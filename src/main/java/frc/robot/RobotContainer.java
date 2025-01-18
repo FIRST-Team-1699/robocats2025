@@ -5,8 +5,10 @@
 package frc.robot;
 
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.commands.intakeCommand;
 
 import java.io.IOException;
+import java.lang.management.OperatingSystemMXBean;
 
 import org.json.simple.parser.ParseException;
 
@@ -24,6 +26,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
 public class RobotContainer {
     // IO DEVICES
@@ -41,11 +45,38 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
 
-    public RobotContainer() {
+    // Intake Subystem/ Command 
+
+    private final IntakeSubsystem intakeSubsystem;
+    private final IntakeCommand intakeCommand;
+    private final ElevatorSubsystem elevatorSubsystem;
+
+    public RobotContainer(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
+        intakeSubsystem = new IntakeSubsystem();
+        elevatorSubsystem = new ElevatorSubsystem();
         configureBindings();
     }
 
     private void configureBindings() {
+        //OperatorController
+        operatorController.getRightTriggerAxis()
+            .whileTrue(new intakeCommand(intakeSubsystem));
+            .onFalse(intakeSubsystem.stop());
+        operatorController.rightBumper()
+            .whileTrue(intakeSubsystem.outtake())
+            .onFalse(intakeSubsystem.stop());
+        operatorController.povUp()
+            .whileTrue(elevatorSubsystem.pickLevel(4));
+        operatorController.povDown()
+            .whileTrue(elevatorSubsystem.pickLevel(0));
+        operatorController.povRight()
+            .whileTrue(elevatorSubsystem.pickLevel(3));
+        operatorController.povLeft()
+            .whileTrue(elevatorSubsystem.pickLevel(2));
+
+        
+
+
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
