@@ -5,6 +5,8 @@
 package frc.robot;
 
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.commands.command_groups.SequentialArmIn;
+import frc.robot.commands.command_groups.SequentialArmOut;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -17,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorSetpoints;
 
 public class RobotContainer {
     // IO DEVICES
@@ -33,6 +37,11 @@ public class RobotContainer {
     // SWERVE CONFIG
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
+
+    // ELEVATOR
+    public final ElevatorSubsystem elevator = new ElevatorSubsystem();
+
+    private final SequentialArmIn storeArm = new SequentialArmIn(elevator, ElevatorSetpoints.HOME);
 
     public RobotContainer() {
         configureBindings();
@@ -66,6 +75,9 @@ public class RobotContainer {
 
         // setup logger
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        // elevator bindings
+        operatorController.a().onTrue(storeArm);
     }
 
     public Command getAutonomousCommand() {
