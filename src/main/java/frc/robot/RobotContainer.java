@@ -17,6 +17,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.HeightPositions;
+import frc.robot.commands.ElevatorLevelCommand;
 
 public class RobotContainer {
     // IO DEVICES
@@ -34,11 +37,15 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
 
-    public RobotContainer() {
+    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+
+    public RobotContainer(ElevatorSubsystem elevatorSubsystem) {
+        elevatorSubsystem = new ElevatorSubsystem();
         configureBindings();
     }
 
     private void configureBindings() {
+    //Driver
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -66,6 +73,29 @@ public class RobotContainer {
 
         // setup logger
         drivetrain.registerTelemetry(logger::telemeterize);
+    //Operator
+        operatorController.povDown()
+            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.LONE))
+            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.LONE));
+        operatorController.povLeft()
+            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.LTWO))
+            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.LTWO));
+        operatorController.povRight()
+            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.LTHREE))
+            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.LTHREE));
+        operatorController.povUp()
+            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.LFOUR))
+            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.LFOUR));
+        operatorController.b()
+            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.COBRASTANCE))
+            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.COBRASTANCE));
+        operatorController.a()
+            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.GROUNDINTAKE))
+            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.GROUNDINTAKE));
+        operatorController.y()
+            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.SOURCEINTAKE))
+            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.SOURCEINTAKE));
+
     }
 
     public Command getAutonomousCommand() {
