@@ -5,7 +5,6 @@ import frc.robot.generated.TunerConstants;
 
 public class Constants {
     public static class SwerveConstants {
-        //SWERVE CONSTANTS
         public static final double kMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
         public static final double kMaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -14,10 +13,11 @@ public class Constants {
 
     }
     public static class ElevatorConstants {
+        // PID CONSTANTS
         public static final double kP = -1;
         public static final double kI = -1;
         public static final double kD = -1;
-
+        // TOLERANCE FOR PID ERROR
         public static final double kTOLEANCE = 1.0;
     }
 }

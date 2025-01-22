@@ -24,6 +24,7 @@ public class ElevatorSubsystem extends SubsystemBase{
     private RelativeEncoder targetRelativeEncoder;
     private SparkClosedLoopController feedbackController;
     private ElevatorPositions currentTargetPosition;
+    private static double elevatorError;
 
 
     /** Constructs an elevator. */
@@ -46,9 +47,10 @@ public class ElevatorSubsystem extends SubsystemBase{
 
     /** Sets the configurations for each motor. */
     private void configureMotors() {
+        // CONFIGURATIONS
         SparkMaxConfig leftConfig = new SparkMaxConfig();
         SparkMaxConfig rightConfig = new SparkMaxConfig();
-
+            // LEFT MOTOR
         leftConfig
             .inverted(true) // TODO: CONFIRM
             .idleMode(IdleMode.kBrake);
@@ -60,8 +62,7 @@ public class ElevatorSubsystem extends SubsystemBase{
             .positionConversionFactor(-1)
             .velocityConversionFactor(-1);
         leftMotor.configureAsync(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        
-        rightConfig = new SparkMaxConfig();
+            //RIGHT MOTOR
         rightConfig.apply(leftConfig);
         rightConfig.follow(leftMotor);
         rightConfig.inverted(true); // TODO: CONFIRM
@@ -74,7 +75,9 @@ public class ElevatorSubsystem extends SubsystemBase{
     */
     public Command elevatorHeight(ElevatorPositions pos) {
         return runOnce(() -> {
+            // CHANGES CURRENT TARGET TO POS
             currentTargetPosition = pos;
+            // SETS FEEDBACKCONTROLLER TO POS
             feedbackController.setReference(pos.heightCentimeters, SparkBase.ControlType.kVoltage);
         });
     }
@@ -85,32 +88,34 @@ public class ElevatorSubsystem extends SubsystemBase{
      */
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
-            return (Math.abs(targetRelativeEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters) 
-                >= -ElevatorConstants.kTOLEANCE 
-            && Math.abs(targetRelativeEncoder.getPosition())-Math.abs(currentTargetPosition.heightCentimeters) 
-                <= Math.abs(ElevatorConstants.kTOLEANCE));
+            // SETS ELEVATOR ERROR
+            elevatorError = (Math.abs(targetRelativeEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters));
+            // TEST FOR IF ELEVATORERROR IS IN TOLERANCE OF TARGETPOSITION
+            return (elevatorError < Math.abs(ElevatorConstants.kTOLEANCE));
         });
-    };
+    }
+
     /**Checks for if elevator has arrived to position. Used for isFinished() method in ElevatorLevelCommand */
     public BooleanSupplier hasReachedPoint() {
         return (() -> {
-            return (Math.abs(targetRelativeEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters) 
-                >= -ElevatorConstants.kTOLEANCE 
-            && Math.abs(targetRelativeEncoder.getPosition())-Math.abs(currentTargetPosition.heightCentimeters) 
-                <= Math.abs(ElevatorConstants.kTOLEANCE));
+            // RETURNS IF ELEVATORERROR IS IN TOLERANCE OF TARGETPOSITION
+            return (elevatorError < Math.abs(ElevatorConstants.kTOLEANCE));
         });
     }
     
-    //@KEVIN, do I need to use the following code for the isFinished() method in ElevatorLevelCommand,
-    //or does WaitUntilAtSetpoint() work for that?
-
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
     public enum ElevatorPositions {
-        // TODO: Work with Miles to figure out height elevator should go
+        // ENUMS FOR POSITIONS
+            // Levels
         L_ONE(45.72), L_TWO(80.01), L_THREE(120.97), L_FOUR(182.88),
-        GROUND_INTAKE(-1), SOURCE_INTAKE(-1), COBRA_STANCE(-1), 
-        STORED(0);
+            // NON-LEVEL POSTIONS
+        GROUND_INTAKE(-1), SOURCE_INTAKE(-1), COBRA_STANCE(-1), STORED(0);
+            // CONSTRUCTOR FOR ENUM'S HEIGHT (CM)
         public final double heightCentimeters;
+        /**Constrcutor for height for ElevatorPositions
+         * @param heightCentimeters
+         * verticle movement in centimeters
+        */
         ElevatorPositions (double heightCentimeters) {
             this.heightCentimeters = heightCentimeters;
         }

@@ -74,7 +74,6 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // Operator
-        //@KEVIN, Would you rather me do these Method Commands with ElevatorLevelCommand or how it is now?
         operatorController.povDown()
             .onTrue(elevator.elevatorHeight(ElevatorPositions.L_ONE)
                 .andThen(elevator.waitUntilAtSetpoint()));
