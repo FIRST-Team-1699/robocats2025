@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.RelativeEncoder;
@@ -11,53 +12,84 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class ElevatorSubsystem extends SubsystemBase{
     private SparkMax leftMotor, rightMotor;
     private RelativeEncoder leftRelativeEncoder, rightRelativeEncoder;
-    private SparkMaxConfig idleConfig;
-    private SparkMaxConfig followerConfig;
-    private SparkClosedLoopController pid;
+    private SparkClosedLoopController feedbackController;
+    private ElevatorPositions currentTargetPosition;
 
+    /** Constructs an elevator. */
     public ElevatorSubsystem() {
-        idleConfig.idleMode(IdleMode.kBrake);
-        followerConfig.follow(leftMotor);
-
-        //Note that leftMotor == leadMotor
+        // MOTOR CONTROLLERS
         leftMotor = new SparkMax(-1, MotorType.kBrushless);
-        leftMotor.configureAsync(idleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        leftRelativeEncoder = leftMotor.getAlternateEncoder();
-        // leftRelativeEncoder = leftMotor.getAlternateEncoder(Type.kQuadrature, 8192);
-
         rightMotor = new SparkMax(-1, MotorType.kBrushless);
-        rightMotor.configureAsync(idleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        rightMotor.configureAsync(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        rightRelativeEncoder = leftMotor.getAlternateEncoder();
+    
+        // RELATIVE ENCODERS
+        leftRelativeEncoder = leftMotor.getEncoder();
+        rightRelativeEncoder = rightMotor.getEncoder();
 
-        pid = leftMotor.getClosedLoopController();
+        // PID CONTROLLER
+        feedbackController = leftMotor.getClosedLoopController();
+        
+        // POSITION
+        currentTargetPosition = ElevatorPositions.STORED;
+
+        configureMotors();
     }
 
-    public Command changeEleavtorHeight(double heightCentimeters) {
+    /** Sets the configurations for each motor. */
+    private void configureMotors() {
+        SparkMaxConfig leftConfig = new SparkMaxConfig();
+        SparkMaxConfig rightConfig = new SparkMaxConfig();
+
+        leftConfig
+            .inverted(true) // TODO: CONFIRM
+            .idleMode(IdleMode.kBrake);
+        leftConfig.closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pidf(-1.0, 0.0, 0.0, 0.0)
+            .outputRange(-1.0, 1.0);
+        leftConfig.encoder
+            .positionConversionFactor(-1)
+            .velocityConversionFactor(-1);
+        leftMotor.configureAsync(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        
+        rightConfig = new SparkMaxConfig();
+        rightConfig.apply(leftConfig);
+        rightConfig.follow(leftMotor);
+        rightConfig.inverted(true); // TODO: CONFIRM
+        rightMotor.configureAsync(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
+
+    // TODO: TAKE ENUM AND NOT DOUBLE
+    /** Sets the target height of the elevator. 
+     * @param heightCentimeters
+     * The target height in centimeters.
+    */
+    public Command changeElevatorHeight(double heightCentimeters) {
         return runOnce(() -> {
-            pid.setReference(heightCentimeters, SparkBase.ControlType.kVoltage);
+            // currentTargetPosition = ELEVATOR POSITION FROM PARAMETER
+            feedbackController.setReference(heightCentimeters, SparkBase.ControlType.kVoltage);
             //Verify with kevin
         });
     }
 
-    public Command stopElevator(HeightPositions heightPosition) {
-        return run(() -> {
-            pid.setReference(heightPosition.heightCentimeters, SparkBase.ControlType.kVoltage); 
-        });
+    public Command waitUntilAtSetpoint() {
+        return new WaitUntilCommand(() -> true); // TODO: CHANGE CONDITION TO SUBTRACT SETPOINT FROM MEASURED AND SEE IF WITHIN TOLERANCE
     }
 
-    public enum HeightPositions {
-        //Work with Miles to figure out height elevator should go
-        LONE(45.72), LTWO(80.01), LTHREE(120.97), LFOUR(182.88),
-        GROUNDINTAKE(-1), SOURCEINTAKE(-1),
-        COBRASTANCE(-1);
+    // METHOD TO SET POINT BASED ON HEIGHT
+
+    /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
+    public enum ElevatorPositions {
+        // TODO: Work with Miles to figure out height elevator should go
+        L_ONE(45.72), L_TWO(80.01), L_THREE(120.97), L_FOUR(182.88),
+        GROUND_INTAKE(-1), SOURCE_INTAKE(-1), COBRA_STANCE(-1), STORED(0);
         public final double heightCentimeters;
-        HeightPositions (double heightCentimeters) {
+        ElevatorPositions (double heightCentimeters) {
             this.heightCentimeters = heightCentimeters;
         }
     }

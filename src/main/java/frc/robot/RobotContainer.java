@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem.HeightPositions;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorPositions;
 import frc.robot.commands.ElevatorLevelCommand;
 
 public class RobotContainer {
@@ -37,15 +37,15 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
 
-    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+    
+    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
 
-    public RobotContainer(ElevatorSubsystem elevatorSubsystem) {
-        elevatorSubsystem = new ElevatorSubsystem();
+    public RobotContainer() {
         configureBindings();
     }
 
     private void configureBindings() {
-    //Driver
+        // Driver
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -73,28 +73,31 @@ public class RobotContainer {
 
         // setup logger
         drivetrain.registerTelemetry(logger::telemeterize);
-    //Operator
+
+        // Operator
         operatorController.povDown()
-            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.LONE))
-            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.LONE));
+            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_ONE))
+            .whileTrue(elevator.stopElevator(ElevatorPositions.L_ONE));
         operatorController.povLeft()
-            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.LTWO))
-            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.LTWO));
+            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_TWO))
+            .whileTrue(elevator.stopElevator(ElevatorPositions.L_TWO));
         operatorController.povRight()
-            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.LTHREE))
-            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.LTHREE));
+            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_THREE))
+            .whileTrue(elevator.stopElevator(ElevatorPositions.L_THREE));
         operatorController.povUp()
-            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.LFOUR))
-            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.LFOUR));
+            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_FOUR))
+            .whileTrue(elevator.stopElevator(ElevatorPositions.L_FOUR));
         operatorController.b()
-            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.COBRASTANCE))
-            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.COBRASTANCE));
+            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.COBRA_STANCE))
+            .whileTrue(elevator.stopElevator(ElevatorPositions.COBRA_STANCE));
         operatorController.a()
-            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.GROUNDINTAKE))
-            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.GROUNDINTAKE));
+            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.GROUND_INTAKE))
+            .whileTrue(elevator.stopElevator(ElevatorPositions.GROUND_INTAKE));
         operatorController.y()
-            .onTrue(new ElevatorLevelCommand(elevatorSubsystem,HeightPositions.SOURCEINTAKE))
-            .whileTrue(elevatorSubsystem.stopElevator(HeightPositions.SOURCEINTAKE));
+            .onTrue(elevator.changeElevatorHeight(5).andThen(elevator.waitUntilAtSetpoint()));
+
+        // operatorController.back()
+        //     .onTrue(elevatorSubsystem.changeElevatorHeight(5).andThen(elevatorSubsystem.waitUntilAtSetpoint()));
 
     }
 
