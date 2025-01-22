@@ -76,25 +76,20 @@ public class RobotContainer {
 
         // Operator
         operatorController.povDown()
-            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_ONE))
-            .whileTrue(elevator.stopElevator(ElevatorPositions.L_ONE));
+            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_ONE));
         operatorController.povLeft()
-            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_TWO))
-            .whileTrue(elevator.stopElevator(ElevatorPositions.L_TWO));
+            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_TWO));
         operatorController.povRight()
-            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_THREE))
-            .whileTrue(elevator.stopElevator(ElevatorPositions.L_THREE));
+            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_THREE));
         operatorController.povUp()
-            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_FOUR))
-            .whileTrue(elevator.stopElevator(ElevatorPositions.L_FOUR));
+            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_FOUR));
         operatorController.b()
-            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.COBRA_STANCE))
-            .whileTrue(elevator.stopElevator(ElevatorPositions.COBRA_STANCE));
+            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.COBRA_STANCE));
         operatorController.a()
-            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.GROUND_INTAKE))
-            .whileTrue(elevator.stopElevator(ElevatorPositions.GROUND_INTAKE));
+            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.GROUND_INTAKE));
         operatorController.y()
-            .onTrue(elevator.changeElevatorHeight(5).andThen(elevator.waitUntilAtSetpoint()));
+            .onTrue(elevator.changeElevatorHeight(ElevatorPositions.SOURCE_INTAKE)
+                .andThen(elevator.waitUntilAtSetpoint(ElevatorPositions.SOURCE_INTAKE)));
 
         // operatorController.back()
         //     .onTrue(elevatorSubsystem.changeElevatorHeight(5).andThen(elevatorSubsystem.waitUntilAtSetpoint()));
