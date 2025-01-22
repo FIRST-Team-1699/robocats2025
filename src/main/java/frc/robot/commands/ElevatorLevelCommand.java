@@ -15,16 +15,15 @@ public class ElevatorLevelCommand extends Command {
         addRequirements(elevatorSubsystem);
     }
 
-    // TODO: MAKE THIS SEND ENUM RATHER THAN TAKING THE HEIGHT OUT OF IT FIRST
     public void initalize() {
-        elevatorSubsystem.changeElevatorHeight(heightPosition.heightCentimeters);
+        elevatorSubsystem.elevatorHeight(heightPosition);
     }
 
     public void execute() {}
 
     public boolean isFinished() {
-        return false;
-        //Figure out parameters to put here
+        return (Boolean.parseBoolean(String.valueOf(new ElevatorSubsystem().waitUntilAtSetpoint())));
+        //Figure out parameters to put here. DONE :)
     }
 
     public void end(boolean isInterrupted) {}

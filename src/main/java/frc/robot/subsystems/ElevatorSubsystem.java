@@ -15,11 +15,22 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import frc.robot.Constants;
+
 public class ElevatorSubsystem extends SubsystemBase{
     private SparkMax leftMotor, rightMotor;
-    private RelativeEncoder leftRelativeEncoder, rightRelativeEncoder;
+    private RelativeEncoder targetRelativeEncoder;
     private SparkClosedLoopController feedbackController;
     private ElevatorPositions currentTargetPosition;
+    //THE FOLLOWING CODE SHOULD BE REMOVED WHEN ELEVATOR CONSTANTS ARE VISIBLE ON THIS FILE (Only to verify methods accuracy)
+    public static final double kELEVATOR_P = -1;
+    public static final double kELEVATOR_I = -1;
+    public static final double kELEVATOR_D = -1;
+
+    public static final double kTOLEANCE = 1.0;
+    //@KEVIN, if you could hint/ tell me the issue for why constants from Constants.java aren't constanting, that would be great :)
+
+
 
     /** Constructs an elevator. */
     public ElevatorSubsystem() {
@@ -28,8 +39,7 @@ public class ElevatorSubsystem extends SubsystemBase{
         rightMotor = new SparkMax(-1, MotorType.kBrushless);
     
         // RELATIVE ENCODERS
-        leftRelativeEncoder = leftMotor.getEncoder();
-        rightRelativeEncoder = rightMotor.getEncoder();
+        targetRelativeEncoder = leftMotor.getEncoder();
 
         // PID CONTROLLER
         feedbackController = leftMotor.getClosedLoopController();
@@ -50,7 +60,7 @@ public class ElevatorSubsystem extends SubsystemBase{
             .idleMode(IdleMode.kBrake);
         leftConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pidf(-1.0, 0.0, 0.0, 0.0)
+            .pidf(kELEVATOR_P, kELEVATOR_I, kELEVATOR_D, -1) 
             .outputRange(-1.0, 1.0);
         leftConfig.encoder
             .positionConversionFactor(-1)
@@ -64,30 +74,42 @@ public class ElevatorSubsystem extends SubsystemBase{
         rightMotor.configureAsync(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    // TODO: TAKE ENUM AND NOT DOUBLE
     /** Sets the target height of the elevator. 
-     * @param heightCentimeters
-     * The target height in centimeters.
+     * @param ElevatorPositions
+     * The taregt position: including state and height.
     */
-    public Command changeElevatorHeight(double heightCentimeters) {
+    public Command elevatorHeight(ElevatorPositions pos) {
         return runOnce(() -> {
-            // currentTargetPosition = ELEVATOR POSITION FROM PARAMETER
-            feedbackController.setReference(heightCentimeters, SparkBase.ControlType.kVoltage);
-            //Verify with kevin
+            currentTargetPosition = pos;
+            feedbackController.setReference(pos.heightCentimeters, SparkBase.ControlType.kVoltage);
         });
     }
 
+    /**Waits until elevator reaches position, then returns waut until Command.
+     * @param ElevatorPositions
+     * Enum for elevator height options. 
+     */
     public Command waitUntilAtSetpoint() {
-        return new WaitUntilCommand(() -> true); // TODO: CHANGE CONDITION TO SUBTRACT SETPOINT FROM MEASURED AND SEE IF WITHIN TOLERANCE
-    }
+        return new WaitUntilCommand(() -> {
+            return (Math.abs(targetRelativeEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters) >= -kTOLEANCE 
+                && targetRelativeEncoder.getPosition()-currentTargetPosition.heightCentimeters <= kTOLEANCE);
+        });
+    };
+    
+    //@KEVIN, do I need to use the following code for the isFinished() method in ElevatorLevelCommand,
+    //or does WaitUntilAtSetpoint() work for that?
 
-    // METHOD TO SET POINT BASED ON HEIGHT
+    // public BooleanSupplier getElevatorDone() {
+    //         return BooleanSupplier(Math.abs(targetRelativeEncoder.getPosition())- currentTargetPosition.heightCentimeters >= -kTOLEANCE 
+    //         && targetRelativeEncoder.getPosition()-currentTargetPosition.heightCentimeters <= kTOLEANCE);
+    //     };
 
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
     public enum ElevatorPositions {
         // TODO: Work with Miles to figure out height elevator should go
         L_ONE(45.72), L_TWO(80.01), L_THREE(120.97), L_FOUR(182.88),
-        GROUND_INTAKE(-1), SOURCE_INTAKE(-1), COBRA_STANCE(-1), STORED(0);
+        GROUND_INTAKE(-1), SOURCE_INTAKE(-1), COBRA_STANCE(-1), 
+        STORED(0);
         public final double heightCentimeters;
         ElevatorPositions (double heightCentimeters) {
             this.heightCentimeters = heightCentimeters;

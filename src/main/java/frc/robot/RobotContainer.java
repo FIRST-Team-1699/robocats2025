@@ -75,24 +75,31 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // Operator
+        //@KEVIN, Would you rather me do these Method Commands with ElevatorLevelCommand or how it is now?
         operatorController.povDown()
-            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_ONE));
+            .onTrue(elevator.elevatorHeight(ElevatorPositions.L_ONE)
+                .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.povLeft()
-            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_TWO));
+            .onTrue(elevator.elevatorHeight(ElevatorPositions.L_TWO)
+                .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.povRight()
-            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_THREE));
+            .onTrue(elevator.elevatorHeight(ElevatorPositions.L_THREE)
+                .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.povUp()
-            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.L_FOUR));
+            .onTrue(elevator.elevatorHeight(ElevatorPositions.L_FOUR)
+                .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.b()
-            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.COBRA_STANCE));
+            .onTrue(elevator.elevatorHeight(ElevatorPositions.COBRA_STANCE)
+                .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.a()
-            .onTrue(new ElevatorLevelCommand(elevator,ElevatorPositions.GROUND_INTAKE));
+            .onTrue(elevator.elevatorHeight(ElevatorPositions.GROUND_INTAKE)
+                .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.y()
-            .onTrue(elevator.changeElevatorHeight(ElevatorPositions.SOURCE_INTAKE)
-                .andThen(elevator.waitUntilAtSetpoint(ElevatorPositions.SOURCE_INTAKE)));
-
-        // operatorController.back()
-        //     .onTrue(elevatorSubsystem.changeElevatorHeight(5).andThen(elevatorSubsystem.waitUntilAtSetpoint()));
+            .onTrue(elevator.elevatorHeight(ElevatorPositions.SOURCE_INTAKE)
+                .andThen(elevator.waitUntilAtSetpoint()));
+        operatorController.back()
+            .onTrue(elevator.elevatorHeight(ElevatorPositions.STORED)
+                .andThen(elevator.waitUntilAtSetpoint()));
 
     }
 
