@@ -5,24 +5,24 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorPositions;
 
 public class ElevatorLevelCommand extends Command {
-    private ElevatorSubsystem elevatorSubsystem;
+    private ElevatorSubsystem elevator;
     private ElevatorPositions heightPosition;
 
-    public ElevatorLevelCommand(ElevatorSubsystem elevatorSubsystem, ElevatorPositions heightPosition) {
-        this.elevatorSubsystem = elevatorSubsystem;
+    public ElevatorLevelCommand(ElevatorSubsystem elevator, ElevatorPositions heightPosition) {
+        this.elevator = elevator;
         this.heightPosition = heightPosition;
 
-        addRequirements(elevatorSubsystem);
+        addRequirements(elevator);
     }
 
     public void initalize() {
-        elevatorSubsystem.elevatorHeight(heightPosition);
+        elevator.elevatorHeight(heightPosition);
     }
 
     public void execute() {}
 
     public boolean isFinished() {
-        return (Boolean.parseBoolean(String.valueOf(new ElevatorSubsystem().waitUntilAtSetpoint())));
+        return (elevator.hasReachedPoint().getAsBoolean());
         //Figure out parameters to put here. DONE :)
     }
 

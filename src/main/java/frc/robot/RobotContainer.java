@@ -19,7 +19,6 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorPositions;
-import frc.robot.commands.ElevatorLevelCommand;
 
 public class RobotContainer {
     // IO DEVICES

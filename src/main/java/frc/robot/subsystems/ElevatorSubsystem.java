@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -15,21 +17,13 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase{
     private SparkMax leftMotor, rightMotor;
     private RelativeEncoder targetRelativeEncoder;
     private SparkClosedLoopController feedbackController;
     private ElevatorPositions currentTargetPosition;
-    //THE FOLLOWING CODE SHOULD BE REMOVED WHEN ELEVATOR CONSTANTS ARE VISIBLE ON THIS FILE (Only to verify methods accuracy)
-    public static final double kELEVATOR_P = -1;
-    public static final double kELEVATOR_I = -1;
-    public static final double kELEVATOR_D = -1;
-
-    public static final double kTOLEANCE = 1.0;
-    //@KEVIN, if you could hint/ tell me the issue for why constants from Constants.java aren't constanting, that would be great :)
-
 
 
     /** Constructs an elevator. */
@@ -60,7 +54,7 @@ public class ElevatorSubsystem extends SubsystemBase{
             .idleMode(IdleMode.kBrake);
         leftConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pidf(kELEVATOR_P, kELEVATOR_I, kELEVATOR_D, -1) 
+            .pidf(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD, -1) 
             .outputRange(-1.0, 1.0);
         leftConfig.encoder
             .positionConversionFactor(-1)
@@ -91,18 +85,24 @@ public class ElevatorSubsystem extends SubsystemBase{
      */
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
-            return (Math.abs(targetRelativeEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters) >= -kTOLEANCE 
-                && targetRelativeEncoder.getPosition()-currentTargetPosition.heightCentimeters <= kTOLEANCE);
+            return (Math.abs(targetRelativeEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters) 
+                >= -ElevatorConstants.kTOLEANCE 
+            && Math.abs(targetRelativeEncoder.getPosition())-Math.abs(currentTargetPosition.heightCentimeters) 
+                <= Math.abs(ElevatorConstants.kTOLEANCE));
         });
     };
+    /**Checks for if elevator has arrived to position. Used for isFinished() method in ElevatorLevelCommand */
+    public BooleanSupplier hasReachedPoint() {
+        return (() -> {
+            return (Math.abs(targetRelativeEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters) 
+                >= -ElevatorConstants.kTOLEANCE 
+            && Math.abs(targetRelativeEncoder.getPosition())-Math.abs(currentTargetPosition.heightCentimeters) 
+                <= Math.abs(ElevatorConstants.kTOLEANCE));
+        });
+    }
     
     //@KEVIN, do I need to use the following code for the isFinished() method in ElevatorLevelCommand,
     //or does WaitUntilAtSetpoint() work for that?
-
-    // public BooleanSupplier getElevatorDone() {
-    //         return BooleanSupplier(Math.abs(targetRelativeEncoder.getPosition())- currentTargetPosition.heightCentimeters >= -kTOLEANCE 
-    //         && targetRelativeEncoder.getPosition()-currentTargetPosition.heightCentimeters <= kTOLEANCE);
-    //     };
 
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
     public enum ElevatorPositions {

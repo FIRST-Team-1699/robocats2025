@@ -11,11 +11,12 @@ public class Constants {
 
         public static final double kTranslationalDeadband = kMaxSpeed * 0.1;
         public static final double kRotationalDeadband = kMaxAngularRate * 0.1;
-        
-        //ELEVATOR CONSTANTS
-        public static final double kELEVATOR_P = -1;
-        public static final double kELEVATOR_I = -1;
-        public static final double kELEVATOR_D = -1;
+
+    }
+    public static class ElevatorConstants {
+        public static final double kP = -1;
+        public static final double kI = -1;
+        public static final double kD = -1;
 
         public static final double kTOLEANCE = 1.0;
     }
