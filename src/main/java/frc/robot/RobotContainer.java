@@ -17,9 +17,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem.ElevatorPositions;
-import frc.robot.commands.ElevatorLevelCommand;
+import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.PivotSubsystem.PivotPos;
 
 public class RobotContainer {
     // IO DEVICES
@@ -37,8 +36,9 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
 
-    
-    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+    // PIVOT SUBSYSTEM / ENUM
+    private final PivotSubsystem pivot = new PivotSubsystem();
+    private PivotPos pivotPos;
 
     public RobotContainer() {
         configureBindings();
@@ -75,7 +75,7 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // Operator Controller
-
+        // TODO: CREATE BINDINGS FOR PIVOT
     }
 
     public Command getAutonomousCommand() {
