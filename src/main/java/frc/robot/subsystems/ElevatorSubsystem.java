@@ -24,6 +24,7 @@ public class ElevatorSubsystem extends SubsystemBase{
     private RelativeEncoder targetRelativeEncoder;
     private SparkClosedLoopController feedbackController;
     private ElevatorPositions currentTargetPosition;
+
     private static double elevatorError;
 
 
@@ -61,11 +62,13 @@ public class ElevatorSubsystem extends SubsystemBase{
         leftConfig.encoder
             .positionConversionFactor(-1)
             .velocityConversionFactor(-1);
+            // APPLIES LEFT CONFIG TO RIGHT MOTOR
         leftMotor.configureAsync(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-            //RIGHT MOTOR
+            // RIGHT MOTOR
         rightConfig.apply(leftConfig);
         rightConfig.follow(leftMotor);
-        rightConfig.inverted(true); // TODO: CONFIRM
+        rightConfig.inverted(true); // TODO: CONFIRM,
+            // APPLIES RIGHT CONFIG TO RIGHT MOTOR
         rightMotor.configureAsync(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
@@ -73,46 +76,38 @@ public class ElevatorSubsystem extends SubsystemBase{
      * @param ElevatorPositions
      * The taregt position: including state and height.
     */
-    public Command elevatorHeight(ElevatorPositions pos) {
+    public Command setHeight(ElevatorPositions pos) {
         return runOnce(() -> {
             // CHANGES CURRENT TARGET TO POS
             currentTargetPosition = pos;
             // SETS FEEDBACKCONTROLLER TO POS
-            feedbackController.setReference(pos.heightCentimeters, SparkBase.ControlType.kVoltage);
+            feedbackController.setReference(pos.heightCentimeters, SparkBase.ControlType.kPosition);
         });
     }
 
-    /**Waits until elevator reaches position, then returns waut until Command.
+    /**Waits until elevator reaches position within Tolerance.
      * @param ElevatorPositions
      * Enum for elevator height options. 
      */
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
             // SETS ELEVATOR ERROR
-            elevatorError = (Math.abs(targetRelativeEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters));
+            elevatorError = Math.abs(Math.abs(targetRelativeEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters));
             // TEST FOR IF ELEVATORERROR IS IN TOLERANCE OF TARGETPOSITION
-            return (elevatorError < Math.abs(ElevatorConstants.kTOLEANCE));
-        });
-    }
-
-    /**Checks for if elevator has arrived to position. Used for isFinished() method in ElevatorLevelCommand */
-    public BooleanSupplier hasReachedPoint() {
-        return (() -> {
-            // RETURNS IF ELEVATORERROR IS IN TOLERANCE OF TARGETPOSITION
-            return (elevatorError < Math.abs(ElevatorConstants.kTOLEANCE));
+            return (elevatorError < ElevatorConstants.kTOLERANCE);
         });
     }
     
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
     public enum ElevatorPositions {
         // ENUMS FOR POSITIONS
-            // Levels
+            // LEVEL POSITIONS
         L_ONE(45.72), L_TWO(80.01), L_THREE(120.97), L_FOUR(182.88),
             // NON-LEVEL POSTIONS
         GROUND_INTAKE(-1), SOURCE_INTAKE(-1), COBRA_STANCE(-1), STORED(0);
             // CONSTRUCTOR FOR ENUM'S HEIGHT (CM)
         public final double heightCentimeters;
-        /**Constrcutor for height for ElevatorPositions
+        /**Constrcutor for height for ElevatorPositions (Enum for Elevator poses)
          * @param heightCentimeters
          * verticle movement in centimeters
         */

@@ -18,6 +18,6 @@ public class Constants {
         public static final double kI = -1;
         public static final double kD = -1;
         // TOLERANCE FOR PID ERROR
-        public static final double kTOLEANCE = 1.0;
+        public static final double kTOLERANCE = 1.0;
     }
 }

@@ -75,28 +75,28 @@ public class RobotContainer {
 
         // Operator
         operatorController.povDown()
-            .onTrue(elevator.elevatorHeight(ElevatorPositions.L_ONE)
+            .onTrue(elevator.setHeight(ElevatorPositions.L_ONE)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.povLeft()
-            .onTrue(elevator.elevatorHeight(ElevatorPositions.L_TWO)
+            .onTrue(elevator.setHeight(ElevatorPositions.L_TWO)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.povRight()
-            .onTrue(elevator.elevatorHeight(ElevatorPositions.L_THREE)
+            .onTrue(elevator.setHeight(ElevatorPositions.L_THREE)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.povUp()
-            .onTrue(elevator.elevatorHeight(ElevatorPositions.L_FOUR)
+            .onTrue(elevator.setHeight(ElevatorPositions.L_FOUR)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.b()
-            .onTrue(elevator.elevatorHeight(ElevatorPositions.COBRA_STANCE)
+            .onTrue(elevator.setHeight(ElevatorPositions.COBRA_STANCE)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.a()
-            .onTrue(elevator.elevatorHeight(ElevatorPositions.GROUND_INTAKE)
+            .onTrue(elevator.setHeight(ElevatorPositions.GROUND_INTAKE)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.y()
-            .onTrue(elevator.elevatorHeight(ElevatorPositions.SOURCE_INTAKE)
+            .onTrue(elevator.setHeight(ElevatorPositions.SOURCE_INTAKE)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.back()
-            .onTrue(elevator.elevatorHeight(ElevatorPositions.STORED)
+            .onTrue(elevator.setHeight(ElevatorPositions.STORED)
                 .andThen(elevator.waitUntilAtSetpoint()));
 
     }
