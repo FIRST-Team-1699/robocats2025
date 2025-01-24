@@ -79,19 +79,19 @@ public class RobotContainer {
         operatorController.povUp().onTrue(pivot.setPivot(PivotPos.L_FOUR)
             .andThen(pivot.waitUntilAtSetpoint()));
         operatorController.povLeft().onTrue(pivot.setPivot(PivotPos.L_ONE)
-        .andThen(pivot.waitUntilAtSetpoint()));
+            .andThen(pivot.waitUntilAtSetpoint()));
         operatorController.povDown().onTrue(pivot.setPivot(PivotPos.L_TWO)
-        .andThen(pivot.waitUntilAtSetpoint()));
+            .andThen(pivot.waitUntilAtSetpoint()));
         operatorController.povRight().onTrue(pivot.setPivot(PivotPos.L_THREE)
-        .andThen(pivot.waitUntilAtSetpoint()));
+            .andThen(pivot.waitUntilAtSetpoint()));
         operatorController.x().onTrue(pivot.setPivot(PivotPos.GROUND)
-        .andThen(pivot.waitUntilAtSetpoint()));
+            .andThen(pivot.waitUntilAtSetpoint()));
         operatorController.y().onTrue(pivot.setPivot(PivotPos.SOURCE)
-        .andThen(pivot.waitUntilAtSetpoint()));
+            .andThen(pivot.waitUntilAtSetpoint()));
         operatorController.leftStick().onTrue(pivot.setPivot(PivotPos.BASE)
-        .andThen(pivot.waitUntilAtSetpoint()));
+            .andThen(pivot.waitUntilAtSetpoint()));
         operatorController.rightStick().onTrue(pivot.setPivot(PivotPos.COBRA_STANCE)
-        .andThen(pivot.waitUntilAtSetpoint()));
+            .andThen(pivot.waitUntilAtSetpoint()));
     }
 
     public Command getAutonomousCommand() {
