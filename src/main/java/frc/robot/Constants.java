@@ -11,4 +11,13 @@ public class Constants {
         public static final double kTranslationalDeadband = kMaxSpeed * 0.1;
         public static final double kRotationalDeadband = kMaxAngularRate * 0.1;
     }
+
+    public static class IntakeConstants {
+        public static final double kIntakeSpeed = .5;
+        public static final double kOuttakeSpeed = -.49;
+
+        public static final int kMotorID = -1;
+
+
+    }
 }
