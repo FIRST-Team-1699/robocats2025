@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -75,7 +76,22 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // Operator Controller
-        // TODO: CREATE BINDINGS FOR PIVOT
+        operatorController.povUp().onTrue(pivot.setPivot(PivotPos.L_FOUR)
+            .andThen(pivot.waitUntilAtSetpoint()));
+        operatorController.povLeft().onTrue(pivot.setPivot(PivotPos.L_ONE)
+        .andThen(pivot.waitUntilAtSetpoint()));
+        operatorController.povDown().onTrue(pivot.setPivot(PivotPos.L_TWO)
+        .andThen(pivot.waitUntilAtSetpoint()));
+        operatorController.povRight().onTrue(pivot.setPivot(PivotPos.L_THREE)
+        .andThen(pivot.waitUntilAtSetpoint()));
+        operatorController.x().onTrue(pivot.setPivot(PivotPos.GROUND)
+        .andThen(pivot.waitUntilAtSetpoint()));
+        operatorController.y().onTrue(pivot.setPivot(PivotPos.SOURCE)
+        .andThen(pivot.waitUntilAtSetpoint()));
+        operatorController.leftStick().onTrue(pivot.setPivot(PivotPos.BASE)
+        .andThen(pivot.waitUntilAtSetpoint()));
+        operatorController.rightStick().onTrue(pivot.setPivot(PivotPos.COBRA_STANCE)
+        .andThen(pivot.waitUntilAtSetpoint()));
     }
 
     public Command getAutonomousCommand() {

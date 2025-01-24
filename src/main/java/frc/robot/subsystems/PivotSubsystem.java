@@ -1,11 +1,9 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.PivotConstants;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import java.util.function.BooleanSupplier;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
@@ -18,11 +16,13 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-public class PivotSubsystem extends SubsystemBase{
+public class PivotSubsystem implements Subsystem {
     private SparkMax leftMotor, rightMotor;
     private RelativeEncoder targetEncoder;
     private SparkClosedLoopController feedbackController;
     private PivotPos targetPos;
+
+    private double pivotError;
 
 
     public PivotSubsystem() {
@@ -68,9 +68,16 @@ public class PivotSubsystem extends SubsystemBase{
      */
     public Command setPivot(PivotPos pivot) {
         return runOnce(() -> {
-            feedbackController.setReference(pivot.pivotHeight, SparkBase.ControlType.kVoltage); //TODO: get manufacturing + general additional data to be cool :)
+            feedbackController.setReference(pivot.pivotHeight, SparkBase.ControlType.kPosition); //TODO: get manufacturing + general additional data to be cool :)
         }
         );
+    }
+
+    public Command waitUntilAtSetpoint() {
+        return new WaitUntilCommand(() -> {
+            pivotError = Math.abs(targetEncoder.getPosition() - targetPos.pivotHeight);
+            return pivotError < PivotConstants.kTOLERENCE;
+        });
     }
     // TODO: MAKE A METHOD TO RETURN IF PIVOT HAS REACHED HEIGHT
     /**Enum, holds position of pivot.
