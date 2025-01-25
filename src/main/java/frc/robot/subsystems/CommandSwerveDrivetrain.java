@@ -69,8 +69,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape), 
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
         new Transform3d(
-            new Translation3d(Units.inchesToMeters(-12), 0, Units.inchesToMeters(2.25)),
-            new Rotation3d(0, 20, 179)
+            new Translation3d(Units.inchesToMeters(1.75), Units.inchesToMeters(0.125), Units.inchesToMeters(7.5)),
+            new Rotation3d(0, 10, 0)
         )
         );
     
