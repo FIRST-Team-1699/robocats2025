@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.RotateWristSubsystem;
+import frc.robot.subsystems.RotateWristSubsystem.RotatationalWristPosition;
 
 public class RobotContainer {
     // IO DEVICES
@@ -33,6 +35,9 @@ public class RobotContainer {
     // SWERVE CONFIG
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
+
+    // WRIST ROTATE
+    private RotateWristSubsystem rotateWrist = new RotateWristSubsystem();
 
     public RobotContainer() {
         configureBindings();
@@ -66,6 +71,12 @@ public class RobotContainer {
 
         // setup logger
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        // OPERATOR CONTROLLER
+        operatorController.a().onTrue(rotateWrist.setRotation(RotatationalWristPosition.HORIZONTAL)
+            .andThen(rotateWrist.waitUntilAtSetpoint()));
+        operatorController.povUp().onTrue(rotateWrist.setRotation(RotatationalWristPosition.VERICAL)
+            .andThen(rotateWrist.waitUntilAtSetpoint()));
     }
 
     public Command getAutonomousCommand() {
