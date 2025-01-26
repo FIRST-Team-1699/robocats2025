@@ -64,13 +64,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private boolean m_hasAppliedOperatorPerspective = false;
 
     // PHOTONVISION STUFF
-    private final PhotonCamera camera = new PhotonCamera("BackCamera");
+    private final PhotonCamera camera = new PhotonCamera("PC_Camera");
     private final PhotonPoseEstimator visionEstimator = new PhotonPoseEstimator(
         AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape), 
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
         new Transform3d(
             new Translation3d(Units.inchesToMeters(1.75), Units.inchesToMeters(0.125), Units.inchesToMeters(7.5)),
-            new Rotation3d(0, 10, 0)
+            new Rotation3d(0, Units.degreesToRadians(10), 0)
         )
         );
     
@@ -253,6 +253,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         } catch (Exception ex) {
             DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
         }
+        visionEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     }
 
     /**
@@ -312,7 +313,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          * CAMERA IS DETECTING AND REPORTING TAG DATA
          * 3D IS CALIBRATED
          */
-        visionEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
         var latestResults = camera.getAllUnreadResults();
         for(PhotonPipelineResult result : latestResults) {
             Optional<EstimatedRobotPose> poseData = visionEstimator.update(result);
