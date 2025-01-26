@@ -10,6 +10,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.estimation.VisionEstimation;
+import org.photonvision.proto.Photon;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -69,8 +70,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape), 
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
         new Transform3d(
-            new Translation3d(Units.inchesToMeters(1.75), Units.inchesToMeters(0.125), Units.inchesToMeters(7.5)),
-            new Rotation3d(0, Units.degreesToRadians(10), 0)
+            new Translation3d(Units.inchesToMeters(.25), Units.inchesToMeters(0.125), Units.inchesToMeters(7.5)),
+            new Rotation3d(0, Units.degreesToRadians(5), 0)
         )
         );
     
@@ -286,6 +287,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.dynamic(direction);
+    }
+
+    public PhotonCamera getFrontCamera() {
+        return camera;
     }
 
     @Override

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.commands.AlignToTagCommand;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -64,6 +65,8 @@ public class RobotContainer {
 
         // reset the field-centric heading
         driverController.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+        driverController.x().whileTrue(new AlignToTagCommand(drivetrain, drivetrain.getFrontCamera(), 0, 0, 0, 12));
 
         // setup logger
         drivetrain.registerTelemetry(logger::telemeterize);
