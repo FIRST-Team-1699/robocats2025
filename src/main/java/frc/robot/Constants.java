@@ -28,4 +28,13 @@ public class Constants {
         public static final double kFF = -1;
         public static final double kTolerance = -1;
     }
+
+    public static class TiltConstants {
+        public static final double kP = -1;
+        public static final double kI = -1;
+        public static final double kD = -1;
+        public static final double kFF = -1;
+        public static final double kTolerance = -1;
+    }
+
 }

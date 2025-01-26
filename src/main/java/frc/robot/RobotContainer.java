@@ -18,7 +18,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.RotateWristSubsystem;
+import frc.robot.subsystems.TiltWristSubsystem;
 import frc.robot.subsystems.RotateWristSubsystem.RotatationalWristPosition;
+import frc.robot.subsystems.TiltWristSubsystem.TiltWristPosition;
 
 public class RobotContainer {
     // IO DEVICES
@@ -38,6 +40,9 @@ public class RobotContainer {
 
     // WRIST ROTATE
     private RotateWristSubsystem rotateWrist = new RotateWristSubsystem();
+
+    // WRIST TILT
+    private TiltWristSubsystem tiltWrist = new TiltWristSubsystem();
 
     public RobotContainer() {
         configureBindings();
@@ -74,9 +79,13 @@ public class RobotContainer {
 
         // OPERATOR CONTROLLER
         operatorController.a().onTrue(rotateWrist.setRotation(RotatationalWristPosition.HORIZONTAL)
-            .andThen(rotateWrist.waitUntilAtSetpoint()));
+            .andThen(rotateWrist.waitUntilAtSetpoint())
+            .andThen(tiltWrist.setTilt(TiltWristPosition.STOWED))
+            .andThen(tiltWrist.wiatUnilAtSetpoint()));
         operatorController.povUp().onTrue(rotateWrist.setRotation(RotatationalWristPosition.VERICAL)
-            .andThen(rotateWrist.waitUntilAtSetpoint()));
+            .andThen(rotateWrist.waitUntilAtSetpoint())
+            .andThen(tiltWrist.setTilt(TiltWristPosition.CSINTAKE))
+            .andThen(tiltWrist.wiatUnilAtSetpoint()));
     }
 
     public Command getAutonomousCommand() {
