@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.commands.ZeroElevatorCommand;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -74,6 +75,7 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // Operator
+        // Raise/Lower Elvator
         operatorController.povDown()
             .onTrue(elevator.setHeight(ElevatorPositions.L_ONE)
                 .andThen(elevator.waitUntilAtSetpoint()));
@@ -98,7 +100,9 @@ public class RobotContainer {
         operatorController.back()
             .onTrue(elevator.setHeight(ElevatorPositions.STORED)
                 .andThen(elevator.waitUntilAtSetpoint()));
-
+        // Zero
+        operatorController.leftBumper()
+            .onTrue(new ZeroElevatorCommand(elevator));
     }
 
     public Command getAutonomousCommand() {

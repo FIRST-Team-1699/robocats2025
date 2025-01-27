@@ -1,6 +1,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
+
 import frc.robot.generated.TunerConstants;
 
 public class Constants {
@@ -19,5 +20,8 @@ public class Constants {
         public static final double kD = -1;
         // TOLERANCE FOR PID ERROR
         public static final double kTOLERANCE = 1.0;
+        // LIMIT VALUES
+        public static final double kMIN_LIMIT = 0;
+        public static final double kMAX_LIMIT = 183.88;
     }
 }
