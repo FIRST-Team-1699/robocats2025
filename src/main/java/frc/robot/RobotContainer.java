@@ -17,9 +17,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.elevator.ZeroElevator;
-import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorPositions;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorPositions;
 
 public class RobotContainer {
     // IO DEVICES
@@ -39,7 +38,6 @@ public class RobotContainer {
 
     
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-    private final ZeroElevator zeroElevator = new ZeroElevator();
 
     public RobotContainer() {
         configureBindings();
@@ -108,8 +106,8 @@ public class RobotContainer {
         //     .whileTrue(elevator.toggleLowerLimit(false).andThen(elevator.lowerElevator().andThen(elevator.stopMotor().alongWith(elevator.resetEncoder().alongWith(elevator.toggleLowerLimit(true))))));
         operatorController.leftBumper()
             .whileTrue(
-                zeroElevator.subsequentialZeroCommandGroup()
-                    .handleInterrupt(zeroElevator::stopMotorManual)
+                elevator.subsequentialZeroCommandGroup()
+                    .handleInterrupt(elevator::stopMotorManual)
                 );
     }
 

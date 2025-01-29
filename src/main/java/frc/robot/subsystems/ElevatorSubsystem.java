@@ -1,6 +1,7 @@
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -119,48 +120,61 @@ public class ElevatorSubsystem extends SubsystemBase{
     }
     // // COMMAND FACTORIES TO ZERO ELEVATOR
 
-    // @KEVIN, THE LOGIC BEHIND ME MOVING THIS TO ZeroElevator.java, IS THAT IT REMOVES ABOUT 40 
-    // LINES OF CODE AND SPLITS UP 2 GOALS BETWEEN 2 CLASSES. PROBABLY OVERTHINKING THIS
-    // /**Runs a WaitUntilCommand, waits until elevator reaches bottom */
-    // public Command lowerElevator() {
-    //     return new WaitUntilCommand(() -> {
-    //         leftMotor.set(-0.2);
-    //         return isAtBottom();
-    //     });
-    // }
-    // /**Resets encoder to 0 after zeroing */
-    // public Command resetEncoder() {
-    //     return runOnce(() -> {
-    //         targetRelativeEncoder.setPosition(0);
-    //     });
-    // }
-    // /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
-    // public Command stopMotorCommand() {
-    //     return runOnce(() -> {
-    //         leftMotor.set(0);
-    //     });
-    // }
+    /**Runs a WaitUntilCommand, waits until elevator reaches bottom */
+    public Command waitWhileLowerElevator() {
+        return new WaitUntilCommand(() -> {
+            leadMotor.set(-0.2);
+            return isAtBottom();
+        });
+    }
+    /**Resets encoder to 0 after zeroing */
+    public Command resetEncoder() {
+        return runOnce(() -> {
+            targetRelativeEncoder.setPosition(0);
+        });
+    }
+    /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
+    public Command stopMotorCommand() {
+        return runOnce(() -> {
+            leadMotor.set(0);
+        });
+    }
 
-    // /** Stops the motor manually, ignoring all commands. */
-    // public void stopMotorManual() {
-    //     leftMotor.set(0);
-    // }
+    /** Stops the motor manually, ignoring all commands. */
+    public void stopMotorManual() {
+        leadMotor.set(0);
+    }
 
-    // /**Enables or disables reverseSoftLimmit
-    //  * @param enabled
-    //  * considers wether (based on boolean data) lowerLimit is to be disable or enabled
-    //  */
-    // public Command toggleLowerLimit(boolean enabled) {
-    //     return runOnce(()-> {
-    //         leftConfig.softLimit.reverseSoftLimitEnabled(enabled);
-    //         leftMotor.configureAsync(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    //     });
-    // }
+    /**Enables or disables reverseSoftLimmit
+     * @param enabled
+     * considers wether (based on boolean data) lowerLimit is to be disable or enabled
+     */
+    public Command toggleLowerLimit(boolean enabled) {
+        return runOnce(()-> {
+            leftConfig.softLimit.reverseSoftLimitEnabled(enabled);
+            leadMotor.configureAsync(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        });
+    }
 
-    // /**Returns if bottomLimitSwitch has been reached, should not be used publicly */
-    // private boolean isAtBottom() {
-    //     return bottomLimitSwitch.isPressed();
-    // }
+    /**Returns if bottomLimitSwitch has been reached, should not be used publicly */
+    private boolean isAtBottom() {
+        return bottomLimitSwitch.isPressed();
+    }
+    
+    /**Runs a Command Group to zero elevator */
+    public Command subsequentialZeroCommandGroup() {
+        return new SequentialCommandGroup(
+            // SETS CONDITIONS FOR ZEROING
+            toggleLowerLimit(false),
+            // LOWERS UNTIL REACHING LIMIT SWITCH, WAITUNTILCOMMAND
+            waitWhileLowerElevator(),
+            // RESETS MOTOR/ENCODER
+            stopMotorCommand(),
+            resetEncoder(),
+            // ENABLES SOFTLIMITSWITCH FOR NORMAL RAISING/LOWERING
+            toggleLowerLimit(true)
+        );
+    }
     
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
     public enum ElevatorPositions {
