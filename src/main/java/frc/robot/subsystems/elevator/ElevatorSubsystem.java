@@ -20,12 +20,13 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase{
-    private SparkMax leftMotor, rightMotor;
-    private RelativeEncoder targetRelativeEncoder;
+    protected SparkMax leadMotor, followerMotor;
+    protected SparkLimitSwitch bottomLimitSwitch;
+    protected SparkMaxConfig rightConfig, leftConfig;
+    protected RelativeEncoder targetRelativeEncoder;
+    protected ElevatorPositions currentTargetPosition;
+
     private SparkClosedLoopController feedbackController;
-    private SparkMaxConfig rightConfig, leftConfig;
-    private ElevatorPositions currentTargetPosition;
-    private SparkLimitSwitch bottomLimitSwitch;
 
     private static double elevatorError;
 
@@ -33,19 +34,19 @@ public class ElevatorSubsystem extends SubsystemBase{
     /** Constructs an elevator. */
     public ElevatorSubsystem() {
         // MOTOR CONTROLLERS
-        leftMotor = new SparkMax(-1, MotorType.kBrushless);
-        rightMotor = new SparkMax(-1, MotorType.kBrushless);
+        leadMotor = new SparkMax(-1, MotorType.kBrushless);
+        followerMotor = new SparkMax(-1, MotorType.kBrushless);
     
         // RELATIVE ENCODERS
-        targetRelativeEncoder = leftMotor.getEncoder();
+        targetRelativeEncoder = leadMotor.getEncoder();
 
         // PID CONTROLLER
-        feedbackController = leftMotor.getClosedLoopController();
+        feedbackController = leadMotor.getClosedLoopController();
         
         // POSITION
         currentTargetPosition = ElevatorPositions.STORED;
 
-        bottomLimitSwitch = leftMotor.getReverseLimitSwitch();
+        bottomLimitSwitch = leadMotor.getReverseLimitSwitch();
 
         configureMotors();
     }
@@ -81,13 +82,13 @@ public class ElevatorSubsystem extends SubsystemBase{
             .positionConversionFactor(-1)
             .velocityConversionFactor(-1);
             // APPLIES LEFT CONFIG TO RIGHT MOTOR
-        leftMotor.configureAsync(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        leadMotor.configureAsync(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             // RIGHT MOTOR
         rightConfig.apply(leftConfig);
-        rightConfig.follow(leftMotor);
+        rightConfig.follow(leadMotor);
         rightConfig.inverted(true); // TODO: CONFIRM,
             // APPLIES RIGHT CONFIG TO RIGHT MOTOR
-        rightMotor.configureAsync(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        followerMotor.configureAsync(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
     // COMMAND FACTORIES TO REACH ENUM HEIGHT
 
@@ -116,48 +117,50 @@ public class ElevatorSubsystem extends SubsystemBase{
             return (elevatorError < ElevatorConstants.kTOLERANCE);
         });
     }
-    // COMMAND FACTORIES TO ZERO ELEVATOR
+    // // COMMAND FACTORIES TO ZERO ELEVATOR
 
-    /**Runs a WaitUntilCommand, waits until elevator reaches bottom */
-    public Command lowerElevator() {
-        return new WaitUntilCommand(() -> {
-            leftMotor.set(-0.2);
-            return isAtBottom();
-        });
-    }
-    /**Resets encoder to 0 after zeroing */
-    public Command resetEncoder() {
-        return runOnce(() -> {
-            targetRelativeEncoder.setPosition(0);
-        });
-    }
-    /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
-    public Command stopMotorCommand() {
-        return runOnce(() -> {
-            leftMotor.set(0);
-        });
-    }
+    // @KEVIN, THE LOGIC BEHIND ME MOVING THIS TO ZeroElevator.java, IS THAT IT REMOVES ABOUT 40 
+    // LINES OF CODE AND SPLITS UP 2 GOALS BETWEEN 2 CLASSES. PROBABLY OVERTHINKING THIS
+    // /**Runs a WaitUntilCommand, waits until elevator reaches bottom */
+    // public Command lowerElevator() {
+    //     return new WaitUntilCommand(() -> {
+    //         leftMotor.set(-0.2);
+    //         return isAtBottom();
+    //     });
+    // }
+    // /**Resets encoder to 0 after zeroing */
+    // public Command resetEncoder() {
+    //     return runOnce(() -> {
+    //         targetRelativeEncoder.setPosition(0);
+    //     });
+    // }
+    // /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
+    // public Command stopMotorCommand() {
+    //     return runOnce(() -> {
+    //         leftMotor.set(0);
+    //     });
+    // }
 
-    /** Stops the motor manually, ignoring all commands. */
-    public void stopMotorManual() {
-        leftMotor.set(0);
-    }
+    // /** Stops the motor manually, ignoring all commands. */
+    // public void stopMotorManual() {
+    //     leftMotor.set(0);
+    // }
 
-    /**Enables or disables reverseSoftLimmit
-     * @param enabled
-     * considers wether (based on boolean data) lowerLimit is to be disable or enabled
-     */
-    public Command toggleLowerLimit(boolean enabled) {
-        return runOnce(()-> {
-            leftConfig.softLimit.reverseSoftLimitEnabled(enabled);
-            leftMotor.configureAsync(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        });
-    }
+    // /**Enables or disables reverseSoftLimmit
+    //  * @param enabled
+    //  * considers wether (based on boolean data) lowerLimit is to be disable or enabled
+    //  */
+    // public Command toggleLowerLimit(boolean enabled) {
+    //     return runOnce(()-> {
+    //         leftConfig.softLimit.reverseSoftLimitEnabled(enabled);
+    //         leftMotor.configureAsync(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    //     });
+    // }
 
-    /**Returns if bottomLimitSwitch has been reached, should not be used publicly */
-    private boolean isAtBottom() {
-        return bottomLimitSwitch.isPressed();
-    }
+    // /**Returns if bottomLimitSwitch has been reached, should not be used publicly */
+    // private boolean isAtBottom() {
+    //     return bottomLimitSwitch.isPressed();
+    // }
     
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
     public enum ElevatorPositions {

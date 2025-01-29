@@ -12,7 +12,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -40,7 +39,7 @@ public class RobotContainer {
 
     
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-    private final ZeroElevator zeroElevator = new ZeroElevator(elevator);
+    private final ZeroElevator zeroElevator = new ZeroElevator();
 
     public RobotContainer() {
         configureBindings();
@@ -109,17 +108,9 @@ public class RobotContainer {
         //     .whileTrue(elevator.toggleLowerLimit(false).andThen(elevator.lowerElevator().andThen(elevator.stopMotor().alongWith(elevator.resetEncoder().alongWith(elevator.toggleLowerLimit(true))))));
         operatorController.leftBumper()
             .whileTrue(
-                new SequentialCommandGroup(
-                    // @KEVIN, THE FOLLOWING CODE MADE ME FEEL GROSS, SO I TRIED TO FIX IT (Yell at me if my fix == bad)
-                    // elevator.toggleLowerLimit(false), 
-                    //     elevator.lowerElevator(), 
-                    //         elevator.stopMotorCommand(), 
-                    //             elevator.resetEncoder(), 
-                    //                 elevator.toggleLowerLimit(true))
-                                    //Paramtizes the void return type method toggleLowerLimit, that it stops motor if interupted 
-                    zeroElevator.initalizeZero(),
-                        zeroElevator.finishZero()
-                ).handleInterrupt(elevator::stopMotorManual));
+                zeroElevator.subsequentialZeroCommandGroup()
+                    .handleInterrupt(zeroElevator::stopMotorManual)
+                );
     }
 
     public Command getAutonomousCommand() {
