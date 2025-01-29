@@ -5,7 +5,6 @@
 package frc.robot;
 
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.commands.ZeroElevatorCommand;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -13,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -101,8 +101,21 @@ public class RobotContainer {
             .onTrue(elevator.setHeight(ElevatorPositions.STORED)
                 .andThen(elevator.waitUntilAtSetpoint()));
         // Zero
+        // operatorController.leftBumper()
+        //     .onTrue(new ZeroElevatorCommand(elevator));
+        // operatorController.leftBumper()
+        //     .whileTrue(elevator.toggleLowerLimit(false).andThen(elevator.lowerElevator().andThen(elevator.stopMotor().alongWith(elevator.resetEncoder().alongWith(elevator.toggleLowerLimit(true))))));
         operatorController.leftBumper()
-            .onTrue(new ZeroElevatorCommand(elevator));
+            .whileTrue(
+                new SequentialCommandGroup(
+                    elevator.toggleLowerLimit(false), 
+                        elevator.lowerElevator(), 
+                            elevator.stopMotorCommand(), 
+                                elevator.resetEncoder(), 
+                                    elevator.toggleLowerLimit(true))
+                                    //Paramtizes the void return type method toggleLowerLimit, that it stops motor if interupted 
+                                        .handleInterrupt(elevator::stopMotorManual)
+            );
     }
 
     public Command getAutonomousCommand() {

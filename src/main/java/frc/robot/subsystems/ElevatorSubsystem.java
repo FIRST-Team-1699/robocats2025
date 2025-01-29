@@ -132,17 +132,22 @@ public class ElevatorSubsystem extends SubsystemBase{
         });
     }
     /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
-    public Command resetMotor() {
+    public Command stopMotorCommand() {
         return runOnce(() -> {
-            rightMotor.set(0);
+            leftMotor.set(0);
         });
+    }
+
+    /** Stops the motor manually, ignoring all commands. */
+    public void stopMotorManual() {
+        leftMotor.set(0);
     }
 
     /**Enables or disables reverseSoftLimmit
      * @param enabled
      * considers wether (based on boolean data) lowerLimit is to be disable or enabled
      */
-    public Command lowerLimit(boolean enabled) {
+    public Command toggleLowerLimit(boolean enabled) {
         return runOnce(()-> {
             leftConfig.softLimit.reverseSoftLimitEnabled(enabled);
             leftMotor.configureAsync(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
