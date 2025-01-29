@@ -18,8 +18,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem.ElevatorPositions;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.elevator.ZeroElevator;
+import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorPositions;
 
 public class RobotContainer {
     // IO DEVICES
@@ -39,6 +40,7 @@ public class RobotContainer {
 
     
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+    private final ZeroElevator zeroElevator = new ZeroElevator(elevator);
 
     public RobotContainer() {
         configureBindings();
@@ -108,14 +110,16 @@ public class RobotContainer {
         operatorController.leftBumper()
             .whileTrue(
                 new SequentialCommandGroup(
-                    elevator.toggleLowerLimit(false), 
-                        elevator.lowerElevator(), 
-                            elevator.stopMotorCommand(), 
-                                elevator.resetEncoder(), 
-                                    elevator.toggleLowerLimit(true))
+                    // @KEVIN, THE FOLLOWING CODE MADE ME FEEL GROSS, SO I TRIED TO FIX IT (Yell at me if my fix == bad)
+                    // elevator.toggleLowerLimit(false), 
+                    //     elevator.lowerElevator(), 
+                    //         elevator.stopMotorCommand(), 
+                    //             elevator.resetEncoder(), 
+                    //                 elevator.toggleLowerLimit(true))
                                     //Paramtizes the void return type method toggleLowerLimit, that it stops motor if interupted 
-                                        .handleInterrupt(elevator::stopMotorManual)
-            );
+                    zeroElevator.initalizeZero(),
+                        zeroElevator.finishZero()
+                ).handleInterrupt(elevator::stopMotorManual));
     }
 
     public Command getAutonomousCommand() {
