@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLimitSwitch;
@@ -23,8 +23,8 @@ import frc.robot.Constants.ElevatorConstants;
 public class ElevatorSubsystem extends SubsystemBase{
     protected SparkMax leadMotor, followerMotor;
     protected SparkLimitSwitch bottomLimitSwitch;
-    protected SparkMaxConfig rightConfig, leftConfig;
-    protected RelativeEncoder targetRelativeEncoder;
+    protected SparkMaxConfig followConfig, leadConfig;
+    protected AbsoluteEncoder targetEncoder;
     protected ElevatorPositions currentTargetPosition;
 
     private SparkClosedLoopController feedbackController;
@@ -38,8 +38,8 @@ public class ElevatorSubsystem extends SubsystemBase{
         leadMotor = new SparkMax(-1, MotorType.kBrushless);
         followerMotor = new SparkMax(-1, MotorType.kBrushless);
     
-        // RELATIVE ENCODERS
-        targetRelativeEncoder = leadMotor.getEncoder();
+        // ABSOLUTE ENCODER
+        targetEncoder = leadMotor.getAbsoluteEncoder();
 
         // PID CONTROLLER
         feedbackController = leadMotor.getClosedLoopController();
@@ -55,41 +55,43 @@ public class ElevatorSubsystem extends SubsystemBase{
     /** Sets the configurations for each motor. */
     private void configureMotors() {
         // CONFIGURATIONS
-        leftConfig = new SparkMaxConfig();
-        rightConfig = new SparkMaxConfig();
+        // leading config
+        leadConfig = new SparkMaxConfig();
+        // following config
+        followConfig = new SparkMaxConfig();
 
             // LEFT MOTOR
-        leftConfig
+        leadConfig
             .inverted(true) // TODO: CONFIRM
             .idleMode(IdleMode.kBrake);
-        leftConfig.closedLoop
+        leadConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pidf(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD, -1) 
             .outputRange(-1.0, 1.0);
-        leftConfig.softLimit
+        leadConfig.softLimit
             // TODO: Assuming in CM, possibly fix later (One CM heigher than L4, within tolerance)
             .forwardSoftLimitEnabled(true)
             .reverseSoftLimitEnabled(true)
 
             .forwardSoftLimit(ElevatorConstants.kMAX_LIMIT)
             .reverseSoftLimit(ElevatorConstants.kMIN_LIMIT);
-        leftConfig.limitSwitch
+        leadConfig.limitSwitch
             .forwardLimitSwitchEnabled(true) // TODO: Check for changes w/ design (wether or not we will be using limit switches)
             .reverseLimitSwitchEnabled(true)
 
             .reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen)
             .setSparkMaxDataPortConfig();
-        leftConfig.encoder
+        leadConfig.encoder
             .positionConversionFactor(-1)
             .velocityConversionFactor(-1);
             // APPLIES LEFT CONFIG TO RIGHT MOTOR
-        leadMotor.configureAsync(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             // RIGHT MOTOR
-        rightConfig.apply(leftConfig);
-        rightConfig.follow(leadMotor);
-        rightConfig.inverted(true); // TODO: CONFIRM,
+        followConfig.apply(leadConfig);
+        followConfig.follow(leadMotor);
+        followConfig.inverted(true); // TODO: CONFIRM,
             // APPLIES RIGHT CONFIG TO RIGHT MOTOR
-        followerMotor.configureAsync(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        followerMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
     // COMMAND FACTORIES TO REACH ENUM HEIGHT
 
@@ -113,7 +115,7 @@ public class ElevatorSubsystem extends SubsystemBase{
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
             // SETS ELEVATOR ERROR
-            elevatorError = Math.abs(Math.abs(targetRelativeEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters));
+            elevatorError = Math.abs(Math.abs(targetEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters));
             // TEST FOR IF ELEVATORERROR IS IN TOLERANCE OF TARGETPOSITION
             return (elevatorError < ElevatorConstants.kTOLERANCE);
         });
@@ -130,8 +132,9 @@ public class ElevatorSubsystem extends SubsystemBase{
     /**Resets encoder to 0 after zeroing */
     public Command resetEncoder() {
         return runOnce(() -> {
-            targetRelativeEncoder.setPosition(0);
-        });
+                leadConfig.absoluteEncoder.zeroOffset(0); //TODO: Check this. I think this is how this works, but IDK its 10PM
+                leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            });
     }
     /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
     public Command stopMotorCommand() {
@@ -141,6 +144,7 @@ public class ElevatorSubsystem extends SubsystemBase{
     }
 
     /** Stops the motor manually, ignoring all commands. */
+    // TODO: @KEVIN, IS THIS REDUNDENT???? 
     public void stopMotorManual() {
         leadMotor.set(0);
     }
@@ -151,8 +155,8 @@ public class ElevatorSubsystem extends SubsystemBase{
      */
     public Command toggleLowerLimit(boolean enabled) {
         return runOnce(()-> {
-            leftConfig.softLimit.reverseSoftLimitEnabled(enabled);
-            leadMotor.configureAsync(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            leadConfig.softLimit.reverseSoftLimitEnabled(enabled);
+            leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         });
     }
 
