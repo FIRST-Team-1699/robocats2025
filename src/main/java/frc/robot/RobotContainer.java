@@ -12,14 +12,13 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.PivotSubsystem;
-import frc.robot.subsystems.PivotSubsystem.PivotPos;
+import frc.robot.subsystems.PivotSubsystem.PivotPosition;
 
 public class RobotContainer {
     // IO DEVICES
@@ -39,7 +38,6 @@ public class RobotContainer {
 
     // PIVOT SUBSYSTEM / ENUM
     private final PivotSubsystem pivot = new PivotSubsystem();
-    private PivotPos pivotPos;
 
     public RobotContainer() {
         configureBindings();
@@ -76,22 +74,28 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // Operator Controller
-        operatorController.povUp().onTrue(pivot.setPivot(PivotPos.L_FOUR)
+        operatorController.povUp().onTrue(pivot.setPivot(PivotPosition.L_FOUR)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.povLeft().onTrue(pivot.setPivot(PivotPos.L_ONE)
+        operatorController.povLeft().onTrue(pivot.setPivot(PivotPosition.L_ONE)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.povDown().onTrue(pivot.setPivot(PivotPos.L_TWO)
+        operatorController.povDown().onTrue(pivot.setPivot(PivotPosition.L_TWO)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.povRight().onTrue(pivot.setPivot(PivotPos.L_THREE)
+        operatorController.povRight().onTrue(pivot.setPivot(PivotPosition.L_THREE)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.x().onTrue(pivot.setPivot(PivotPos.GROUND)
+        operatorController.x().onTrue(pivot.setPivot(PivotPosition.GROUND)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.y().onTrue(pivot.setPivot(PivotPos.SOURCE)
+        operatorController.y().onTrue(pivot.setPivot(PivotPosition.SOURCE)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.leftStick().onTrue(pivot.setPivot(PivotPos.BASE)
+        operatorController.leftStick().onTrue(pivot.setPivot(PivotPosition.BASE)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.rightStick().onTrue(pivot.setPivot(PivotPos.COBRA_STANCE)
+        operatorController.rightStick().onTrue(pivot.setPivot(PivotPosition.COBRA_STANCE)
             .andThen(pivot.waitUntilAtSetpoint()));
+        // ZERO PIVOT
+        operatorController.leftBumper()
+            .whileTrue(
+                pivot.subsequentialZeroCommandGroup()
+                    .handleInterrupt(pivot::stopMotorManual)
+            );
     }
 
     public Command getAutonomousCommand() {
