@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.LEDS.LEDController;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -12,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -33,6 +35,9 @@ public class RobotContainer {
     // SWERVE CONFIG
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
+
+    // LED
+    LEDController leds = new LEDController(-1, -1);
 
     public RobotContainer() {
         configureBindings();
@@ -66,6 +71,11 @@ public class RobotContainer {
 
         // setup logger
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        // OPERATOR CONTROLLER
+        // LEDS 
+        operatorController.start().onTrue(new RunCommand(leds::start));
+        operatorController.back().onTrue(new RunCommand(leds::stop));
     }
 
     public Command getAutonomousCommand() {
