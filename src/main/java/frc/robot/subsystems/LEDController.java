@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 
 
 // NOTE: THIS CLASS MAY NOT WORK INDEPENDENTLY BECAUSE THE REQUIRED SUBSYSTEMS ARE INVISIBLE TO IT 
-public class LEDControllerSubsystem implements Subsystem {
+public class LEDController implements Subsystem {
     // DECLARATIONS
     private AddressableLED leds;
     private AddressableLEDBuffer ledBuffer;
@@ -23,7 +23,11 @@ public class LEDControllerSubsystem implements Subsystem {
      * @param ledLength
      * The total length of LED strips
      */
-    public LEDControllerSubsystem(int port, int ledLength) {
+    public LEDController(int port, int ledLength,
+        PivotSubsystem pivot, 
+        ElevatorSubsystem elevator,  
+        RotateWristSubsystem rotateWrist, 
+        TiltWirstSubsystem tiltWrist) {
         // Constructor for LED objects
         leds = new AddressableLED(port);
         ledBuffer = new AddressableLEDBuffer(ledLength);
@@ -33,11 +37,11 @@ public class LEDControllerSubsystem implements Subsystem {
 
         ticks = 0;
 
-        // SUBSYSTEMS TO USE AS CONDITIONALS
+        // SUBSYSTEMS TO USE FOR CONDITIONALS
         elevator = new ElevatorSubsystem();
-        pivot = new pivot();
-        
-
+        pivot = new PivotSubsystem();
+        rotateWrist = new RotateWristSubsystem();
+        tiltWrist = new TiltWristSubsystem();
 
     }
     /**Changes the colot of LEDs */
@@ -73,10 +77,10 @@ public class LEDControllerSubsystem implements Subsystem {
         // TODO USE KNOWN DATA FROM EACH SUBSYSTEM AND MAKE A DECISION FOR THE LED STATE BASED ON ALL OPF THE SUBSYSTEMS\
         ticks++;
         if(testIfCodeShouldBeRun(ticks)) {
-            if(elevator.getInTransit() 
-            || pivot.getInTransit() 
-            || rotateWrist.getInTransit()
-            || tiltWristSusbsytem.getInTransit()) {
+            if(!elevator.isAtSetpoint() 
+            || !pivot.isAtSetpoint() 
+            || !rotateWrist.isAtSetpoint()
+            || !tiltWristSusbsytem.isAtSetpoint()) {
                 changeColor(TargetHSV.IN_TRANSITION);
             } 
             else {

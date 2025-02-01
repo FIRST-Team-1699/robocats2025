@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.LEDControllerSubsystem;
+import frc.robot.subsystems.LEDController;
 
 public class RobotContainer {
     // IO DEVICES
@@ -37,7 +37,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
 
     // LED
-    LEDControllerSubsystem leds = new LEDControllerSubsystem(-1, -1);
+    LEDController leds = new LEDController(-1, -1,pivot,elevator,rotateWrist,tiltWrist);
 
     public RobotContainer() {
         configureBindings();
