@@ -26,9 +26,6 @@ public class PivotSubsystem implements Subsystem {
     private SparkClosedLoopController feedbackController;
     private PivotPosition targetPos;
 
-    private static double pivotError;
-
-
     public PivotSubsystem() {
         // MOTORS
         //Right
@@ -89,9 +86,16 @@ public class PivotSubsystem implements Subsystem {
 
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
-            pivotError = Math.abs(targetEncoder.getPosition() - targetPos.pivotHeight);
-            return pivotError < PivotConstants.kTOLERENCE;
+            return isAtSetpoint();
         });
+    }
+
+    public boolean isAtSetpoint() {
+        return getError() < PivotConstants.kTOLERANCE;
+    }
+    
+    private double getError() {
+        return Math.abs(Math.abs(targetEncoder.getPosition()) - Math.abs(targetPos.pivotHeight));
     }
 
       // // COMMAND FACTORIES TO ZERO PIVOT
@@ -136,13 +140,6 @@ public class PivotSubsystem implements Subsystem {
     /**Returns if bottomLimitSwitch has been reached, should not be used publicly */
     private boolean isAtBottom() {
         return bottomLimitSwitch.isPressed();
-    }
-
-    // Method for LEDs
-
-    /** Retrieves inTransition boolean value for LEDs */
-    public static boolean getInTransit() {
-        return !(pivotError < PivotConstants.kTOLERENCE);
     }
     
     /**Runs a Command Group to zero elevator */

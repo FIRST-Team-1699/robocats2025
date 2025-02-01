@@ -39,6 +39,10 @@ public class RobotContainer {
     // PIVOT SUBSYSTEM / ENUM
     private final PivotSubsystem pivot = new PivotSubsystem();
 
+    // LEDController ledcontroller = new LEDController(pivot, elevator, rotateWrits, tiltWrist);
+
+    // if(!pivot.isAtSetpoint())
+
     public RobotContainer() {
         configureBindings();
     }

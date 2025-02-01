@@ -16,7 +16,7 @@ public class Constants {
         public static final double kI = -1;
         public static final double kD = -1;
 
-        public static final double kTOLERENCE = 1;
+        public static final double kTOLERANCE = 1;
 
         public static final double kMAX_LIMIT = -1;
         public static final double kMIN_LIMIT = -1;
