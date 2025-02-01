@@ -15,6 +15,7 @@ import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem implements Subsystem {
  
+    public boolean running;
     private SparkMax motor;
 
     public IntakeSubsystem() {
@@ -33,15 +34,28 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public Command intake() {
-        return runOnce(() -> motor.set(IntakeConstants.kIntakeSpeed));
+        return runOnce(() -> {
+            motor.set(IntakeConstants.kIntakeSpeed);
+            this.running  = true;
+        });
     }
 
     public Command outtake() {
-        return runOnce(() -> motor.set(IntakeConstants.kOuttakeSpeed));
+        return runOnce(() -> {
+            motor.set(IntakeConstants.kOuttakeSpeed);
+            this.running  = true;
+        });
+    }
+
+    public boolean isRunning() {
+        return this.running;
     }
 
     public Command stop() {
-        return runOnce(() -> motor.set(0));
+        return runOnce(() -> {
+            motor.set(0);
+            this.running  = false;
+        });
     }
     //TODO: make things enums
 }
