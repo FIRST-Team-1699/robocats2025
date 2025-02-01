@@ -56,8 +56,7 @@ public class PivotSubsystem implements Subsystem {
             .pidf(PivotConstants.kP, PivotConstants.kI, PivotConstants.kD, -1) 
             .outputRange(-1.0, 1.0);
         leadConfig.absoluteEncoder
-            .positionConversionFactor(-1)
-            .velocityConversionFactor(-1);
+            .positionConversionFactor(PivotConstants.kPOSITIONAL_CONVERSION);
         leadConfig.limitSwitch
             .reverseLimitSwitchEnabled(true);
         leadConfig.softLimit
@@ -80,8 +79,7 @@ public class PivotSubsystem implements Subsystem {
     public Command setPivot(PivotPosition pivot) {
         return runOnce(() -> {
             feedbackController.setReference(pivot.pivotHeight, SparkBase.ControlType.kPosition); //TODO: get manufacturing + general additional data to be cool :)
-        }
-        );
+        });
     }
 
     public Command waitUntilAtSetpoint() {
@@ -98,7 +96,7 @@ public class PivotSubsystem implements Subsystem {
         return Math.abs(Math.abs(targetEncoder.getPosition()) - Math.abs(targetPos.pivotHeight));
     }
 
-      // // COMMAND FACTORIES TO ZERO PIVOT
+      // COMMAND FACTORIES TO ZERO PIVOT
 
     /**Runs a WaitUntilCommand, waits until pivot reaches bottom */
     public Command waitWhileLowerPivot() {

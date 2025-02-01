@@ -1,6 +1,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
+
 import frc.robot.generated.TunerConstants;
 
 public class Constants {
@@ -12,6 +13,8 @@ public class Constants {
         public static final double kRotationalDeadband = kMaxAngularRate * 0.1;
     }
     public static class PivotConstants {
+        public static final double kPOSITIONAL_CONVERSION = 360;
+
         public static final double kP = -1;
         public static final double kI = -1;
         public static final double kD = -1;
