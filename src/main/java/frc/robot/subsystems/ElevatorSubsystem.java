@@ -115,11 +115,17 @@ public class ElevatorSubsystem extends SubsystemBase{
      */
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
-            // SETS ELEVATOR ERROR
-            elevatorError = Math.abs(Math.abs(targetEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters));
             // TEST FOR IF ELEVATORERROR IS IN TOLERANCE OF TARGETPOSITION
-            return (elevatorError < ElevatorConstants.kTOLERANCE);
+            return isAtSetpoint();
         });
+    }
+    
+    public boolean isAtSetpoint() {
+        return (getElevetaorError() < ElevatorConstants.kTOLERANCE);
+    }
+
+    private double getElevetaorError() {
+        return elevatorError = Math.abs(Math.abs(targetEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters));
     }
     // // COMMAND FACTORIES TO ZERO ELEVATOR
 
