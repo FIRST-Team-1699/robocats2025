@@ -27,6 +27,7 @@ public class Constants {
         public static final double kD = -1;
         public static final double kFF = -1;
         public static final double kTolerance = 1;
+        public static final double kConversionFactor = 360;
     }
 
     public static class TiltConstants {
@@ -35,6 +36,7 @@ public class Constants {
         public static final double kD = -1;
         public static final double kFF = -1;
         public static final double kTolerance = 1;
+        public static final double kConversionFactor = 360;
     }
 
 }

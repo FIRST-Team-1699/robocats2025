@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.RotateConstants;
+import frc.robot.Constants.TiltConstants;
 
 public class RotateWristSubsystem implements Subsystem{
     
@@ -47,8 +48,7 @@ public class RotateWristSubsystem implements Subsystem{
             .inverted(false);
         // SETS ENCODER OF MOTORCONFIG
         motorConfig.encoder
-            .velocityConversionFactor(-1)
-            .positionConversionFactor(-1);
+            .positionConversionFactor(TiltConstants.kConversionFactor);
         // PPIIIIIIIIDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDFF
         motorConfig.closedLoop
             .pidf(RotateConstants.kP, RotateConstants.kI, RotateConstants.kD, RotateConstants.kFF)

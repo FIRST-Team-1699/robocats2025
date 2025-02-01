@@ -46,8 +46,7 @@ public class TiltWristSubsystem implements Subsystem {
             .inverted(false);
         // SETS ENCODER OF MOTORCONFIG
         motorConfig.encoder
-            .velocityConversionFactor(-1)
-            .positionConversionFactor(-1);
+            .positionConversionFactor(TiltConstants.kConversionFactor);
         // PPIIIIIIIIDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDFF
         motorConfig.closedLoop
             .pidf(TiltConstants.kP, TiltConstants.kI, TiltConstants.kD, TiltConstants.kFF)
