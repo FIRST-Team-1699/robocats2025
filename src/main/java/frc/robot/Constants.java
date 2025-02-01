@@ -11,4 +11,8 @@ public class Constants {
         public static final double kTranslationalDeadband = kMaxSpeed * 0.1;
         public static final double kRotationalDeadband = kMaxAngularRate * 0.1;
     }
+    public static class LEDConstants {
+        public static final int kPort = -1;
+        public static final int kLED_Length= -1;
+    }
 }

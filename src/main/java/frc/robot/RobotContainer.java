@@ -37,7 +37,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
 
     // LED
-    LEDController leds = new LEDController(-1, -1,pivot,elevator,rotateWrist,tiltWrist);
+    LEDController leds = new LEDController(-1,pivot,elevator,rotateWrist,tiltWrist);
 
     public RobotContainer() {
         configureBindings();
