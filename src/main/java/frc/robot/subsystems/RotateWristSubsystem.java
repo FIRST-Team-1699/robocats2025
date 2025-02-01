@@ -72,9 +72,18 @@ public class RotateWristSubsystem implements Subsystem{
     /** Command that waits until rotation set point is reached within the tolerance*/
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
-            return Math.abs(Math.abs(targetPosition.degrees) - Math.abs(targetEncoder.getPosition())) < RotateConstants.kTolerance;
+            return isAtSetpoint();
         });
     }
+
+    public boolean isAtSetpoint() {
+        return getError() < RotateConstants.kTolerance;
+    }
+
+    private double getError() {
+        return Math.abs(Math.abs(targetPosition.degrees) - Math.abs(targetEncoder.getPosition()));
+    }
+
     /**Enum, holds positional data (degrees) */
     public enum RotatationalWristPosition{
         VERICAL(90), HORIZONTAL(0);

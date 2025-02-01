@@ -71,8 +71,16 @@ public class TiltWristSubsystem implements Subsystem {
     /** Command that waits for robot to reach target tilt within tolerance */
     public Command wiatUnilAtSetpoint() {
         return new WaitUntilCommand(() -> {
-            return Math.abs(Math.abs(targetPosition.degrees) - Math.abs(targetEncoder.getPosition())) < TiltConstants.kTolerance;
+            return isAtSetPoint();
         });
+    }
+
+    public boolean isAtSetPoint() {
+        return getError() < TiltConstants.kTolerance;
+    }
+
+    private double getError() {
+        return Math.abs(Math.abs(targetPosition.degrees) - Math.abs(targetEncoder.getPosition()));
     }
 
     /** Enum, holds positional data (degrees) */
