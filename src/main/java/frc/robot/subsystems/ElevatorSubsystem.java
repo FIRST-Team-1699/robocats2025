@@ -21,6 +21,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase{
+
     protected SparkMax leadMotor, followerMotor;
     protected SparkLimitSwitch bottomLimitSwitch;
     protected SparkMaxConfig followConfig, leadConfig;
@@ -144,7 +145,6 @@ public class ElevatorSubsystem extends SubsystemBase{
     }
 
     /** Stops the motor manually, ignoring all commands. */
-    // TODO: @KEVIN, IS THIS REDUNDENT???? 
     public void stopMotorManual() {
         leadMotor.set(0);
     }
@@ -164,6 +164,15 @@ public class ElevatorSubsystem extends SubsystemBase{
     private boolean isAtBottom() {
         return bottomLimitSwitch.isPressed();
     }
+
+    // Methods for LEDs
+
+    /** Retrieves inTransition boolean value for LEDs */
+    public static boolean getInTransit() {
+        return !(elevatorError < ElevatorConstants.kTOLERANCE);
+    }
+
+
     
     /**Runs a Command Group to zero elevator */
     public Command subsequentialZeroCommandGroup() {
