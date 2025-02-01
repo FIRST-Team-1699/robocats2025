@@ -5,7 +5,6 @@
 package frc.robot;
 
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.LEDS.LEDController;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
