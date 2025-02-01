@@ -83,8 +83,8 @@ public class ElevatorSubsystem extends SubsystemBase{
             .reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen)
             .setSparkMaxDataPortConfig();
         leadConfig.encoder
-            .positionConversionFactor(-1)
-            .velocityConversionFactor(-1);
+            .positionConversionFactor(1)
+            .velocityConversionFactor(1);
             // APPLIES LEFT CONFIG TO RIGHT MOTOR
         leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             // RIGHT MOTOR
