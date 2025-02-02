@@ -27,10 +27,10 @@ public class ElevatorSubsystem extends SubsystemBase{
     protected SparkMaxConfig followConfig, leadConfig;
     protected AbsoluteEncoder targetEncoder;
     protected ElevatorPositions currentTargetPosition;
+    protected static double elevatorError;
 
     private SparkClosedLoopController feedbackController;
 
-    private static double elevatorError;
 
 
     /** Constructs an elevator. */
@@ -120,10 +120,10 @@ public class ElevatorSubsystem extends SubsystemBase{
     }
     
     public boolean isAtSetpoint() {
-        return (getElevetaorError() < ElevatorConstants.kTOLERANCE);
+        return (getElevatorError() < ElevatorConstants.kTOLERANCE);
     }
 
-    private double getElevetaorError() {
+    private double getElevatorError() {
         return elevatorError = Math.abs(Math.abs(targetEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters));
     }
     // // COMMAND FACTORIES TO ZERO ELEVATOR
@@ -169,14 +169,6 @@ public class ElevatorSubsystem extends SubsystemBase{
     private boolean isAtBottom() {
         return bottomLimitSwitch.isPressed();
     }
-
-    // Methods for LEDs
-
-    /** Retrieves inTransition boolean value for LEDs */
-    public static boolean getInTransit() {
-        return !(elevatorError < ElevatorConstants.kTOLERANCE);
-    }
-
 
     
     /**Runs a Command Group to zero elevator */
