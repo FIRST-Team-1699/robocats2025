@@ -13,7 +13,7 @@ public class LEDController implements Subsystem {
     private AddressableLEDBuffer ledBuffer;
     private double cycleTicks, totalTicks;
 
-    private TargetHSV currentHSV;
+    private TargetRGB currentRGB;
     private boolean blink;
 
     private ElevatorSubsystem elevator;
@@ -43,27 +43,27 @@ public class LEDController implements Subsystem {
         pivot = new PivotSubsystem();
         rotateWrist = new RotateWristSubsystem();
         tiltWrist = new TiltWristSubsystem();
-        currentHSV = TargetHSV.NONE;
+        currentRGB = TargetRGB.NONE;
     }
     /**Changes the colot of LEDs */
-    public void changeColor(TargetHSV targetHSV) {
+    public void changeColor(TargetRGB targetRGB) {
         // STOPS FROM WASTING RESOURCES VIA RETURN
-        if(currentHSV.equals(targetHSV)) return;
+        if(currentRGB.equals(targetRGB)) return;
         // ALLOWS LEDS TO TURN ON/OFF, BLINK FOR INTAKE
-        if(blink && totalTicks % 20 <= 10) {
-            setLedBuffer(TargetHSV.NONE);
+        if(blink && totalTicks % 50 <= 25) {
+            setLedBuffer(TargetRGB.NONE);
         } else {
-            setLedBuffer(targetHSV);
+            setLedBuffer(targetRGB);
         }
         leds.setData(ledBuffer);
     }
-    /**sets the HSV of entire LED strip defined in ledBuffer
-     * @param targetHSV 
-     * Uses stored enum data to assign LED HSV
+    /**sets the RGB of entire LED strip defined in ledBuffer
+     * @param targetRGB 
+     * Uses stored enum data to assign LED RGB
      */
-    public void setLedBuffer(TargetHSV targetHSV) {
+    public void setLedBuffer(TargetRGB targetRGB) {
         for (int ledSquares = 0; ledSquares < ledBuffer.getLength(); ledSquares++) {
-            ledBuffer.setHSV(ledSquares, targetHSV.hue, targetHSV.saturation, targetHSV.value);
+            ledBuffer.setRGB(ledSquares, targetRGB.red, targetRGB.blue, targetRGB.green);
         }
     }
     // METHODS TO MANIPULATE LEDs in-match
@@ -89,12 +89,12 @@ public class LEDController implements Subsystem {
             || !pivot.isAtSetpoint() 
             || !rotateWrist.isAtSetpoint()
             || !tiltWristSusbsytem.isAtSetpoint()) {
-                changeColor(TargetHSV.IN_TRANSITION);
+                changeColor(TargetRGB.IN_TRANSITION);
             } else {
                 if(elevator.currentTargetPosition != ElevatorPositions.STORED) {
-                    changeColor(TargetHSV.AT_POSITION);
+                    changeColor(TargetRGB.AT_POSITION);
                 } else {
-                    changeColor(TargetHSV.BASE);
+                    changeColor(TargetRGB.BASE);
                 }
                 if(intake.isRunning()) {
                     blink = true;
@@ -106,42 +106,44 @@ public class LEDController implements Subsystem {
         }
     }
 
-    /**enums for determining HSVs of LEDs*/
-    public enum TargetHSV {
+    /**enums for determining RGBs of LEDs*/
+    public enum TargetRGB {
         NONE(0, 0, 0),
 
-        BASE(-1,-1,-1), // BLUE
+        BASE(18, 148, 255), // Blue
 
-        IN_TRANSITION(-1,-1,-1),
+        IN_TRANSITION(255, 13, 13),// Red
+
+        OBTAINED_CORAL(240, 200, 0),// Gold
+
+        IS_PECKING(255,255,255),// White
+
+        REACHED_POSITION(49,255, 13);//Green
+
+
 
         // THE Following are maybes to use
 
-        // REACHED_POSITION(-1,-1,-1),
-
         // IS_PECKING(-1,-1,-1),
-
-        // OBTAINED_CORAL(-1,-1,-1),
-
-        // INTAKING(-1,-1,-1);
 
         
         // VARIABLES TO SET INTS for LEDs' enums
-        int hue;
-        int saturation;
-        int value;
+        int red;
+        int green;
+        int blue;
 
         /**Constructor for LEDs color
          * @param hue
          * Determines hue of LEDs
          * @param saturation
          * determines saturation of LEDs
-         * @param saturation
+         * @param value
          * determines value of LEDs
          */
-        private TargetHSV(int hue, int saturation, int value) {
-            this.hue = hue;
-            this.saturation = saturation;
-            this.value = value;
+        private TargetRGB(int red, int green, int blue) {
+            this.red = red;
+            this.green = green;
+            this.blue = blue;
         }
     }
 }
