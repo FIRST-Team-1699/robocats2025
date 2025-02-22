@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem.ElevatorPositions;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorPosition;
 
 public class RobotContainer {
     // IO DEVICES
@@ -76,28 +76,28 @@ public class RobotContainer {
         // Operator
         // Raise/Lower Elvator
         operatorController.povDown()
-            .onTrue(elevator.setHeight(ElevatorPositions.L_ONE)
+            .onTrue(elevator.setPosition(ElevatorPosition.L_ONE)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.povLeft()
-            .onTrue(elevator.setHeight(ElevatorPositions.L_TWO)
+            .onTrue(elevator.setPosition(ElevatorPosition.L_TWO)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.povRight()
-            .onTrue(elevator.setHeight(ElevatorPositions.L_THREE)
+            .onTrue(elevator.setPosition(ElevatorPosition.L_THREE)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.povUp()
-            .onTrue(elevator.setHeight(ElevatorPositions.L_FOUR)
+            .onTrue(elevator.setPosition(ElevatorPosition.L_FOUR)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.b()
-            .onTrue(elevator.setHeight(ElevatorPositions.COBRA_STANCE)
+            .onTrue(elevator.setPosition(ElevatorPosition.COBRA_STANCE)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.a()
-            .onTrue(elevator.setHeight(ElevatorPositions.GROUND_INTAKE)
+            .onTrue(elevator.setPosition(ElevatorPosition.GROUND_INTAKE)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.y()
-            .onTrue(elevator.setHeight(ElevatorPositions.SOURCE_INTAKE)
+            .onTrue(elevator.setPosition(ElevatorPosition.CORAL_STATION_INTAKE)
                 .andThen(elevator.waitUntilAtSetpoint()));
         operatorController.back()
-            .onTrue(elevator.setHeight(ElevatorPositions.STORED)
+            .onTrue(elevator.setPosition(ElevatorPosition.STORED)
                 .andThen(elevator.waitUntilAtSetpoint()));
         // Zero
         // operatorController.leftBumper()
@@ -106,7 +106,7 @@ public class RobotContainer {
         //     .whileTrue(elevator.toggleLowerLimit(false).andThen(elevator.lowerElevator().andThen(elevator.stopMotor().alongWith(elevator.resetEncoder().alongWith(elevator.toggleLowerLimit(true))))));
         operatorController.leftBumper()
             .whileTrue(
-                elevator.subsequentialZeroCommandGroup()
+                elevator.zeroElevator()
                     .handleInterrupt(elevator::stopMotorManual)
                 );
     }

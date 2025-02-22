@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -22,12 +23,12 @@ import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase{
 
+    public ElevatorPosition currentTargetPosition;
+
     protected SparkMax leadMotor, followerMotor;
     protected SparkLimitSwitch bottomLimitSwitch;
     protected SparkMaxConfig followConfig, leadConfig;
     protected AbsoluteEncoder targetEncoder;
-    protected ElevatorPositions currentTargetPosition;
-    protected static double elevatorError;
 
     private SparkClosedLoopController feedbackController;
 
@@ -46,7 +47,7 @@ public class ElevatorSubsystem extends SubsystemBase{
         feedbackController = leadMotor.getClosedLoopController();
         
         // POSITION
-        currentTargetPosition = ElevatorPositions.STORED;
+        currentTargetPosition = ElevatorPosition.STORED;
 
         bottomLimitSwitch = leadMotor.getReverseLimitSwitch();
 
@@ -66,9 +67,9 @@ public class ElevatorSubsystem extends SubsystemBase{
             .inverted(true) // TODO: CONFIRM
             .idleMode(IdleMode.kBrake);
         leadConfig.closedLoop
-            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             .pidf(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD, -1) 
-            .outputRange(-1.0, 1.0);
+            .outputRange(-.5, .5);
         leadConfig.softLimit
             // TODO: Assuming in CM, possibly fix later (One CM heigher than L4, within tolerance)
             .forwardSoftLimitEnabled(true)
@@ -77,12 +78,12 @@ public class ElevatorSubsystem extends SubsystemBase{
             .forwardSoftLimit(ElevatorConstants.kMAX_LIMIT)
             .reverseSoftLimit(ElevatorConstants.kMIN_LIMIT);
         leadConfig.limitSwitch
-            .forwardLimitSwitchEnabled(true) // TODO: Check for changes w/ design (wether or not we will be using limit switches)
+            .forwardLimitSwitchEnabled(true) 
             .reverseLimitSwitchEnabled(true)
 
             .reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen)
             .setSparkMaxDataPortConfig();
-        leadConfig.encoder
+        leadConfig.absoluteEncoder
             .positionConversionFactor(1);
             // APPLIES LEFT CONFIG TO RIGHT MOTOR
         leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -96,20 +97,20 @@ public class ElevatorSubsystem extends SubsystemBase{
     // COMMAND FACTORIES TO REACH ENUM HEIGHT
 
     /** Sets the target height of the elevator. 
-     * @param ElevatorPositions
+     * @param ElevatorPosition
      * The taregt position: including state and height.
     */
-    public Command setHeight(ElevatorPositions pos) {
+    public Command setPosition(ElevatorPosition position) {
         return runOnce(() -> {
             // CHANGES CURRENT TARGET TO POS
-            currentTargetPosition = pos;
+            currentTargetPosition = position;
             // SETS FEEDBACKCONTROLLER TO POS
-            feedbackController.setReference(pos.heightCentimeters, SparkBase.ControlType.kPosition);
+            feedbackController.setReference(position.centimeters, SparkBase.ControlType.kPosition);
         });
     }
 
     /**Waits until elevator reaches position within Tolerance.
-     * @param ElevatorPositions
+     * @param ElevatorPosition
      * Enum for elevator height options. 
      */
     public Command waitUntilAtSetpoint() {
@@ -120,20 +121,21 @@ public class ElevatorSubsystem extends SubsystemBase{
     }
     
     public boolean isAtSetpoint() {
-        return (getElevatorError() < ElevatorConstants.kTOLERANCE);
+        return (getElevatorError() < ElevatorConstants.kTOLERENCE);
     }
 
     private double getElevatorError() {
-        return elevatorError = Math.abs(Math.abs(targetEncoder.getPosition())- Math.abs(currentTargetPosition.heightCentimeters));
+        return Math.abs(Math.abs(targetEncoder.getPosition())- Math.abs(currentTargetPosition.centimeters));
     }
     // // COMMAND FACTORIES TO ZERO ELEVATOR
 
     /**Runs a WaitUntilCommand, waits until elevator reaches bottom */
     public Command waitWhileLowerElevator() {
         return new WaitUntilCommand(() -> {
+            SmartDashboard.putBoolean("Zeroing Elevator", true);
             leadMotor.set(-0.2);
             return isAtBottom();
-        });
+        }).andThen(() -> SmartDashboard.putBoolean("Zeroing Elevator", true));
     }
     /**Resets encoder to 0 after zeroing */
     public Command resetEncoder() {
@@ -162,6 +164,7 @@ public class ElevatorSubsystem extends SubsystemBase{
         return runOnce(()-> {
             leadConfig.softLimit.reverseSoftLimitEnabled(enabled);
             leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
         });
     }
 
@@ -170,9 +173,8 @@ public class ElevatorSubsystem extends SubsystemBase{
         return bottomLimitSwitch.isPressed();
     }
 
-    
     /**Runs a Command Group to zero elevator */
-    public Command subsequentialZeroCommandGroup() {
+    public Command zeroElevator() {
         return new SequentialCommandGroup(
             // SETS CONDITIONS FOR ZEROING
             toggleLowerLimit(false),
@@ -185,22 +187,29 @@ public class ElevatorSubsystem extends SubsystemBase{
             toggleLowerLimit(true)
         );
     }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Actual height", targetEncoder.getPosition());
+        SmartDashboard.putNumber("Wanted angle", currentTargetPosition.centimeters);
+    }
     
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
-    public enum ElevatorPositions {
+    public enum ElevatorPosition {
         // ENUMS FOR POSITIONS
-            // LEVEL POSITIONS
-        L_ONE(45.72), L_TWO(80.01), L_THREE(120.97), L_FOUR(182.88),
-            // NON-LEVEL POSTIONS
-        GROUND_INTAKE(-1), SOURCE_INTAKE(-1), COBRA_STANCE(-1), STORED(0);
-            // CONSTRUCTOR FOR ENUM'S HEIGHT (CM)
-        public final double heightCentimeters;
+        STORED(-1), PRIME(-1), COBRA_STANCE(-1),
+
+        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
+        GROUND_INTAKE(-1), CORAL_STATION_INTAKE(-1),
+
+        L_ONE(-1), L_TWO(-1), L_THREE(-1), L_FOUR(-1);
+        public final double centimeters;
         /**Constrcutor for height for ElevatorPositions (Enum for Elevator poses)
-         * @param heightCentimeters
-         * verticle movement in centimeters
+        * @param centimeters
+        * verticle movement in centimeters
         */
-        ElevatorPositions (double heightCentimeters) {
-            this.heightCentimeters = heightCentimeters;
+        ElevatorPosition (double centimeters) {
+            this.centimeters = centimeters;
         }
     }
 }
