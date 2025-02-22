@@ -78,28 +78,22 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // Operator Controller
-        operatorController.povUp().onTrue(pivot.setPivot(PivotPosition.L_FOUR)
+        operatorController.povUp().onTrue(pivot.setPosition(PivotPosition.L_FOUR)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.povLeft().onTrue(pivot.setPivot(PivotPosition.L_ONE)
+        operatorController.povLeft().onTrue(pivot.setPosition(PivotPosition.L_ONE)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.povDown().onTrue(pivot.setPivot(PivotPosition.L_TWO)
+        operatorController.povDown().onTrue(pivot.setPosition(PivotPosition.L_TWO)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.povRight().onTrue(pivot.setPivot(PivotPosition.L_THREE)
+        operatorController.povRight().onTrue(pivot.setPosition(PivotPosition.L_THREE)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.x().onTrue(pivot.setPivot(PivotPosition.GROUND)
+        operatorController.x().onTrue(pivot.setPosition(PivotPosition.GROUND_INTAKE)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.y().onTrue(pivot.setPivot(PivotPosition.SOURCE)
+        operatorController.y().onTrue(pivot.setPosition(PivotPosition.CORAL_STATION_INTAKE)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.leftStick().onTrue(pivot.setPivot(PivotPosition.BASE)
+        operatorController.leftStick().onTrue(pivot.setPosition(PivotPosition.STORED)
             .andThen(pivot.waitUntilAtSetpoint()));
-        operatorController.rightStick().onTrue(pivot.setPivot(PivotPosition.COBRA_STANCE)
+        operatorController.rightStick().onTrue(pivot.setPosition(PivotPosition.COBRA_STANCE)
             .andThen(pivot.waitUntilAtSetpoint()));
-        // ZERO PIVOT
-        operatorController.leftBumper()
-            .whileTrue(
-                pivot.subsequentialZeroCommandGroup()
-                    .handleInterrupt(pivot::stopMotorManual)
-            );
     }
 
     public Command getAutonomousCommand() {

@@ -13,7 +13,8 @@ public class Constants {
         public static final double kRotationalDeadband = kMaxAngularRate * 0.1;
     }
     public static class PivotConstants {
-        public static final double kPOSITIONAL_CONVERSION = 360;
+        public static final double kPOSITIONAL_CONVERSION = 1/360;
+        public static final double kStoredToZeroDegrees = -1; //TODO: determine diffrence between 0 and stored
 
         public static final double kP = -1;
         public static final double kI = -1;
