@@ -5,96 +5,105 @@ import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants.RotateConstants;
-import frc.robot.Constants.TiltConstants;
+import frc.robot.Constants.RotateWristConstants;
 
-public class RotateWristSubsystem implements Subsystem{
-    
+public class RotateWristSubsystem implements Subsystem {
     private SparkMax motor;
+    private SparkAbsoluteEncoder encoder;
     private SparkClosedLoopController feedbackController;
-    private SparkAbsoluteEncoder targetEncoder; //named by Evan
-    private RotatationalWristPosition targetPosition;
-    
-    /**Constructor for RotateWristSubsystem class */
+
+    private SparkMaxConfig motorConfig;
+
+    private RotatePosition currentTargetPosition;
+
+    /**Constructor for Subsystem */
     public RotateWristSubsystem() {
-        // MOTOR CONSTRUCTOR
         motor = new SparkMax(-1, MotorType.kBrushless);
-        // DEFAULT TARGET POSITION
-        targetPosition = RotatationalWristPosition.HORIZONTAL;
-        // CREATES FEEDBACK CONTROLLER 
+
+        encoder = motor.getAbsoluteEncoder();
+
         feedbackController = motor.getClosedLoopController();
-        // CREATES TARGET ENCODER
-        targetEncoder = motor.getAbsoluteEncoder();
 
         configureMotors();
     }
-    
-    /**Method, configures motor configuration and applies it to motor */
+
+    /**Configures motor, encoder and closed loop for subsystem  */
     private void configureMotors() {
-        // CONSTRUCTS MOTORCONFIG
-        SparkMaxConfig motorConfig = new SparkMaxConfig();
-        // MOTORCONFIG
+        motorConfig = new SparkMaxConfig();
+        
         motorConfig
-            .idleMode(IdleMode.kBrake)
-            .inverted(false);
-        // SETS ENCODER OF MOTORCONFIG
-        motorConfig.encoder
-            .positionConversionFactor(TiltConstants.kConversionFactor);
-        // PPIIIIIIIIDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDFF
+            .inverted(false) //TODO: Change later
+            .idleMode(IdleMode.kBrake);
+        motorConfig.absoluteEncoder
+            .positionConversionFactor(RotateWristConstants.kConversionFactor);
         motorConfig.closedLoop
-            .pidf(RotateConstants.kP, RotateConstants.kI, RotateConstants.kD, RotateConstants.kFF)
-            .outputRange(-1, 1)
-            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-        // APPLIES MOTORCONFIG TO MOTOR
-        motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            .outputRange(-1,1)
+            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+            .pidf(RotateWristConstants.kP, RotateWristConstants.kI, RotateWristConstants.kD, RotateWristConstants.kFF);
+        motorConfig.softLimit
+            .forwardSoftLimit(RotateWristConstants.kMAX_LIMIT)
+            .reverseSoftLimit(RotateWristConstants.kMIN_LIMIT)
+            .forwardSoftLimitEnabled(true)
+            .reverseSoftLimitEnabled(true);
+        motor.configureAsync(motorConfig, SparkBase.ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    /** Command that sets the rotation and target position of the wrist
-     * @param position
-     * What rotation you want to move the wrist to
+    /**Sets rotate position for writs
+     * @param currentTargetPosition
+     * Sets the currentTargetPosition to object and to PID controller
      */
-    public Command setRotation(RotatationalWristPosition position) {
+    public Command setPosition(RotatePosition currentTargetPosition) {
         return runOnce(() -> {
-            targetPosition = position;
-            feedbackController.setReference(position.degrees, SparkBase.ControlType.kPosition);
+            this.currentTargetPosition = currentTargetPosition;
+            feedbackController.setReference(currentTargetPosition.degrees, SparkBase.ControlType.kPosition);
         });
     }
 
-    /** Command that waits until rotation set point is reached within the tolerance*/
+    /**Waits until within an acceptable range for PID (Tolerence), via calling isAtSetpoint */
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
             return isAtSetpoint();
         });
     }
 
+    /**Returns boolean if getError is within tolerence*/
     public boolean isAtSetpoint() {
-        return getError() < RotateConstants.kTolerance;
+        return getError() < RotateWristConstants.kTolerance;
     }
 
-    private double getError() {
-        return Math.abs(Math.abs(targetPosition.degrees) - Math.abs(targetEncoder.getPosition()));
+    /**Returns double, representing error between target position and actual position */
+    public double getError() {
+        return Math.abs(Math.abs(currentTargetPosition.degrees) - Math.abs(encoder.getPosition()));
     }
 
-    /**Enum, holds positional data (degrees) */
-    public enum RotatationalWristPosition{
-        VERICAL(90), HORIZONTAL(0);
+    /**Returns a command to stop motor */
+    public Command stopMotorCommand() {
+        return runOnce(() -> {
+            motor.set(0);
+        });
+    }
 
-        private final double degrees;
-        /**Constructor for WristRotPos
-         * @param degrees
-         * The angle for a positiom
-         */
-        private RotatationalWristPosition(double degrees) {
-            this.degrees = degrees;
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Actual Rotate Wrist Angle", encoder.getPosition());
+        SmartDashboard.putNumber("Wanted Rotate Wrist Angle", currentTargetPosition.degrees);
+    }
+
+    /**Contains desired position for rotational positions */
+    public enum RotatePosition {
+        VERTICAL(-1), HORIZONTAL(-1);
+        double degrees;
+        private RotatePosition(double rotationDegrees) {
+            this.degrees = rotationDegrees;
         }
     }
 }

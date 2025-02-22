@@ -13,30 +13,34 @@ public class Constants {
     }
 
     public static class IntakeConstants {
-        public static final double kIntakeSpeed = .5;
-        public static final double kOuttakeSpeed = -.49;
 
         public static final int kMotorID = -1;
 
-
+        public static final double kMAX_LIMIT = -1;
+        public static final double kMIN_LIMIT = 1;
     }
 
-    public static class RotateConstants {
+    public static class RotateWristConstants {
         public static final double kP = -1;
         public static final double kI = -1;
         public static final double kD = -1;
         public static final double kFF = -1;
         public static final double kTolerance = 1;
-        public static final double kConversionFactor = 360;
+        public static final double kConversionFactor = 1/360;
+
+        public static final double kMAX_LIMIT = -1;
+        public static final double kMIN_LIMIT = -1;
     }
 
-    public static class TiltConstants {
+    public static class TiltWristConstants {
         public static final double kP = -1;
         public static final double kI = -1;
         public static final double kD = -1;
         public static final double kFF = -1;
         public static final double kTolerance = 1;
-        public static final double kConversionFactor = 360;
-    }
+        public static final double kConversionFactor = 1/360;
 
+        public static final double kMAX_LIMIT = -1;
+        public static final double kMIN_LIMIT = -1;
+    }
 }
