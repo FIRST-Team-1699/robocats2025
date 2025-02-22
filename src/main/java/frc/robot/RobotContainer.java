@@ -23,7 +23,7 @@ import frc.robot.subsystems.PivotSubsystem.PivotPosition;
 public class RobotContainer {
     // IO DEVICES
     private final CommandXboxController driverController = new CommandXboxController(0);
-    private final CommandXboxController operatorController = new CommandXboxController(1);
+    // private final CommandXboxController operatorController = new CommandXboxController(1);
 
     // SWERVE COMMANDS
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -95,7 +95,8 @@ public class RobotContainer {
         // operatorController.rightStick().onTrue(pivot.setPosition(PivotPosition.COBRA_STANCE)
         //     .andThen(pivot.waitUntilAtSetpoint()));
 
-        operatorController.a().onTrue(pivot.setRaw(.1)).onFalse(pivot.setRaw(0));
+        driverController.a().whileTrue(pivot.setRaw(.2)).onFalse(pivot.setRaw(0));
+        driverController.b().whileTrue(pivot.setRaw(-.2)).onFalse(pivot.setRaw(0));
     }
 
     public Command getAutonomousCommand() {

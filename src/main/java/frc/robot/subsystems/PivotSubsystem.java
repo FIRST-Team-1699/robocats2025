@@ -55,7 +55,7 @@ public class PivotSubsystem implements Subsystem {
         // CONFIGURATIONS
             // RIGHT MOTOR
         leadConfig
-            .inverted(true) // TODO: CONFIRM
+            .inverted(false) // TODO: CONFIRM
             .idleMode(IdleMode.kBrake);
         leadConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
@@ -71,9 +71,8 @@ public class PivotSubsystem implements Subsystem {
 
         leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             // LEFT MOROR
-        followConfig.apply(followConfig);
-        followConfig.follow(leadMotor);
-        followConfig.inverted(true); // TODO: CONFIRM
+        followConfig.apply(leadConfig);
+        followConfig.follow(leadMotor, true);
         followMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
@@ -118,7 +117,7 @@ public class PivotSubsystem implements Subsystem {
     }
 
     public Command setRaw(double percentage) {
-        return runOnce(() -> {
+        return run(() -> {
             leadMotor.set(percentage);
         });
     }
