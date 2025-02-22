@@ -31,9 +31,9 @@ public class PivotSubsystem implements Subsystem {
     public PivotSubsystem() {
         // MOTORS
         //Right
-        leadMotor = new SparkMax(-1, MotorType.kBrushless);
+        leadMotor = new SparkMax(PivotConstants.kLeaderId, MotorType.kBrushless);
         //Left
-        followMotor = new SparkMax(-1, MotorType.kBrushless);
+        followMotor = new SparkMax(PivotConstants.kFollowerId, MotorType.kBrushless);
         // ENCODERS
         targetAbsoluteEncoder = leadMotor.getAbsoluteEncoder();
 
@@ -58,11 +58,11 @@ public class PivotSubsystem implements Subsystem {
             .inverted(true) // TODO: CONFIRM
             .idleMode(IdleMode.kBrake);
         leadConfig.closedLoop
-            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pidf(PivotConstants.kP, PivotConstants.kI, PivotConstants.kD, -1) 
+            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+            .pidf(PivotConstants.kP, PivotConstants.kI, PivotConstants.kD, 0) 
             .outputRange(-0.5, 0.5);
         leadConfig.encoder
-            .positionConversionFactor(PivotConstants.kPOSITIONAL_CONVERSION-PivotConstants.kStoredToZeroDegrees); //TODO: VERIFY THAT THIS IS WHAT WE WANT
+            .positionConversionFactor(PivotConstants.kPOSITIONAL_CONVERSION); //TODO: VERIFY THAT THIS IS WHAT WE WANT
         leadConfig.softLimit
             .forwardSoftLimitEnabled(true)
             .reverseSoftLimitEnabled(true)
@@ -114,6 +114,12 @@ public class PivotSubsystem implements Subsystem {
     public Command stopMotorCommand() {
         return runOnce(() -> {
             leadMotor.set(0);
+        });
+    }
+
+    public Command setRaw(double percentage) {
+        return runOnce(() -> {
+            leadMotor.set(percentage);
         });
     }
 
