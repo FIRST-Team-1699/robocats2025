@@ -29,13 +29,13 @@ public class IntakeSubsystem implements Subsystem {
         SparkMaxConfig config = new SparkMaxConfig();
 
         config
-            .inverted(false) // TODO: CHANGE LATER
+            .inverted(true) 
             .idleMode(IdleMode.kBrake);
-        config.softLimit
-            .forwardSoftLimit(IntakeConstants.kMAX_LIMIT)
-            .reverseSoftLimit(IntakeConstants.kMIN_LIMIT)
-            .forwardSoftLimitEnabled(true)
-            .reverseSoftLimitEnabled(true);
+        // config.softLimit
+            // .forwardSoftLimit(IntakeConstants.kMAX_LIMIT)
+            // reverseSoftLimit(IntakeConstants.kMIN_LIMIT)
+            // .forwardSoftLimitEnabled(true)
+            // .reverseSoftLimitEnabled(true);
 
         motor.configureAsync(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -70,6 +70,12 @@ public class IntakeSubsystem implements Subsystem {
         return runOnce(() -> motor.set(0));
     }
 
+    // public Command setRaw(double speed) {
+    //     return runOnce(()-> {
+    //         motor.set(speed);
+    //     });
+    // }
+
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Intake is Running", isRunning());
@@ -78,7 +84,7 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public enum IntakeSpeed {
-        CORAL(-1), ALGAE(-1), DESCORE_ALGAE(-1),
+        CORAL(.1), ALGAE(.1), DESCORE_ALGAE(.1), //TODO: Change values to verify differing intake speeds
         STOP(0);
         double speed;
         IntakeSpeed(double speed) {

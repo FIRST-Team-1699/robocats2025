@@ -41,7 +41,7 @@ public class RotateWristSubsystem implements Subsystem {
         motorConfig = new SparkMaxConfig();
         
         motorConfig
-            .inverted(false) //TODO: Change later
+            .inverted(false) 
             .idleMode(IdleMode.kBrake);
         motorConfig.absoluteEncoder
             .positionConversionFactor(RotateWristConstants.kConversionFactor);
@@ -49,11 +49,11 @@ public class RotateWristSubsystem implements Subsystem {
             .outputRange(-1,1)
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             .pidf(RotateWristConstants.kP, RotateWristConstants.kI, RotateWristConstants.kD, RotateWristConstants.kFF);
-        motorConfig.softLimit
-            .forwardSoftLimit(RotateWristConstants.kMAX_LIMIT)
-            .reverseSoftLimit(RotateWristConstants.kMIN_LIMIT)
-            .forwardSoftLimitEnabled(true)
-            .reverseSoftLimitEnabled(true);
+        // motorConfig.softLimit
+        //     .forwardSoftLimit(RotateWristConstants.kMAX_LIMIT)
+        //     .reverseSoftLimit(RotateWristConstants.kMIN_LIMIT)
+        //     .forwardSoftLimitEnabled(true)
+        //     .reverseSoftLimitEnabled(true);
         motor.configureAsync(motorConfig, SparkBase.ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
@@ -89,6 +89,12 @@ public class RotateWristSubsystem implements Subsystem {
     public Command stopMotorCommand() {
         return runOnce(() -> {
             motor.set(0);
+        });
+    }
+
+    public Command setRaw(double degree) {
+        return runOnce(() -> {
+            motor.set(degree);
         });
     }
 

@@ -41,7 +41,7 @@ public class TiltWristSubsystem implements Subsystem {
         motorConfig = new SparkMaxConfig();
         
         motorConfig
-            .inverted(false) //TODO: Change later
+            .inverted(false) 
             .idleMode(IdleMode.kBrake);
         motorConfig.absoluteEncoder
             .positionConversionFactor(TiltWristConstants.kConversionFactor);
@@ -49,11 +49,11 @@ public class TiltWristSubsystem implements Subsystem {
             .outputRange(-1,1)
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             .pidf(TiltWristConstants.kP, TiltWristConstants.kI, TiltWristConstants.kD, TiltWristConstants.kFF);
-        motorConfig.softLimit
-            .forwardSoftLimit(TiltWristConstants.kMAX_LIMIT)
-            .reverseSoftLimit(TiltWristConstants.kMIN_LIMIT)
-            .forwardSoftLimitEnabled(true)
-            .reverseSoftLimitEnabled(true);
+        // motorConfig.softLimit
+        //     .forwardSoftLimit(TiltWristConstants.kMAX_LIMIT)
+        //     .reverseSoftLimit(TiltWristConstants.kMIN_LIMIT)
+        //     .forwardSoftLimitEnabled(true)
+        //     .reverseSoftLimitEnabled(true);
         motor.configureAsync(motorConfig, SparkBase.ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
@@ -91,6 +91,12 @@ public class TiltWristSubsystem implements Subsystem {
     public Command stopMotorCommand() {
         return runOnce(() -> {
             motor.set(0);
+        });
+    }
+
+    public Command setRaw(double degree) {
+        return runOnce(() -> {
+            motor.set(degree);
         });
     }
 
