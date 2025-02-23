@@ -1,94 +1,88 @@
 package frc.robot.subsystems;
 
+import frc.robot.Constants.ElevatorConstants;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.LimitSwitchConfig;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import frc.robot.Constants.ElevatorConstants;
-
-public class ElevatorSubsystem extends SubsystemBase{
-
-    public ElevatorPosition currentTargetPosition;
-
-    protected SparkMax leadMotor, followerMotor;
-    protected SparkLimitSwitch bottomLimitSwitch;
-    protected SparkMaxConfig followConfig, leadConfig;
-    protected AbsoluteEncoder targetEncoder;
-
+public class ElevatorSubsystem extends SubsystemBase {
+    // MOTORS
+    private SparkMax leadMotor, followMotor;
+    // ENCODER
+    private RelativeEncoder encoder;
+    // FEEDBACK CONTROLLER
     private SparkClosedLoopController feedbackController;
-
-
+    // CONFIGS
+    SparkMaxConfig leadConfig, followConfig;
+    // CURRENT POSITION
+    public ElevatorPosition currentTargetPosition;
 
     /** Constructs an elevator. */
     public ElevatorSubsystem() {
         // MOTOR CONTROLLERS
-        leadMotor = new SparkMax(ElevatorConstants.kLeadID, MotorType.kBrushless);
-        followerMotor = new SparkMax(ElevatorConstants.kFollowerID, MotorType.kBrushless);
-    
-        // ABSOLUTE ENCODER
-        targetEncoder = leadMotor.getAbsoluteEncoder();
-
+        leadMotor = new SparkMax(ElevatorConstants.kLeaderID, MotorType.kBrushless);
+        followMotor = new SparkMax(ElevatorConstants.kFollowerID, MotorType.kBrushless);
+        // ENCODER
+        encoder = leadMotor.getEncoder();
         // PID CONTROLLER
         feedbackController = leadMotor.getClosedLoopController();
-        
         // POSITION
         currentTargetPosition = ElevatorPosition.STORED;
-
-        bottomLimitSwitch = leadMotor.getReverseLimitSwitch();
-
+        // CONFIGS
+        leadConfig = new SparkMaxConfig();
+        followConfig = new SparkMaxConfig();
+        // CONFIGURE MOTORS
         configureMotors();
     }
 
     /** Sets the configurations for each motor. */
     private void configureMotors() {
-        // CONFIGURATIONS
-        // leading config
-        leadConfig = new SparkMaxConfig();
-        // following config
-        followConfig = new SparkMaxConfig();
-
-            // LEFT MOTOR
+        // LEADER CONFIG
         leadConfig
-            .inverted(false) // TODO: CONFIRM
-            .idleMode(IdleMode.kBrake);
+            .inverted(ElevatorConstants.kInverted)
+            .idleMode(ElevatorConstants.kIdleMode)
+            .smartCurrentLimit(ElevatorConstants.kStallLimit, ElevatorConstants.kFreeLimit);
         leadConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pidf(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD, 0) 
-            .outputRange(-.5, .5);
-        // leadConfig.softLimit
-        //     // TODO: Assuming in CM, possibly fix later (One CM heigher than L4, within tolerance)
-        //     .forwardSoftLimitEnabled(true)
-        //     .reverseSoftLimitEnabled(true);
-
-            // .forwardSoftLimit(ElevatorConstants.kMAX_LIMIT)
-            // .reverseSoftLimit(ElevatorConstants.kMIN_LIMIT);
-            // APPLIES LEFT CONFIG TO RIGHT MOTOR
+            .pidf(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD, ElevatorConstants.kFF, ClosedLoopSlot.kSlot0)
+            .pidf(ElevatorConstants.kMAXMotionP, ElevatorConstants.kMAXMotionI, ElevatorConstants.kMAXMotionD, ElevatorConstants.kMAXMotionFF, ClosedLoopSlot.kSlot1) 
+            .outputRange(ElevatorConstants.kMinimumOutputLimit, ElevatorConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot0)
+            .outputRange(ElevatorConstants.kMinimumOutputLimit, ElevatorConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot1)
+        .maxMotion
+            .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot1)
+            .maxAcceleration(ElevatorConstants.kMAXMotionMaxAcceleration, ClosedLoopSlot.kSlot1)
+            .maxVelocity(ElevatorConstants.kMAXMotionMaxVelocity, ClosedLoopSlot.kSlot1)
+            .allowedClosedLoopError(ElevatorConstants.kMAXMotionAllowedError, ClosedLoopSlot.kSlot1);
+        leadConfig.softLimit
+            .forwardSoftLimit(ElevatorConstants.kMaximumRotationLimit)
+            .forwardSoftLimitEnabled(true)
+            .reverseSoftLimit(ElevatorConstants.kMinimumRotationLimit)
+            .reverseSoftLimitEnabled(true);
         leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-            // RIGHT MOTOR
+        // FOLLOWER CONFIG
         followConfig.apply(leadConfig);
-        followConfig.follow(leadMotor, true);
-            // APPLIES RIGHT CONFIG TO RIGHT MOTOR
-        followerMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        followConfig.follow(leadMotor, ElevatorConstants.kFollowerInverted);
+        followMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
-    // COMMAND FACTORIES TO REACH ENUM HEIGHT
 
+    // COMMAND FACTORIES TO REACH ENUM HEIGHT
     public Command setRaw(double percent) {
-        return run(() -> {
+        return runOnce(() -> {
             leadMotor.set(percent);
         });
     }
@@ -102,7 +96,20 @@ public class ElevatorSubsystem extends SubsystemBase{
             // CHANGES CURRENT TARGET TO POS
             currentTargetPosition = position;
             // SETS FEEDBACKCONTROLLER TO POS
-            feedbackController.setReference(position.centimeters, SparkBase.ControlType.kPosition);
+            feedbackController.setReference(position.rotations, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        });
+    }
+
+    /** Sets the target height of the elevator using trapezoidal profiling. 
+     * @param ElevatorPosition
+     * The taregt position: including state and height.
+    */
+    public Command setPositionSmartMotion(ElevatorPosition position) {
+        return runOnce(() -> {
+            // CHANGES CURRENT TARGET TO POS
+            currentTargetPosition = position;
+            // SETS FEEDBACKCONTROLLER TO POS
+            feedbackController.setReference(position.rotations, SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot1);
         });
     }
 
@@ -118,27 +125,17 @@ public class ElevatorSubsystem extends SubsystemBase{
     }
     
     public boolean isAtSetpoint() {
-        return (getElevatorError() < ElevatorConstants.kTOLERENCE);
+        return (getElevatorError() < ElevatorConstants.kTolerance);
     }
 
     private double getElevatorError() {
-        return Math.abs(Math.abs(targetEncoder.getPosition())- Math.abs(currentTargetPosition.centimeters));
+        return Math.abs(Math.abs(encoder.getPosition()) - Math.abs(currentTargetPosition.rotations));
     }
-    // // COMMAND FACTORIES TO ZERO ELEVATOR
 
-    /**Runs a WaitUntilCommand, waits until elevator reaches bottom */
-    public Command waitWhileLowerElevator() {
-        return new WaitUntilCommand(() -> {
-            SmartDashboard.putBoolean("Zeroing Elevator", true);
-            leadMotor.set(-0.2);
-            return isAtBottom();
-        }).andThen(() -> SmartDashboard.putBoolean("Zeroing Elevator", true));
-    }
-    /**Resets encoder to 0 after zeroing */
+    /**Resets encoder to 0*/
     public Command resetEncoder() {
         return runOnce(() -> {
-                leadConfig.absoluteEncoder.zeroOffset(0); //TODO: Check this. I think this is how this works, but IDK its 10PM
-                leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+                encoder.setPosition(0);
             });
     }
     /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
@@ -153,60 +150,45 @@ public class ElevatorSubsystem extends SubsystemBase{
         leadMotor.set(0);
     }
 
-    /**Enables or disables reverseSoftLimmit
-     * @param enabled
-     * considers wether (based on boolean data) lowerLimit is to be disable or enabled
-     */
-    public Command toggleLowerLimit(boolean enabled) {
-        return runOnce(()-> {
-            leadConfig.softLimit.reverseSoftLimitEnabled(enabled);
-            leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-        });
+    public Command printPosition() {
+        return runOnce(() -> System.out.println(encoder.getPosition()));
     }
 
-    /**Returns if bottomLimitSwitch has been reached, should not be used publicly */
-    private boolean isAtBottom() {
-        return bottomLimitSwitch.isPressed();
-    }
-
-    /**Runs a Command Group to zero elevator */
-    public Command zeroElevator() {
-        return new SequentialCommandGroup(
-            // SETS CONDITIONS FOR ZEROING
-            toggleLowerLimit(false),
-            // LOWERS UNTIL REACHING LIMIT SWITCH, WAITUNTILCOMMAND
-            waitWhileLowerElevator(),
-            // RESETS MOTOR/ENCODER
-            stopMotorCommand(),
-            resetEncoder(),
-            // ENABLES SOFTLIMITSWITCH FOR NORMAL RAISING/LOWERING
-            toggleLowerLimit(true)
-        );
+    public void setIdleMode(IdleMode idleMode) {
+        leadConfig.idleMode(idleMode);
+        leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        followConfig.idleMode(idleMode);
+        followMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Actual height", targetEncoder.getPosition());
-        SmartDashboard.putNumber("Wanted angle", currentTargetPosition.centimeters);
+        SmartDashboard.putNumber("Actual height", encoder.getPosition());
+        SmartDashboard.putNumber("Wanted angle", currentTargetPosition.getRotations());
     }
     
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
     public enum ElevatorPosition {
         // ENUMS FOR POSITIONS
-        STORED(-1), PRIME(-1), COBRA_STANCE(-1),
+        STORED(0), PRIME(-1), COBRA_STANCE(-1),
+        PID_TESTING(5),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
         GROUND_INTAKE(-1), CORAL_STATION_INTAKE(-1),
 
         L_ONE(-1), L_TWO(-1), L_THREE(-1), L_FOUR(-1);
-        public final double centimeters;
+
+        private double rotations;
         /**Constrcutor for height for ElevatorPositions (Enum for Elevator poses)
-        * @param centimeters
+        * @param rotations
         * verticle movement in centimeters
         */
-        ElevatorPosition (double centimeters) {
-            this.centimeters = centimeters;
+        ElevatorPosition (double rotations) {
+            this.rotations = rotations;
+        }
+
+        public double getRotations() {
+            return this.rotations;
         }
     }
 }
