@@ -33,7 +33,7 @@ public class PivotSubsystem implements Subsystem {
     // CONFIGS
     SparkMaxConfig leadConfig, followConfig;
     // CURRENT POSITION
-    private PivotPosition currentTargetPosition;
+    public PivotPosition currentTargetPosition;
 
     /** Constructs a pivot. */
     public PivotSubsystem() {
@@ -77,7 +77,8 @@ public class PivotSubsystem implements Subsystem {
         leadConfig.absoluteEncoder
             .positionConversionFactor(PivotConstants.kPositionConversionFactor)
             .zeroOffset(PivotConstants.kOffset)
-            .zeroCentered(true);
+            .zeroCentered(true)
+            .inverted(PivotConstants.kAbsoluteEncoderInverted);
         leadConfig.softLimit
             .forwardSoftLimit(PivotConstants.kMaximumRotationLimit)
             .forwardSoftLimitEnabled(true)
@@ -131,9 +132,17 @@ public class PivotSubsystem implements Subsystem {
     }
 
     public Command setRaw(double percentage) {
-        return run(() -> {
+        return runOnce(() -> {
             leadMotor.set(percentage);
         });
+    }
+
+    public double getPosition() {
+        return absoluteEncoder.getPosition();
+    }
+
+    public Command printPosition() {
+        return run(() -> System.out.println(getPosition()));
     }
 
     public void setIdleMode(IdleMode idleMode) {
@@ -145,8 +154,8 @@ public class PivotSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Actual Pivot Angle", absoluteEncoder.getPosition());
-        SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getDegrees());
+        // SmartDashboard.putNumber("Actual Pivot Angle", absoluteEncoder.getPosition());
+        // SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getDegrees());
     }
     
     /**Enum, holds position of pivot.
@@ -154,7 +163,8 @@ public class PivotSubsystem implements Subsystem {
      * Height Pivot must reach to get to state.
      */
     public enum PivotPosition{
-        STORED(-1), PRIME(-1), COBRA_STANCE(-1),
+        STORED(-102), PRIME(0), COBRA_STANCE(-1),
+        TESTING_PID(-25),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
         GROUND_INTAKE(-1), CORAL_STATION_INTAKE(-1),

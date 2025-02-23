@@ -31,7 +31,7 @@ public class Constants {
         public static final int kLeaderID = 46;
         public static final int kFollowerID = 45;
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = 0;
+        public static final double kP = .1;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
@@ -46,8 +46,8 @@ public class Constants {
         // TOLERANCE FOR PID ERROR
         public static final double kTolerance = 1.0; // TODO: TUNE
         // LIMIT VALUES
-        public static final double kMinimumRotationLimit = 0; // TODO: SET
-        public static final double kMaximumRotationLimit = 50000; // TODO: SET
+        public static final double kMinimumRotationLimit = -5; // TODO: SET
+        public static final double kMaximumRotationLimit = 100; // TODO: SET
         public static final double kMinimumOutputLimit = -.8;
         public static final double kMaximumOutputLimit = .8;
         // INVERSIONS
@@ -65,7 +65,7 @@ public class Constants {
         public static final int kLeaderID = 44;
         public static final int kFollowerID = 43;
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = 0;
+        public static final double kP = .012;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
@@ -80,17 +80,18 @@ public class Constants {
         // TOLERANCE FOR PID ERROR
         public static final double kTolerance = 1.0; // TODO: TUNE
         // LIMIT VALUES
-        public static final double kMinimumRotationLimit = -45; // TODO: SET
-        public static final double kMaximumRotationLimit = 235; // TODO: SET
+        public static final double kMinimumRotationLimit = -105; // TODO: SET
+        public static final double kMaximumRotationLimit = 5; // TODO: SET
         public static final double kMinimumOutputLimit = -.8;
         public static final double kMaximumOutputLimit = .8;
         // INVERSIONS
         public static final boolean kInverted = false;
         public static final boolean kFollowerInverted = true;
+        public static final boolean kAbsoluteEncoderInverted = true;
         // OFFSET
-        public static final double kOffset = 0; // TODO: SET
+        public static final double kOffset = 0.7140662; // TODO: SET
         // CONVERSION FACTOR
-        public static final double kPositionConversionFactor = 1.0/360.0;
+        public static final double kPositionConversionFactor = 360.0;
         // CURRENT LIMITS TODO: TUNE
         public static final int kStallLimit = 80;
         public static final int kFreeLimit = 80;

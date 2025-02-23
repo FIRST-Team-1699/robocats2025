@@ -82,7 +82,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // COMMAND FACTORIES TO REACH ENUM HEIGHT
     public Command setRaw(double percent) {
-        return run(() -> {
+        return runOnce(() -> {
             leadMotor.set(percent);
         });
     }
@@ -150,6 +150,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadMotor.set(0);
     }
 
+    public Command printPosition() {
+        return runOnce(() -> System.out.println(encoder.getPosition()));
+    }
+
     public void setIdleMode(IdleMode idleMode) {
         leadConfig.idleMode(idleMode);
         leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
@@ -166,12 +170,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
     public enum ElevatorPosition {
         // ENUMS FOR POSITIONS
-        STORED(-1), PRIME(-1), COBRA_STANCE(-1),
+        STORED(0), PRIME(-1), COBRA_STANCE(-1),
+        PID_TESTING(5),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
         GROUND_INTAKE(-1), CORAL_STATION_INTAKE(-1),
 
         L_ONE(-1), L_TWO(-1), L_THREE(-1), L_FOUR(-1);
+
         private double rotations;
         /**Constrcutor for height for ElevatorPositions (Enum for Elevator poses)
         * @param rotations

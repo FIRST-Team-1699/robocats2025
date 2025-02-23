@@ -12,6 +12,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -60,6 +62,9 @@ public class RobotContainer {
                     .withRotationalRate(-driverController.getRightX() * SwerveConstants.kMaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
+
+        // pivot.setDefaultCommand(pivot.printPosition());
+        elevator.setDefaultCommand(elevator.printPosition());
 
         driverController.a().whileTrue(drivetrain.applyRequest(() -> brake));
         driverController.b().whileTrue(drivetrain.applyRequest(() ->
@@ -115,8 +120,10 @@ public class RobotContainer {
         //             .handleInterrupt(elevator::stopMotorManual)
         //         );
 
-        operatorController.y().whileTrue(elevator.setRaw(.2)).onFalse(elevator.setRaw(0));
-        operatorController.x().whileTrue(elevator.setRaw(-.2)).onFalse(elevator.setRaw(0));
+        operatorController.povUp().whileTrue(elevator.setRaw(.2)).onFalse(elevator.setRaw(0));
+        operatorController.povDown().whileTrue(elevator.setRaw(-.2)).onFalse(elevator.setRaw(0));
+        operatorController.x().onTrue(elevator.setPosition(ElevatorPosition.STORED));
+        operatorController.y().onTrue(elevator.setPosition(ElevatorPosition.PID_TESTING).onlyIf(() -> pivot.currentTargetPosition != PivotPosition.STORED));
 
         // Operator Controller
         // operatorController.povUp().onTrue(pivot.setPosition(PivotPosition.L_FOUR)
@@ -136,8 +143,10 @@ public class RobotContainer {
         // operatorController.rightStick().onTrue(pivot.setPosition(PivotPosition.COBRA_STANCE)
         //     .andThen(pivot.waitUntilAtSetpoint()));
 
-        operatorController.a().whileTrue(pivot.setRaw(.2)).onFalse(pivot.setRaw(0));
-        operatorController.b().whileTrue(pivot.setRaw(-.2)).onFalse(pivot.setRaw(0));
+        operatorController.povRight().whileTrue(pivot.setRaw(.2)).onFalse(pivot.setRaw(0));
+        operatorController.povLeft().whileTrue(pivot.setRaw(-.2)).onFalse(pivot.setRaw(0));
+        operatorController.a().onTrue(pivot.setPosition(PivotPosition.STORED).onlyIf(() -> elevator.currentTargetPosition == ElevatorPosition.STORED));
+        operatorController.b().onTrue(pivot.setPosition(PivotPosition.TESTING_PID));
     }
 
     public Command getAutonomousCommand() {
