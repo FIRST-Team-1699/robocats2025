@@ -1,13 +1,15 @@
 package frc.robot.subsystems;
 
+import frc.robot.Constants.PivotConstants;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.PivotConstants;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
@@ -16,63 +18,68 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class PivotSubsystem implements Subsystem {
     //TODO: USE ABSOLUTE ENCODER FOR INITALIZATION, RELATIVE OTHERWISE
-    private SparkMax followMotor, leadMotor;
-
-    private RelativeEncoder targetRelativeEncoder;
-    private AbsoluteEncoder targetAbsoluteEncoder;
-
+    // MOTORS
+    private SparkMax leadMotor, followMotor;
+    // ENCODERS
+    private RelativeEncoder encoder;
+    private AbsoluteEncoder absoluteEncoder;
+    // FEEDBACK CONTROLLER
     private SparkClosedLoopController feedbackController;
+    // CURRENT POSITION
     private PivotPosition currentTargetPosition;
 
+    /** Constructs a pivot. */
     public PivotSubsystem() {
         // MOTORS
-        //Right
-        leadMotor = new SparkMax(PivotConstants.kLeaderId, MotorType.kBrushless);
-        //Left
-        followMotor = new SparkMax(PivotConstants.kFollowerId, MotorType.kBrushless);
+        leadMotor = new SparkMax(PivotConstants.kLeaderID, MotorType.kBrushless);
+        followMotor = new SparkMax(PivotConstants.kFollowerID, MotorType.kBrushless);
         // ENCODERS
-        targetAbsoluteEncoder = leadMotor.getAbsoluteEncoder();
-
-        targetRelativeEncoder = leadMotor.getEncoder();
-
-
+        absoluteEncoder = leadMotor.getAbsoluteEncoder();
+        encoder = leadMotor.getEncoder();
         // PID/FEEDBACK CONTROLLER
         feedbackController = leadMotor.getClosedLoopController();
         // SETS TARGET POSITION
         currentTargetPosition = PivotPosition.STORED;
-        
+        // CONFIGURE MOTORS
         configureMotors();
     }
-    /*Cool, motors are being configured her */
+
+    /** Sets the configurations for each motor. */
     private void configureMotors() {
-        // CONFIGURATION CONSTRUCTORS
-        SparkMaxConfig followConfig = new SparkMaxConfig();
         SparkMaxConfig leadConfig = new SparkMaxConfig();
-        // CONFIGURATIONS
-            // RIGHT MOTOR
+        // LEADER CONFIG
         leadConfig
-            .inverted(false) // TODO: CONFIRM
-            .idleMode(IdleMode.kBrake);
+            .inverted(PivotConstants.kInverted)
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(PivotConstants.kStallLimit, PivotConstants.kFreeLimit);
         leadConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-            .pidf(PivotConstants.kP, PivotConstants.kI, PivotConstants.kD, 0) 
-            .outputRange(-0.5, 0.5);
+            .pidf(PivotConstants.kP, PivotConstants.kI, PivotConstants.kD, PivotConstants.kFF, ClosedLoopSlot.kSlot0)
+            .pidf(PivotConstants.kMAXMotionP, PivotConstants.kMAXMotionI, PivotConstants.kMAXMotionD, PivotConstants.kMAXMotionFF, ClosedLoopSlot.kSlot1)
+            .outputRange(PivotConstants.kMinimumOutputLimit, PivotConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot0)
+            .outputRange(PivotConstants.kMinimumOutputLimit, PivotConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot1)
+        .maxMotion
+            .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot1)
+            .maxAcceleration(PivotConstants.kMAXMotionMaxAcceleration, ClosedLoopSlot.kSlot1)
+            .maxVelocity(PivotConstants.kMAXMotionMaxVelocity, ClosedLoopSlot.kSlot1)
+            .allowedClosedLoopError(PivotConstants.kMAXMotionAllowedError, ClosedLoopSlot.kSlot1);
         leadConfig.encoder
-            .positionConversionFactor(PivotConstants.kPOSITIONAL_CONVERSION); //TODO: VERIFY THAT THIS IS WHAT WE WANT
+            .positionConversionFactor(PivotConstants.kPositionConversionFactor);
         leadConfig.softLimit
+            .forwardSoftLimit(PivotConstants.kMaximumRotationLimit)
             .forwardSoftLimitEnabled(true)
-            .reverseSoftLimitEnabled(true)
-            .forwardSoftLimit(PivotConstants.kMAX_LIMIT)
-            .reverseSoftLimit(PivotConstants.kMIN_LIMIT);
-
+            .reverseSoftLimit(PivotConstants.kMinimumRotationLimit)
+            .reverseSoftLimitEnabled(true);
         leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-            // LEFT MOROR
+        // FOLLOWER CONFIG
+        SparkMaxConfig followConfig = new SparkMaxConfig();
         followConfig.apply(leadConfig);
-        followConfig.follow(leadMotor, true);
+        followConfig.follow(leadMotor, PivotConstants.kFollowerInverted);
         followMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
@@ -83,7 +90,7 @@ public class PivotSubsystem implements Subsystem {
     public Command setPosition(PivotPosition pivotPosition) {
         return runOnce(() -> {
             currentTargetPosition = pivotPosition;
-            feedbackController.setReference(pivotPosition.degrees, SparkBase.ControlType.kPosition);
+            feedbackController.setReference(pivotPosition.getDegrees(), SparkBase.ControlType.kPosition);
         });
     }
 
@@ -92,7 +99,7 @@ public class PivotSubsystem implements Subsystem {
      * The new position to determine direction
      */
     public boolean isPivotRising(PivotPosition newPosition) {
-        return (newPosition.degrees-currentTargetPosition.degrees > 0 );
+        return (newPosition.getDegrees() - currentTargetPosition.getDegrees() > 0 );
     }
 
     public Command waitUntilAtSetpoint() {
@@ -102,11 +109,11 @@ public class PivotSubsystem implements Subsystem {
     }
 
     public boolean isAtSetpoint() {
-        return getError() < PivotConstants.kTOLERANCE;
+        return getError() < PivotConstants.kTolerance;
     }
     
     private double getError() {
-        return Math.abs(Math.abs(targetRelativeEncoder.getPosition()) - Math.abs(currentTargetPosition.degrees));
+        return Math.abs(Math.abs(encoder.getPosition()) - Math.abs(currentTargetPosition.getDegrees()));
     }
 
     /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
@@ -124,8 +131,8 @@ public class PivotSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Actual Pivot Angle", targetAbsoluteEncoder.getPosition());
-        SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.degrees);
+        SmartDashboard.putNumber("Actual Pivot Angle", absoluteEncoder.getPosition());
+        SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getDegrees());
     }
     
     /**Enum, holds position of pivot.
@@ -139,9 +146,13 @@ public class PivotSubsystem implements Subsystem {
         GROUND_INTAKE(-1), CORAL_STATION_INTAKE(-1),
 
         L_ONE(-1), L_TWO(-1), L_THREE(-1), L_FOUR(-1);
-        double degrees;
+        private double degrees;
         PivotPosition(double degrees) {
             this.degrees = degrees;
+        }
+
+        public double getDegrees() {
+            return this.degrees;
         }
     }
 }
