@@ -1,6 +1,9 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
+
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import frc.robot.generated.TunerConstants;
 
 public class Constants {
@@ -53,6 +56,8 @@ public class Constants {
         // CURRENT LIMITS TODO: TUNE
         public static final int kStallLimit = 80;
         public static final int kFreeLimit = 80;
+        // IDLE MODE
+        public static final IdleMode kIdleMode = IdleMode.kBrake;
     }
     
     public static class PivotConstants {
@@ -83,11 +88,13 @@ public class Constants {
         public static final boolean kInverted = false;
         public static final boolean kFollowerInverted = true;
         // OFFSET
-        public static final double kOffset = 0;
+        public static final double kOffset = 0; // TODO: SET
         // CONVERSION FACTOR
         public static final double kPositionConversionFactor = 1.0/360.0;
         // CURRENT LIMITS TODO: TUNE
         public static final int kStallLimit = 80;
         public static final int kFreeLimit = 80;
+        // IDLE MODE
+        public static final IdleMode kIdleMode = IdleMode.kBrake;
     }
 }

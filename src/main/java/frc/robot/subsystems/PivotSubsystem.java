@@ -22,7 +22,7 @@ import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class PivotSubsystem implements Subsystem {
-    //TODO: USE ABSOLUTE ENCODER FOR INITALIZATION, RELATIVE OTHERWISE
+    // TODO: USE ABSOLUTE ENCODER FOR INITALIZATION, RELATIVE OTHERWISE
     // MOTORS
     private SparkMax leadMotor, followMotor;
     // ENCODERS
@@ -30,6 +30,8 @@ public class PivotSubsystem implements Subsystem {
     private AbsoluteEncoder absoluteEncoder;
     // FEEDBACK CONTROLLER
     private SparkClosedLoopController feedbackController;
+    // CONFIGS
+    SparkMaxConfig leadConfig, followConfig;
     // CURRENT POSITION
     private PivotPosition currentTargetPosition;
 
@@ -45,17 +47,19 @@ public class PivotSubsystem implements Subsystem {
         feedbackController = leadMotor.getClosedLoopController();
         // SETS TARGET POSITION
         currentTargetPosition = PivotPosition.STORED;
+        // CONFIGS
+        leadConfig = new SparkMaxConfig();
+        followConfig = new SparkMaxConfig();
         // CONFIGURE MOTORS
         configureMotors();
     }
 
     /** Sets the configurations for each motor. */
     private void configureMotors() {
-        SparkMaxConfig leadConfig = new SparkMaxConfig();
         // LEADER CONFIG
         leadConfig
             .inverted(PivotConstants.kInverted)
-            .idleMode(IdleMode.kBrake)
+            .idleMode(PivotConstants.kIdleMode)
             .smartCurrentLimit(PivotConstants.kStallLimit, PivotConstants.kFreeLimit);
         leadConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
@@ -70,6 +74,10 @@ public class PivotSubsystem implements Subsystem {
             .allowedClosedLoopError(PivotConstants.kMAXMotionAllowedError, ClosedLoopSlot.kSlot1);
         leadConfig.encoder
             .positionConversionFactor(PivotConstants.kPositionConversionFactor);
+        leadConfig.absoluteEncoder
+            .positionConversionFactor(PivotConstants.kPositionConversionFactor)
+            .zeroOffset(PivotConstants.kOffset)
+            .zeroCentered(true);
         leadConfig.softLimit
             .forwardSoftLimit(PivotConstants.kMaximumRotationLimit)
             .forwardSoftLimitEnabled(true)
@@ -77,7 +85,6 @@ public class PivotSubsystem implements Subsystem {
             .reverseSoftLimitEnabled(true);
         leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         // FOLLOWER CONFIG
-        SparkMaxConfig followConfig = new SparkMaxConfig();
         followConfig.apply(leadConfig);
         followConfig.follow(leadMotor, PivotConstants.kFollowerInverted);
         followMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -127,6 +134,13 @@ public class PivotSubsystem implements Subsystem {
         return run(() -> {
             leadMotor.set(percentage);
         });
+    }
+
+    public void setIdleMode(IdleMode idleMode) {
+        leadConfig.idleMode(idleMode);
+        leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        followConfig.idleMode(idleMode);
+        followMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
     @Override

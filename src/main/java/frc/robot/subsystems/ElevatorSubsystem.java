@@ -27,6 +27,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private RelativeEncoder encoder;
     // FEEDBACK CONTROLLER
     private SparkClosedLoopController feedbackController;
+    // CONFIGS
+    SparkMaxConfig leadConfig, followConfig;
     // CURRENT POSITION
     public ElevatorPosition currentTargetPosition;
 
@@ -41,6 +43,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         feedbackController = leadMotor.getClosedLoopController();
         // POSITION
         currentTargetPosition = ElevatorPosition.STORED;
+        // CONFIGS
+        leadConfig = new SparkMaxConfig();
+        followConfig = new SparkMaxConfig();
         // CONFIGURE MOTORS
         configureMotors();
     }
@@ -48,10 +53,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     /** Sets the configurations for each motor. */
     private void configureMotors() {
         // LEADER CONFIG
-        SparkMaxConfig leadConfig = new SparkMaxConfig();
         leadConfig
             .inverted(ElevatorConstants.kInverted)
-            .idleMode(IdleMode.kBrake)
+            .idleMode(ElevatorConstants.kIdleMode)
             .smartCurrentLimit(ElevatorConstants.kStallLimit, ElevatorConstants.kFreeLimit);
         leadConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -71,7 +75,6 @@ public class ElevatorSubsystem extends SubsystemBase {
             .reverseSoftLimitEnabled(true);
         leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         // FOLLOWER CONFIG
-        SparkMaxConfig followConfig = new SparkMaxConfig();
         followConfig.apply(leadConfig);
         followConfig.follow(leadMotor, ElevatorConstants.kFollowerInverted);
         followMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -145,6 +148,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     /** Stops the motor manually, ignoring all commands. */
     public void stopMotorManual() {
         leadMotor.set(0);
+    }
+
+    public void setIdleMode(IdleMode idleMode) {
+        leadConfig.idleMode(idleMode);
+        leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        followConfig.idleMode(idleMode);
+        followMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
     @Override
