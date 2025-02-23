@@ -37,8 +37,8 @@ public class ElevatorSubsystem extends SubsystemBase{
     /** Constructs an elevator. */
     public ElevatorSubsystem() {
         // MOTOR CONTROLLERS
-        leadMotor = new SparkMax(-1, MotorType.kBrushless);
-        followerMotor = new SparkMax(-1, MotorType.kBrushless);
+        leadMotor = new SparkMax(ElevatorConstants.kLeadID, MotorType.kBrushless);
+        followerMotor = new SparkMax(ElevatorConstants.kFollowerID, MotorType.kBrushless);
     
         // ABSOLUTE ENCODER
         targetEncoder = leadMotor.getAbsoluteEncoder();
@@ -64,37 +64,34 @@ public class ElevatorSubsystem extends SubsystemBase{
 
             // LEFT MOTOR
         leadConfig
-            .inverted(true) // TODO: CONFIRM
+            .inverted(false) // TODO: CONFIRM
             .idleMode(IdleMode.kBrake);
         leadConfig.closedLoop
-            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-            .pidf(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD, -1) 
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pidf(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD, 0) 
             .outputRange(-.5, .5);
-        leadConfig.softLimit
-            // TODO: Assuming in CM, possibly fix later (One CM heigher than L4, within tolerance)
-            .forwardSoftLimitEnabled(true)
-            .reverseSoftLimitEnabled(true)
+        // leadConfig.softLimit
+        //     // TODO: Assuming in CM, possibly fix later (One CM heigher than L4, within tolerance)
+        //     .forwardSoftLimitEnabled(true)
+        //     .reverseSoftLimitEnabled(true);
 
-            .forwardSoftLimit(ElevatorConstants.kMAX_LIMIT)
-            .reverseSoftLimit(ElevatorConstants.kMIN_LIMIT);
-        leadConfig.limitSwitch
-            .forwardLimitSwitchEnabled(true) 
-            .reverseLimitSwitchEnabled(true)
-
-            .reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen)
-            .setSparkMaxDataPortConfig();
-        leadConfig.absoluteEncoder
-            .positionConversionFactor(1);
+            // .forwardSoftLimit(ElevatorConstants.kMAX_LIMIT)
+            // .reverseSoftLimit(ElevatorConstants.kMIN_LIMIT);
             // APPLIES LEFT CONFIG TO RIGHT MOTOR
         leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             // RIGHT MOTOR
         followConfig.apply(leadConfig);
-        followConfig.follow(leadMotor);
-        followConfig.inverted(true); // TODO: CONFIRM,
+        followConfig.follow(leadMotor, true);
             // APPLIES RIGHT CONFIG TO RIGHT MOTOR
         followerMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
     // COMMAND FACTORIES TO REACH ENUM HEIGHT
+
+    public Command setRaw(double percent) {
+        return run(() -> {
+            leadMotor.set(percent);
+        });
+    }
 
     /** Sets the target height of the elevator. 
      * @param ElevatorPosition
