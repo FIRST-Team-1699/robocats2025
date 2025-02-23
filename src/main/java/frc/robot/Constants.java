@@ -25,6 +25,10 @@ public class Constants {
         public static final double kRotationI = 0;
         public static final double kRotationD = 0;
     }
+
+    public static class IntakeConstants {
+        public static final int kMotorID = 40;
+    }
     
     public static class ElevatorConstants {
         // MOTOR CAN BUS IDS

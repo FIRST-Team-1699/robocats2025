@@ -22,6 +22,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.PivotSubsystem.PivotPosition;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorPosition;
 
 public class RobotContainer {
@@ -42,6 +43,7 @@ public class RobotContainer {
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final PivotSubsystem pivot = new PivotSubsystem();
+    private final IntakeSubsystem intake = new IntakeSubsystem();
 
     // LEDController ledcontroller = new LEDController(pivot, elevator, rotateWrits, tiltWrist);
 
@@ -64,7 +66,7 @@ public class RobotContainer {
         );
 
         // pivot.setDefaultCommand(pivot.printPosition());
-        elevator.setDefaultCommand(elevator.printPosition());
+        // elevator.setDefaultCommand(elevator.printPosition());
 
         driverController.a().whileTrue(drivetrain.applyRequest(() -> brake));
         driverController.b().whileTrue(drivetrain.applyRequest(() ->
@@ -147,6 +149,9 @@ public class RobotContainer {
         operatorController.povLeft().whileTrue(pivot.setRaw(-.2)).onFalse(pivot.setRaw(0));
         operatorController.a().onTrue(pivot.setPosition(PivotPosition.STORED).onlyIf(() -> elevator.currentTargetPosition == ElevatorPosition.STORED));
         operatorController.b().onTrue(pivot.setPosition(PivotPosition.TESTING_PID));
+
+        operatorController.rightTrigger().whileTrue(intake.runIntake(.3)).onFalse(intake.stopMotorCommand());
+        operatorController.leftTrigger().whileTrue(intake.runIntake(-.3)).onFalse(intake.stopMotorCommand());
     }
 
     public Command getAutonomousCommand() {
