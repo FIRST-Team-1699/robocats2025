@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -12,19 +14,32 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
-
+  private ArmSim armSim;
+  private XboxController simController;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    if(Robot.isSimulation()) {
+      armSim = new ArmSim();
+      simController = new XboxController(0);
+    }
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run(); 
+
+    if(Robot.isSimulation()) {
+      armSim.updateTelemetry();
+    }
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    if(Robot.isSimulation()) {
+      armSim.stopElevator();
+    }
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -55,7 +70,20 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    if(Robot.isSimulation()) {
+      if(simController.getAButton()) {
+        armSim.setElevatorGoal(1);
+      } else {
+        armSim.setElevatorGoal(0.05);
+      }
+      if(simController.getBButton()) {
+        armSim.setPivotGoal(Units.degreesToRadians(90));
+      } else {
+        armSim.setPivotGoal(Units.degreesToRadians(45));
+      }
+    }
+  }
 
   @Override
   public void teleopExit() {}
@@ -72,5 +100,7 @@ public class Robot extends TimedRobot {
   public void testExit() {}
 
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    armSim.simulationPeriodic();
+  }
 }

@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -26,8 +27,8 @@ import frc.robot.subsystems.ElevatorSubsystem.ElevatorPosition;
 
 public class RobotContainer {
     // IO DEVICES
-    private final CommandXboxController driverController = new CommandXboxController(0);
-    private final CommandXboxController operatorController = new CommandXboxController(1);
+    private CommandXboxController driverController = new CommandXboxController(0);
+    private CommandXboxController operatorController = new CommandXboxController(1);
 
     // // SWERVE COMMANDS
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -37,18 +38,23 @@ public class RobotContainer {
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     // SWERVE 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
+    public CommandSwerveDrivetrain drivetrain;
+    private Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
 
-    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-    private final PivotSubsystem pivot = new PivotSubsystem();
+    private ElevatorSubsystem elevator;
+    private PivotSubsystem pivot;
 
     // LEDController ledcontroller = new LEDController(pivot, elevator, rotateWrits, tiltWrist);
 
     // if(!pivot.isAtSetpoint())
 
     public RobotContainer() {
-        configureBindings();
+        if(Robot.isReal()) {
+            drivetrain = TunerConstants.createDrivetrain();
+            elevator = new ElevatorSubsystem();
+            pivot = new PivotSubsystem();
+            configureBindings();
+        }
     }
 
     private void configureBindings() {

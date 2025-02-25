@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.*;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.util.Units;
 import frc.robot.generated.TunerConstants;
 
 public class Constants {
@@ -97,5 +98,42 @@ public class Constants {
         public static final int kFreeLimit = 80;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
+    }
+
+    public static class SimConstants {
+        public static final int kNumElevatorMotors = 2;
+        public static final int kElevatorMotorPort = 1;
+        public static final int kElevatorEncoderAChannel = 3;
+        public static final int kElevatorEncoderBChannel = 4;
+
+        public static final double kElevatorDrumRadius = Units.inchesToMeters(1.75 / 2.0);
+        public static final double kElevatorCarriageMass = Units.lbsToKilograms(15);
+        public static final double kElevatorGearing = 20.0;
+        public static final double kElevatorEncoderDistPerPulse = 2.0 * Math.PI * kElevatorDrumRadius / 4096.0;
+
+        public static final double kMinimumElevatorLength = Units.inchesToMeters(0);
+        public static final double kMaximumElevatorLength = Units.inchesToMeters(50);
+
+        public static final double kElevatorP = 15;
+        public static final double kElevatorI = 0;
+        public static final double kElevatorD = 0;
+
+        public static final int kNumPivotMotors = 2;
+        public static final int kPivotMotorPort = 2;
+        public static final int kPivotEncoderAChannel = 5;
+        public static final int kPivotEncoderBChannel = 6;
+
+        public static final double kPivotArmMass = kElevatorCarriageMass + Units.lbsToKilograms(10);
+        public static final double kPivotGearing = 20.0 * 52.0 / 12.0;
+        public static final double kPivotEncoderDistPerPulse = 2.0 * Math.PI / 4096;
+
+        public static final double kMinimumPivotAngle = 0.0;
+        public static final double kMaximumPivotAngle = 180;
+
+        public static final double kPivotP = 4;
+        public static final double kPivotI = 0;
+        public static final double kPivotD = 0;
+
+        public static final double kLoopTime = 0.020;
     }
 }
