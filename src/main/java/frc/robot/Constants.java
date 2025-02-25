@@ -111,10 +111,10 @@ public class Constants {
         public static final double kElevatorGearing = 20.0;
         public static final double kElevatorEncoderDistPerPulse = 2.0 * Math.PI * kElevatorDrumRadius / 4096.0;
 
-        public static final double kMinimumElevatorLength = Units.inchesToMeters(0);
-        public static final double kMaximumElevatorLength = Units.inchesToMeters(50);
+        public static final double kMinimumElevatorLength = Units.inchesToMeters(15);
+        public static final double kMaximumElevatorLength = Units.inchesToMeters(60);
 
-        public static final double kElevatorP = 15;
+        public static final double kElevatorP = 25;
         public static final double kElevatorI = 0;
         public static final double kElevatorD = 0;
 
@@ -127,8 +127,8 @@ public class Constants {
         public static final double kPivotGearing = 20.0 * 52.0 / 12.0;
         public static final double kPivotEncoderDistPerPulse = 2.0 * Math.PI / 4096;
 
-        public static final double kMinimumPivotAngle = 0.0;
-        public static final double kMaximumPivotAngle = 180;
+        public static final double kMinimumPivotAngle = -30;
+        public static final double kMaximumPivotAngle = 95.0;
 
         public static final double kPivotP = 4;
         public static final double kPivotI = 0;

@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ArmSim;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.PivotSubsystem.PivotPosition;
@@ -39,24 +41,26 @@ public class RobotContainer {
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     // SWERVE 
-    public CommandSwerveDrivetrain drivetrain;
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
 
     private ElevatorSubsystem elevator;
     private PivotSubsystem pivot;
+
+    private ArmSim armSim;
 
     // LEDController ledcontroller = new LEDController(pivot, elevator, rotateWrits, tiltWrist);
 
     // if(!pivot.isAtSetpoint())
 
     public RobotContainer() {
-        drivetrain = TunerConstants.createDrivetrain();
-        configureSimBindings();
         if(Robot.isReal()) {
             elevator = new ElevatorSubsystem();
             pivot = new PivotSubsystem();
-            configureBindings();
+        } else if(Robot.isSimulation()) {
+            armSim = new ArmSim();
         }
+        configureBindings();
     }
 
     private void configureBindings() {
@@ -72,22 +76,27 @@ public class RobotContainer {
         );
 
         // pivot.setDefaultCommand(pivot.printPosition());
-        elevator.setDefaultCommand(elevator.printPosition());
+        if(Robot.isReal()) {
+            elevator.setDefaultCommand(elevator.printPosition());
+        }
 
-        driverController.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        driverController.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-driverController.getLeftY(), -driverController.getLeftX()))
-        ));
+        if(Robot.isReal()) {
+            driverController.a().whileTrue(drivetrain.applyRequest(() -> brake));
+            driverController.b().whileTrue(drivetrain.applyRequest(() ->
+                point.withModuleDirection(new Rotation2d(-driverController.getLeftY(), -driverController.getLeftX()))
+            ));
 
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        driverController.back().and(driverController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        driverController.back().and(driverController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        driverController.start().and(driverController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+            // Run SysId routines when holding back/start and X/Y.
+            // Note that each routine should be run exactly once in a single log.
+            driverController.back().and(driverController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+            driverController.back().and(driverController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+            driverController.start().and(driverController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+            driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        // reset the field-centric heading
-        driverController.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+            // reset the field-centric heading
+            driverController.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        }
+        
         // setup logger
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -128,11 +137,12 @@ public class RobotContainer {
         //             .handleInterrupt(elevator::stopMotorManual)
         //         );
 
-        operatorController.povUp().whileTrue(elevator.setRaw(.2)).onFalse(elevator.setRaw(0));
-        operatorController.povDown().whileTrue(elevator.setRaw(-.2)).onFalse(elevator.setRaw(0));
-        operatorController.x().onTrue(elevator.setPosition(ElevatorPosition.STORED));
-        operatorController.y().onTrue(elevator.setPosition(ElevatorPosition.PID_TESTING).onlyIf(() -> pivot.currentTargetPosition != PivotPosition.STORED));
-
+        if(Robot.isReal()) {
+            operatorController.povUp().whileTrue(elevator.setRaw(.2)).onFalse(elevator.setRaw(0));
+            operatorController.povDown().whileTrue(elevator.setRaw(-.2)).onFalse(elevator.setRaw(0));
+            operatorController.x().onTrue(elevator.setPosition(ElevatorPosition.STORED));
+            operatorController.y().onTrue(elevator.setPosition(ElevatorPosition.PID_TESTING).onlyIf(() -> pivot.currentTargetPosition != PivotPosition.STORED));
+        }
         // Operator Controller
         // operatorController.povUp().onTrue(pivot.setPosition(PivotPosition.L_FOUR)
         //     .andThen(pivot.waitUntilAtSetpoint()));
@@ -150,21 +160,18 @@ public class RobotContainer {
         //     .andThen(pivot.waitUntilAtSetpoint()));
         // operatorController.rightStick().onTrue(pivot.setPosition(PivotPosition.COBRA_STANCE)
         //     .andThen(pivot.waitUntilAtSetpoint()));
+        if(Robot.isReal()) {
+            operatorController.povRight().whileTrue(pivot.setRaw(.2)).onFalse(pivot.setRaw(0));
+            operatorController.povLeft().whileTrue(pivot.setRaw(-.2)).onFalse(pivot.setRaw(0));
+            operatorController.a().onTrue(pivot.setPosition(PivotPosition.STORED).onlyIf(() -> elevator.currentTargetPosition == ElevatorPosition.STORED));
+            operatorController.b().onTrue(pivot.setPosition(PivotPosition.TESTING_PID));
+        }
 
-        operatorController.povRight().whileTrue(pivot.setRaw(.2)).onFalse(pivot.setRaw(0));
-        operatorController.povLeft().whileTrue(pivot.setRaw(-.2)).onFalse(pivot.setRaw(0));
-        operatorController.a().onTrue(pivot.setPosition(PivotPosition.STORED).onlyIf(() -> elevator.currentTargetPosition == ElevatorPosition.STORED));
-        operatorController.b().onTrue(pivot.setPosition(PivotPosition.TESTING_PID));
-    }
-
-    private void configureSimBindings() {
-        drivetrain.setDefaultCommand(
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-driverController.getLeftY() * SwerveConstants.kMaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-driverController.getLeftX() * SwerveConstants.kMaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-driverController.getRightX() * SwerveConstants.kMaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
-        );
+        if(Robot.isSimulation()) {
+            driverController.a().onTrue(armSim.pivotUpright().andThen(armSim.waitUntilPivotSetpoint()).andThen(armSim.elevatorL4()));
+            driverController.b().onTrue(armSim.elevatorStored().andThen(armSim.waitUntilElevatorSetpoint()).andThen(armSim.pivotStored()));
+            driverController.x().onTrue(armSim.pivotSourceIntake().andThen(armSim.waitUntilPivotSetpoint()).andThen(armSim.elevatorSourceIntake()));
+        }
     }
 
     public Command getAutonomousCommand() {

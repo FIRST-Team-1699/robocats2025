@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,9 +18,12 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.SimConstants;
 
-public class ArmSim {
+public class ArmSim extends SubsystemBase {
     private final DCMotor elevatorGearbox = DCMotor.getNEO(SimConstants.kNumElevatorMotors);
     private final DCMotor pivotGearbox = DCMotor.getNEO(SimConstants.kNumPivotMotors);
 
@@ -31,7 +34,7 @@ public class ArmSim {
     private final Encoder pivotEncoder = new Encoder(SimConstants.kPivotEncoderAChannel, SimConstants.kPivotEncoderBChannel);
 
     private final ProfiledPIDController elevatorController = 
-        new ProfiledPIDController(SimConstants.kElevatorP, SimConstants.kElevatorI, SimConstants.kElevatorD, new TrapezoidProfile.Constraints(10, 5));
+        new ProfiledPIDController(SimConstants.kElevatorP, SimConstants.kElevatorI, SimConstants.kElevatorD, new TrapezoidProfile.Constraints(20, 10));
     private final ProfiledPIDController pivotController = 
         new ProfiledPIDController(SimConstants.kPivotP, SimConstants.kPivotI, SimConstants.kPivotD, new TrapezoidProfile.Constraints(30, 10));
 
@@ -44,18 +47,18 @@ public class ArmSim {
             SimConstants.kMinimumElevatorLength, 
             SimConstants.kMaximumElevatorLength,
             true,
-            0.5);
+            SimConstants.kMinimumElevatorLength);
 
     private final SingleJointedArmSim pivotSim =
         new SingleJointedArmSim(
             pivotGearbox, 
             SimConstants.kPivotGearing, 
             SingleJointedArmSim.estimateMOI(SimConstants.kMaximumElevatorLength / 2.0, SimConstants.kPivotArmMass), 
-            SimConstants.kMaximumElevatorLength, 
-            Rotation2d.fromDegrees(SimConstants.kMinimumPivotAngle).getRadians(), 
-            Rotation2d.fromDegrees(SimConstants.kMaximumPivotAngle).getRadians(), 
+            SimConstants.kMaximumElevatorLength / 2.0, 
+            Units.degreesToRadians(SimConstants.kMinimumPivotAngle), 
+            Units.degreesToRadians(SimConstants.kMaximumPivotAngle), 
             true, 
-            Units.degreesToRadians(90));
+            Units.degreesToRadians(SimConstants.kMinimumPivotAngle));
 
     private final EncoderSim elevatorEncoderSim = new EncoderSim(elevatorEncoder);
     private final EncoderSim pivotEncoderSim = new EncoderSim(pivotEncoder);
@@ -63,13 +66,13 @@ public class ArmSim {
     private final PWMSim elevatorMotorSim = new PWMSim(elevatorMotor);
     private final PWMSim pivotMotorSim = new PWMSim(pivotMotor);
 
-    private final Mechanism2d mechanism = new Mechanism2d(Units.inchesToMeters(20), Units.inchesToMeters(50));
-    private final MechanismRoot2d root = mechanism.getRoot("Arm Root", Units.inchesToMeters(3), Units.inchesToMeters(4));
+    private final Mechanism2d mechanism = new Mechanism2d(Units.inchesToMeters(30), Units.inchesToMeters(70));
+    private final MechanismRoot2d root = mechanism.getRoot("Arm Root", Units.inchesToMeters(3), Units.inchesToMeters(15));
     private final MechanismLigament2d arm = root.append(
         new MechanismLigament2d(
             "Arm", 
-            1, 
-            45.0));
+            SimConstants.kMinimumElevatorLength, 
+            SimConstants.kMinimumPivotAngle));
 
     public ArmSim() {
         elevatorEncoder.setDistancePerPulse(SimConstants.kElevatorEncoderDistPerPulse);
@@ -78,6 +81,52 @@ public class ArmSim {
         SmartDashboard.putData("ArmSim", mechanism);
     }
 
+    public Command pivotUpright() {
+        return runOnce(() -> setPivotGoal(Units.degreesToRadians(95)));
+    }
+
+    public Command pivotStored() {
+        return runOnce(() -> setPivotGoal(Units.degreesToRadians(-5)));
+    }
+
+    public Command pivotSourceIntake() {
+        return runOnce(() -> setPivotGoal(Units.degreesToRadians(40)));
+    }
+
+    public Command waitUntilPivotSetpoint() {
+        return new WaitUntilCommand(() -> Math.abs(pivotController.getPositionError()) < Units.degreesToRadians(1));
+    }
+
+    public Command elevatorL4() {
+        return runOnce(() -> setElevatorGoal(Units.inchesToMeters(60)));
+    }
+
+    public Command elevatorStored() {
+        return runOnce(() -> setElevatorGoal(Units.inchesToMeters(23)));
+    }
+
+    public Command elevatorSourceIntake() {
+        return runOnce(() -> setElevatorGoal(Units.inchesToMeters(35)));
+    }
+
+    public Command waitUntilElevatorSetpoint() {
+        return new WaitUntilCommand(() -> Math.abs(elevatorController.getPositionError()) < .0025);
+    }
+
+    private void setElevatorGoal(double goal) {
+        elevatorController.setGoal(goal);
+    }
+
+    private void setPivotGoal(double goal) {
+        pivotController.setGoal(goal);
+    }
+
+    private void updateTelemetry() {
+        arm.setLength(elevatorSim.getPositionMeters());
+        arm.setAngle(Rotation2d.fromRadians(pivotSim.getAngleRads()));
+    }
+
+    @Override
     public void simulationPeriodic() {
         elevatorSim.setInput(elevatorMotorSim.getSpeed() * RobotController.getBatteryVoltage());
         pivotSim.setInput(pivotMotorSim.getSpeed() * RobotController.getBatteryVoltage());
@@ -93,34 +142,13 @@ public class ArmSim {
                 elevatorSim.getCurrentDrawAmps() + pivotSim.getCurrentDrawAmps()
             )
         );
-    }
 
-    public void setElevatorGoal(double goal) {
-        elevatorController.setGoal(goal);
+        double elevatorOutput = elevatorController.calculate(elevatorEncoder.getDistance());
+        elevatorMotor.setVoltage(elevatorOutput);
 
-        double pidOutput = elevatorController.calculate(elevatorEncoder.getDistance());
-        elevatorMotor.setVoltage(pidOutput);
-    }
+        double pivotOutput = pivotController.calculate(pivotEncoder.getDistance());
+        pivotMotor.setVoltage(pivotOutput);
 
-    public void setPivotGoal(double goal) {
-        pivotController.setGoal(goal);
-
-        double pidOutput = pivotController.calculate(pivotEncoder.getDistance());
-        pivotMotor.setVoltage(pidOutput);
-    }
-
-    public void stopElevator() {
-        elevatorController.setGoal(0.0);
-        elevatorMotor.set(0.0);
-    }
-
-    public void stopPivot() {
-        pivotController.setGoal(0.0);
-        pivotMotor.set(0.0);
-    }
-
-    public void updateTelemetry() {
-        arm.setLength(elevatorSim.getPositionMeters());
-        arm.setAngle(Rotation2d.fromRadians(pivotSim.getAngleRads()));
+        updateTelemetry();
     }
 }
