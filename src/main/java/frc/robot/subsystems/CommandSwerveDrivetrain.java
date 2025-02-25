@@ -288,7 +288,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             final double currentTime = Utils.getCurrentTimeSeconds();
             double deltaTime = currentTime - m_lastSimTime;
             m_lastSimTime = currentTime;
-
             /* use the measured time delta, get battery voltage from WPILib */
             updateSimState(deltaTime, RobotController.getBatteryVoltage());
         });

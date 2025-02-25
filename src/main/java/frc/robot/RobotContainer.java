@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -49,8 +50,9 @@ public class RobotContainer {
     // if(!pivot.isAtSetpoint())
 
     public RobotContainer() {
+        drivetrain = TunerConstants.createDrivetrain();
+        configureSimBindings();
         if(Robot.isReal()) {
-            drivetrain = TunerConstants.createDrivetrain();
             elevator = new ElevatorSubsystem();
             pivot = new PivotSubsystem();
             configureBindings();
@@ -153,6 +155,16 @@ public class RobotContainer {
         operatorController.povLeft().whileTrue(pivot.setRaw(-.2)).onFalse(pivot.setRaw(0));
         operatorController.a().onTrue(pivot.setPosition(PivotPosition.STORED).onlyIf(() -> elevator.currentTargetPosition == ElevatorPosition.STORED));
         operatorController.b().onTrue(pivot.setPosition(PivotPosition.TESTING_PID));
+    }
+
+    private void configureSimBindings() {
+        drivetrain.setDefaultCommand(
+            drivetrain.applyRequest(() ->
+                drive.withVelocityX(-driverController.getLeftY() * SwerveConstants.kMaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driverController.getLeftX() * SwerveConstants.kMaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-driverController.getRightX() * SwerveConstants.kMaxAngularRate) // Drive counterclockwise with negative X (left)
+            )
+        );
     }
 
     public Command getAutonomousCommand() {

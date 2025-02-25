@@ -99,7 +99,6 @@ public class ArmSim {
         elevatorController.setGoal(goal);
 
         double pidOutput = elevatorController.calculate(elevatorEncoder.getDistance());
-        System.out.println(pidOutput);
         elevatorMotor.setVoltage(pidOutput);
     }
 
