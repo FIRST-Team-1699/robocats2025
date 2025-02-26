@@ -17,10 +17,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.RotateWristSubsystem;
 import frc.robot.subsystems.TiltWristSubsystem;
-import frc.robot.subsystems.RotateWristSubsystem.RotatationalWristPosition;
-import frc.robot.subsystems.TiltWristSubsystem.TiltWristPosition;
+import frc.robot.subsystems.IntakeSubsystem.IntakeSpeed;
 
 public class RobotContainer {
     // IO DEVICES
@@ -43,6 +43,9 @@ public class RobotContainer {
 
     // WRIST TILT
     private TiltWristSubsystem tiltWrist = new TiltWristSubsystem();
+
+    // INTAKE 
+    private IntakeSubsystem intake = new IntakeSubsystem();
 
     public RobotContainer() {
         configureBindings();
@@ -78,14 +81,45 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // OPERATOR CONTROLLER
-        operatorController.a().onTrue(rotateWrist.setRotation(RotatationalWristPosition.HORIZONTAL)
-            .andThen(rotateWrist.waitUntilAtSetpoint())
-            .andThen(tiltWrist.setTilt(TiltWristPosition.STOWED))
-            .andThen(tiltWrist.wiatUnilAtSetpoint()));
-        operatorController.povUp().onTrue(rotateWrist.setRotation(RotatationalWristPosition.VERICAL)
-            .andThen(rotateWrist.waitUntilAtSetpoint())
-            .andThen(tiltWrist.setTilt(TiltWristPosition.CSINTAKE))
-            .andThen(tiltWrist.wiatUnilAtSetpoint()));
+        // operatorController.leftTrigger()
+        //     .onTrue(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
+        //     .andThen(rotateWrist.waitUntilAtSetpoint()));
+        // operatorController.rightTrigger()
+        //     .onTrue(rotateWrist.setPosition(RotatePosition.VERTICAL)
+        //     .andThen(rotateWrist.waitUntilAtSetpoint()));
+
+        // operatorController.povRight().onTrue(tiltWrist.setPosition(TiltPosition.STORED)
+        //     .andThen(tiltWrist.waitUntilAtSetpoint()));
+        // operatorController.povUp().onTrue(tiltWrist.setPosition(TiltPosition.CORAL_STATION_INTAKE)
+        //     .andThen(tiltWrist.waitUntilAtSetpoint()));
+        // operatorController.povDown().onTrue(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE)
+        //     .andThen(tiltWrist.waitUntilAtSetpoint()));
+
+        driverController.x()
+            .onTrue(intake.setWaitingIntake(IntakeSpeed.CORAL));
+        driverController.y()
+            .onTrue(intake.setWaitingIntake(IntakeSpeed.ALGAE));
+        driverController.a()
+            .onTrue(intake.setWaitingIntake(IntakeSpeed.DESCORE_ALGAE));
+        driverController.b()
+            .onTrue(intake.setWaitingIntake(IntakeSpeed.STOP));
+
+        driverController.rightBumper()
+            .whileTrue(intake.runIntake())
+            .onFalse(intake.stopMotorCommand());
+        driverController.leftBumper()
+            .whileTrue(intake.runOutake())
+            .onFalse(intake.stopMotorCommand());
+        
+        driverController.rightTrigger()
+            .whileTrue(tiltWrist.setRaw(.05))
+            .onFalse(tiltWrist.setRaw(.05));
+        driverController.rightTrigger()
+            .whileTrue(rotateWrist.setRaw(.05))
+            .onFalse(rotateWrist.setRaw(.05));
+        
+
+
     }
 
     public Command getAutonomousCommand() {
