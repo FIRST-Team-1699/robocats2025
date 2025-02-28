@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.81,
-        "y": 2.365
+        "x": 2.0085,
+        "y": 4.1225
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.841016792935357,
-        "y": 2.6037303474129576
+        "x": 2.4960000000000004,
+        "y": 4.112749999999999
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.572,
-        "y": 2.856
+        "x": 2.97375,
+        "y": 4.1225
       },
       "prevControl": {
-        "x": 2.712443280031074,
-        "y": 2.6279330910997154
+        "x": 2.68125,
+        "y": 4.1225
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,17 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 179.06080905426438
   },
   "reversed": false,
-<<<<<<< Updated upstream:src/main/deploy/pathplanner/paths/Lollipop lower pt3.path
-  "folder": "Lollipop lower",
-=======
-  "folder": "Charlie(s) Main path",
->>>>>>> Stashed changes:src/main/deploy/pathplanner/paths/CS to 5 o'clock.path
+  "folder": "Unlikely Lolli(unfinished)",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -160.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
