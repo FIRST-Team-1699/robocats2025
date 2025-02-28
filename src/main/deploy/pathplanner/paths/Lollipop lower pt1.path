@@ -45,11 +45,7 @@
     "rotation": -59.99999999999999
   },
   "reversed": false,
-<<<<<<< Updated upstream:src/main/deploy/pathplanner/paths/Lollipop lower pt1.path
   "folder": "Lollipop lower",
-=======
-  "folder": "Charlie(s) Main path",
->>>>>>> Stashed changes:src/main/deploy/pathplanner/paths/Score 3 o'clock.path
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
