@@ -45,7 +45,11 @@
     "rotation": 179.06080905426438
   },
   "reversed": false,
+<<<<<<<< Updated upstream:src/main/deploy/pathplanner/paths/Lolli 4.path
   "folder": "Unlikely Lolli(unfinished)",
+========
+  "folder": "Charlie(s) Main path",
+>>>>>>>> Stashed changes:src/main/deploy/pathplanner/paths/CS to 4 o'clock.path
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0
