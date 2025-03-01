@@ -17,13 +17,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class IntakeSubsystem extends SubsystemBase {
 
     private SparkMax motor;
+      
     private SparkMaxConfig config;
+
     private IntakeSpeed currentIntakeSpeed;
 
     public IntakeSubsystem() {
         motor = new SparkMax(IntakeConstants.kMotorID, MotorType.kBrushless);
-
-        config = new SparkMaxConfig();
 
         currentIntakeSpeed = IntakeSpeed.STOP;
 
@@ -31,7 +31,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     private void configureMotors() {
-        SparkMaxConfig config = new SparkMaxConfig();
+        config = new SparkMaxConfig();
 
         config
             .inverted(IntakeConstants.kInverted) 
