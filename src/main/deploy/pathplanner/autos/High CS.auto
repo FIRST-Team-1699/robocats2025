@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Coral station upper pt1"
+                  "pathName": "Score 10 o'clock"
                 }
               }
             ]
@@ -24,7 +24,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Coral station upper pt2"
+                  "pathName": "1st CS"
                 }
               }
             ]
@@ -37,7 +37,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Coral station upper pt3"
+                  "pathName": "Score 9 o'clock"
                 }
               }
             ]
@@ -50,20 +50,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Coral station upper pt4"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Coral station upper pt5"
+                  "pathName": "2nd CS"
                 }
               }
             ]
@@ -73,6 +60,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Charlie Ro's auto",
   "choreoAuto": false
 }

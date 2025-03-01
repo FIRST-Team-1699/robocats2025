@@ -5,33 +5,68 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "Coral station lower pt1"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Coral station lower pt1"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "Coral station lower pt2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Coral station lower pt2"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "Coral station lower pt3"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Coral station lower pt3"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "Coral station lower pt4"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Coral station lower pt4"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "Coral station lower pt5"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Coral station lower pt5"
+                }
+              }
+            ]
           }
         }
       ]
