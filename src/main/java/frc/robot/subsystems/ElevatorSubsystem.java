@@ -163,8 +163,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Actual height", encoder.getPosition());
-        SmartDashboard.putNumber("Wanted angle", currentTargetPosition.getRotations());
+        SmartDashboard.putNumber("Elevator Height", encoder.getPosition());
+        SmartDashboard.putNumber("Target Elevator Height", currentTargetPosition.getRotations());
+        SmartDashboard.putBoolean("Elevator at Setpoint", isAtSetpoint());
     }
     
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
@@ -174,7 +175,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         PID_TESTING(20),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
-        GROUND_INTAKE(-1), CORAL_STATION_INTAKE(-1),
+        GROUND_INTAKE(7), CORAL_STATION_INTAKE(-1),
 
         L_ONE(-1), L_TWO(-1), L_THREE(-1), L_FOUR(-1);
 

@@ -10,6 +10,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,12 +24,16 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private IntakeSpeed currentIntakeSpeed;
 
+    private ShuffleboardTab intakeTab;
+
     public IntakeSubsystem() {
         motor = new SparkMax(IntakeConstants.kMotorID, MotorType.kBrushless);
 
         currentIntakeSpeed = IntakeSpeed.STOP;
 
         configureMotors();
+
+        intakeTab = Shuffleboard.getTab("Intake");
     }
 
     private void configureMotors() {
@@ -88,6 +94,9 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Intake is at hard limit", motor.getForwardLimitSwitch().isPressed());
         SmartDashboard.putNumber("Wanted intake speed", currentIntakeSpeed.speed);
         SmartDashboard.putNumber("Current intake speed", motor.get());
+
+    // intakeTab.add("Speed", motor.get());
+    // intakeTab.add("Is Running", isRunning());
     }
 
     public enum IntakeSpeed {
