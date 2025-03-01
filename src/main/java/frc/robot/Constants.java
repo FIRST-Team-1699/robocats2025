@@ -15,6 +15,10 @@ public class Constants {
         public static final double kTranslationalDeadband = kMaxSpeed * 0.1;
         public static final double kRotationalDeadband = kMaxAngularRate * 0.1;
     }
+  
+    public static class LEDConstants {
+        public static final int kPort = 0;
+        public static final int kLEDLength = 36;
 
     public static class AutoConstants {
         // TRANSLATION PID
