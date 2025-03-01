@@ -114,7 +114,7 @@ public class PivotSubsystem extends SubsystemBase {
         });
     }
 
-    /** Changes hieght/angle of pivot.
+    /** Changes height/angle of pivot.
      * @param pivotPosition
      * enum that has height value for target position.
      */
@@ -193,7 +193,7 @@ public class PivotSubsystem extends SubsystemBase {
      * @param degreePositionOne
      * Height Pivot must reach to get to state.
      */
-    public enum PivotPosition{
+    public enum PivotPosition {
         STORED(-102), PRIME(-45), SAFE_POSITION(-85), COBRA_STANCE(-1),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
