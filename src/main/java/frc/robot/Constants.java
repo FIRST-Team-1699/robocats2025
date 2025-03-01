@@ -25,12 +25,11 @@ public class Constants {
         public static final double kRotationI = 0;
         public static final double kRotationD = 0;
     }
-  
+
     public static class IntakeConstants {
         public static final int kMotorID = 40;
 
-        public static final double kMAX_LIMIT = 1;
-        public static final double kMIN_LIMIT = -1;
+        public static final boolean kInverted = false;
     }
     
     public static class ElevatorConstants {
@@ -100,8 +99,8 @@ public class Constants {
         // CONVERSION FACTOR
         public static final double kPositionConversionFactor = 360.0;
         // CURRENT LIMITS TODO: TUNE
-        public static final int kStallLimit = 80;
-        public static final int kFreeLimit = 80;
+        public static final int kStallLimit = 20;
+        public static final int kFreeLimit = 20;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
     }

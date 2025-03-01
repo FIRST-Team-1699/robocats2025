@@ -164,7 +164,7 @@ public class PivotSubsystem implements Subsystem {
      */
     public enum PivotPosition{
         STORED(-102), PRIME(0), COBRA_STANCE(-1),
-        TESTING_PID(-25),
+        TESTING_PID(-5),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
         GROUND_INTAKE(-1), CORAL_STATION_INTAKE(-1),

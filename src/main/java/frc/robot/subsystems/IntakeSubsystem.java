@@ -1,9 +1,10 @@
 package frc.robot.subsystems;
 
-
+import frc.robot.Constants.IntakeConstants;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -12,11 +13,13 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
     private SparkMax motor;
+      
+    private SparkMaxConfig config;
+
     private IntakeSpeed currentIntakeSpeed;
 
     public IntakeSubsystem() {
@@ -28,16 +31,14 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     private void configureMotors() {
-        SparkMaxConfig config = new SparkMaxConfig();
+        config = new SparkMaxConfig();
 
         config
-            .inverted(true) 
+            .inverted(IntakeConstants.kInverted) 
             .idleMode(IdleMode.kBrake);
-        // config.softLimit
-            // .forwardSoftLimit(IntakeConstants.kMAX_LIMIT)
-            // reverseSoftLimit(IntakeConstants.kMIN_LIMIT)
-            // .forwardSoftLimitEnabled(true)
-            // .reverseSoftLimitEnabled(true);
+        // config.limitSwitch
+        //     .forwardLimitSwitchEnabled(true)
+        //     .forwardLimitSwitchType(Type.kNormallyOpen);
 
         motor.configureAsync(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -72,6 +73,10 @@ public class IntakeSubsystem extends SubsystemBase {
         return runOnce(() -> motor.set(0));
     }
 
+    public Command runIntake(double percentage) {
+        return runOnce(() -> motor.set(percentage));
+    }
+
     // public Command setRaw(double speed) {
     //     return runOnce(()-> {
     //         motor.set(speed);
@@ -80,7 +85,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Intake is Running", isRunning());
+        SmartDashboard.putBoolean("Intake is at hard limit", motor.getForwardLimitSwitch().isPressed());
         SmartDashboard.putNumber("Wanted intake speed", currentIntakeSpeed.speed);
         SmartDashboard.putNumber("Current intake speed", motor.get());
     }
