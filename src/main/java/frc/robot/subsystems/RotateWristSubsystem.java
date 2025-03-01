@@ -43,8 +43,8 @@ public class RotateWristSubsystem implements Subsystem {
         motorConfig
             .inverted(false) 
             .idleMode(IdleMode.kBrake);
-        motorConfig.absoluteEncoder
-            .positionConversionFactor(RotateWristConstants.kConversionFactor);
+        // motorConfig.absoluteEncoder
+            // .positionConversionFactor(RotateWristConstants.positionConversionFactor);
         motorConfig.closedLoop
             .outputRange(-1,1)
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)

@@ -43,8 +43,8 @@ public class TiltWristSubsystem implements Subsystem {
         motorConfig
             .inverted(false) 
             .idleMode(IdleMode.kBrake);
-        motorConfig.absoluteEncoder
-            .positionConversionFactor(TiltWristConstants.kConversionFactor);
+        // motorConfig.absoluteEncoder
+            // .positionConversionFactor(TiltWristConstants.kConversionFactor);
         motorConfig.closedLoop
             .outputRange(-1,1)
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
