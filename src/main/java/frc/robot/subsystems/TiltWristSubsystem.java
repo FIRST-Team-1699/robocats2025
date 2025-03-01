@@ -1,24 +1,28 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+
 import frc.robot.Constants.TiltWristConstants;
 
-public class TiltWristSubsystem implements Subsystem {
+public class TiltWristSubsystem extends SubsystemBase {
     private SparkMax motor;
-    private SparkAbsoluteEncoder encoder;
+    private SparkAbsoluteEncoder absoluteEncoder;
     private SparkClosedLoopController feedbackController;
 
     private SparkMaxConfig motorConfig;
@@ -27,9 +31,9 @@ public class TiltWristSubsystem implements Subsystem {
 
     /**Constructor for Subsystem */
     public TiltWristSubsystem() {
-        motor = new SparkMax(-1, MotorType.kBrushless);
+        motor = new SparkMax(TiltWristConstants.kMotorID, MotorType.kBrushless);
 
-        encoder = motor.getAbsoluteEncoder();
+        absoluteEncoder = motor.getAbsoluteEncoder();
 
         feedbackController = motor.getClosedLoopController();
 
@@ -41,20 +45,34 @@ public class TiltWristSubsystem implements Subsystem {
         motorConfig = new SparkMaxConfig();
         
         motorConfig
-            .inverted(false) 
-            .idleMode(IdleMode.kBrake);
-        motorConfig.absoluteEncoder
-            .positionConversionFactor(TiltWristConstants.kPositionConversionFactor);
+            .inverted(TiltWristConstants.kInverted)
+            .idleMode(TiltWristConstants.kIdleMode)
+            .smartCurrentLimit(TiltWristConstants.kStallLimit, TiltWristConstants.kFreeLimit);
         motorConfig.closedLoop
-            .outputRange(-1,1)
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-            .pidf(TiltWristConstants.kP, TiltWristConstants.kI, TiltWristConstants.kD, TiltWristConstants.kFF);
-        // motorConfig.softLimit
-        //     .forwardSoftLimit(TiltWristConstants.kMAX_LIMIT)
-        //     .reverseSoftLimit(TiltWristConstants.kMIN_LIMIT)
-        //     .forwardSoftLimitEnabled(true)
-        //     .reverseSoftLimitEnabled(true);
-        motor.configureAsync(motorConfig, SparkBase.ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            .pidf(TiltWristConstants.kP, TiltWristConstants.kI, TiltWristConstants.kD, TiltWristConstants.kFF, ClosedLoopSlot.kSlot0)
+            .pidf(TiltWristConstants.kMAXMotionP, TiltWristConstants.kMAXMotionI, TiltWristConstants.kMAXMotionD, TiltWristConstants.kMAXMotionFF, ClosedLoopSlot.kSlot1)
+            .outputRange(TiltWristConstants.kMinimumOutputLimit, TiltWristConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot0)
+            .outputRange(TiltWristConstants.kMinimumOutputLimit, TiltWristConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot1)
+        .maxMotion
+            .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot1)
+            .maxAcceleration(TiltWristConstants.kMAXMotionMaxAcceleration, ClosedLoopSlot.kSlot1)
+            .maxVelocity(TiltWristConstants.kMAXMotionMaxVelocity, ClosedLoopSlot.kSlot1)
+            .allowedClosedLoopError(TiltWristConstants.kMAXMotionAllowedError, ClosedLoopSlot.kSlot1);
+        motorConfig.encoder
+            .positionConversionFactor(TiltWristConstants.kPositionConversionFactor);
+        motorConfig.absoluteEncoder
+            .positionConversionFactor(TiltWristConstants.kPositionConversionFactor)
+            .zeroOffset(TiltWristConstants.kOffset)
+            .zeroCentered(TiltWristConstants.kZeroCentered)
+            .inverted(TiltWristConstants.kAbsoluteEncoderInverted);
+        motorConfig.softLimit
+            .forwardSoftLimit(TiltWristConstants.kMaximumRotationLimit)
+            .forwardSoftLimitEnabled(true)
+            .reverseSoftLimit(TiltWristConstants.kMinimumRotationLimit)
+            .reverseSoftLimitEnabled(true);
+
+        motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /**Sets Tilt position for writs
@@ -84,7 +102,7 @@ public class TiltWristSubsystem implements Subsystem {
 
     /**Returns double, representing error between target position and actual position */
     public double getError() {
-        return Math.abs(Math.abs(currentTargetPosition.degreePosition) - Math.abs(encoder.getPosition()));
+        return Math.abs(Math.abs(currentTargetPosition.degreePosition) - Math.abs(absoluteEncoder.getPosition()));
     }
 
     /**returns command to stop motor */
@@ -94,15 +112,28 @@ public class TiltWristSubsystem implements Subsystem {
         });
     }
 
-    public Command setRaw(double degree) {
+    public Command setRaw(double percentage) {
         return runOnce(() -> {
-            motor.set(degree);
+            motor.set(percentage);
         });
+    }
+
+    public double getPosition() {
+        return absoluteEncoder.getPosition();
+    }
+
+    public Command printPosition() {
+        return run(() -> System.out.println(getPosition()));
+    }
+
+    public void setIdleMode(IdleMode idleMode) {
+        motorConfig.idleMode(idleMode);
+        motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Actual Tilt Wrist Angle", encoder.getPosition());
+        SmartDashboard.putNumber("Actual Tilt Wrist Angle", absoluteEncoder.getPosition());
         SmartDashboard.putNumber("Wanted Tilt Wrist Angle", currentTargetPosition.degreePosition);
     }
 

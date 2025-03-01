@@ -1,24 +1,28 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+
 import frc.robot.Constants.RotateWristConstants;
 
-public class RotateWristSubsystem implements Subsystem {
+public class RotateWristSubsystem extends SubsystemBase {
     private SparkMax motor;
-    private SparkAbsoluteEncoder encoder;
+    private SparkAbsoluteEncoder absoluteEncoder;
     private SparkClosedLoopController feedbackController;
 
     private SparkMaxConfig motorConfig;
@@ -27,9 +31,9 @@ public class RotateWristSubsystem implements Subsystem {
 
     /**Constructor for Subsystem */
     public RotateWristSubsystem() {
-        motor = new SparkMax(-1, MotorType.kBrushless);
+        motor = new SparkMax(RotateWristConstants.kMotorID, MotorType.kBrushless);
 
-        encoder = motor.getAbsoluteEncoder();
+        absoluteEncoder = motor.getAbsoluteEncoder();
 
         feedbackController = motor.getClosedLoopController();
 
@@ -41,20 +45,34 @@ public class RotateWristSubsystem implements Subsystem {
         motorConfig = new SparkMaxConfig();
         
         motorConfig
-            .inverted(false) 
-            .idleMode(IdleMode.kBrake);
-        motorConfig.absoluteEncoder
-            .positionConversionFactor(RotateWristConstants.kPositionConversionFactor);
+            .inverted(RotateWristConstants.kInverted)
+            .idleMode(RotateWristConstants.kIdleMode)
+            .smartCurrentLimit(RotateWristConstants.kStallLimit, RotateWristConstants.kFreeLimit);
         motorConfig.closedLoop
-            .outputRange(-1,1)
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-            .pidf(RotateWristConstants.kP, RotateWristConstants.kI, RotateWristConstants.kD, RotateWristConstants.kFF);
-        // motorConfig.softLimit
-        //     .forwardSoftLimit(RotateWristConstants.kMAX_LIMIT)
-        //     .reverseSoftLimit(RotateWristConstants.kMIN_LIMIT)
-        //     .forwardSoftLimitEnabled(true)
-        //     .reverseSoftLimitEnabled(true);
-        motor.configureAsync(motorConfig, SparkBase.ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            .pidf(RotateWristConstants.kP, RotateWristConstants.kI, RotateWristConstants.kD, RotateWristConstants.kFF, ClosedLoopSlot.kSlot0)
+            .pidf(RotateWristConstants.kMAXMotionP, RotateWristConstants.kMAXMotionI, RotateWristConstants.kMAXMotionD, RotateWristConstants.kMAXMotionFF, ClosedLoopSlot.kSlot1)
+            .outputRange(RotateWristConstants.kMinimumOutputLimit, RotateWristConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot0)
+            .outputRange(RotateWristConstants.kMinimumOutputLimit, RotateWristConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot1)
+        .maxMotion
+            .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot1)
+            .maxAcceleration(RotateWristConstants.kMAXMotionMaxAcceleration, ClosedLoopSlot.kSlot1)
+            .maxVelocity(RotateWristConstants.kMAXMotionMaxVelocity, ClosedLoopSlot.kSlot1)
+            .allowedClosedLoopError(RotateWristConstants.kMAXMotionAllowedError, ClosedLoopSlot.kSlot1);
+        motorConfig.encoder
+            .positionConversionFactor(RotateWristConstants.kPositionConversionFactor);
+        motorConfig.absoluteEncoder
+            .positionConversionFactor(RotateWristConstants.kPositionConversionFactor)
+            .zeroOffset(RotateWristConstants.kOffset)
+            .zeroCentered(RotateWristConstants.kZeroCentered)
+            .inverted(RotateWristConstants.kAbsoluteEncoderInverted);
+        motorConfig.softLimit
+            .forwardSoftLimit(RotateWristConstants.kMaximumRotationLimit)
+            .forwardSoftLimitEnabled(true)
+            .reverseSoftLimit(RotateWristConstants.kMinimumRotationLimit)
+            .reverseSoftLimitEnabled(true);
+            
+        motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /**Sets rotate position for writs
@@ -82,7 +100,7 @@ public class RotateWristSubsystem implements Subsystem {
 
     /**Returns double, representing error between target position and actual position */
     public double getError() {
-        return Math.abs(Math.abs(currentTargetPosition.degrees) - Math.abs(encoder.getPosition()));
+        return Math.abs(Math.abs(currentTargetPosition.degrees) - Math.abs(absoluteEncoder.getPosition()));
     }
 
     /**Returns a command to stop motor */
@@ -92,15 +110,28 @@ public class RotateWristSubsystem implements Subsystem {
         });
     }
 
-    public Command setRaw(double degree) {
+    public Command setRaw(double percentage) {
         return runOnce(() -> {
-            motor.set(degree);
+            motor.set(percentage);
         });
+    }
+
+    public double getPosition() {
+        return absoluteEncoder.getPosition();
+    }
+
+    public Command printPosition() {
+        return run(() -> System.out.println(getPosition()));
+    }
+
+    public void setIdleMode(IdleMode idleMode) {
+        motorConfig.idleMode(idleMode);
+        motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Actual Rotate Wrist Angle", encoder.getPosition());
+        SmartDashboard.putNumber("Actual Rotate Wrist Angle", absoluteEncoder.getPosition());
         SmartDashboard.putNumber("Wanted Rotate Wrist Angle", currentTargetPosition.degrees);
     }
 
