@@ -44,7 +44,7 @@ public class RobotContainer {
 
     // SWERVE 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed)
+    private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
       
     // WRIST ROTATE
     private RotateWristSubsystem rotateWrist = new RotateWristSubsystem();
