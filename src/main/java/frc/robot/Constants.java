@@ -2,8 +2,12 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import frc.robot.generated.TunerConstants;
 
 public class Constants {
@@ -25,77 +29,12 @@ public class Constants {
         public static final double kRotationI = 0;
         public static final double kRotationD = 0;
     }
-    
-    public static class ElevatorConstants {
-        // MOTOR CAN BUS IDS
-        public static final int kLeaderID = 46;
-        public static final int kFollowerID = 45;
-        // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = .1;
-        public static final double kI = 0;
-        public static final double kD = 0;
-        public static final double kFF = 0;
-        // MAXMOTION CONSTANTS TODO: TUNE
-        public static final double kMAXMotionP = 0;
-        public static final double kMAXMotionI = 0;
-        public static final double kMAXMotionD = 0;
-        public static final double kMAXMotionFF = 0;
-        public static final double kMAXMotionMaxAcceleration = 0;
-        public static final double kMAXMotionMaxVelocity = 0;
-        public static final double kMAXMotionAllowedError = 0;
-        // TOLERANCE FOR PID ERROR
-        public static final double kTolerance = 1.0; // TODO: TUNE
-        // LIMIT VALUES
-        public static final double kMinimumRotationLimit = -5; // TODO: SET
-        public static final double kMaximumRotationLimit = 100; // TODO: SET
-        public static final double kMinimumOutputLimit = -.8;
-        public static final double kMaximumOutputLimit = .8;
-        // INVERSIONS
-        public static final boolean kInverted = false;
-        public static final boolean kFollowerInverted = true;
-        // CURRENT LIMITS TODO: TUNE
-        public static final int kStallLimit = 80;
-        public static final int kFreeLimit = 80;
-        // IDLE MODE
-        public static final IdleMode kIdleMode = IdleMode.kBrake;
+
+    public static class VisionConstants {
+        // TODO: EXPERIEMENT W/ ON ACTUAL ROBOT
+        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(-1,-1,-1);
+        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(-1,-1,-1);
+        public static final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     }
     
-    public static class PivotConstants {
-        // MOTOR CAN BUS IDS
-        public static final int kLeaderID = 44;
-        public static final int kFollowerID = 43;
-        // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = .012;
-        public static final double kI = 0;
-        public static final double kD = 0;
-        public static final double kFF = 0;
-        // MAXMOTION CONSTANTS TODO: TUNE
-        public static final double kMAXMotionP = 0;
-        public static final double kMAXMotionI = 0;
-        public static final double kMAXMotionD = 0;
-        public static final double kMAXMotionFF = 0;
-        public static final double kMAXMotionMaxAcceleration = 0;
-        public static final double kMAXMotionMaxVelocity = 0;
-        public static final double kMAXMotionAllowedError = 0;
-        // TOLERANCE FOR PID ERROR
-        public static final double kTolerance = 1.0; // TODO: TUNE
-        // LIMIT VALUES
-        public static final double kMinimumRotationLimit = -105; // TODO: SET
-        public static final double kMaximumRotationLimit = 5; // TODO: SET
-        public static final double kMinimumOutputLimit = -.8;
-        public static final double kMaximumOutputLimit = .8;
-        // INVERSIONS
-        public static final boolean kInverted = false;
-        public static final boolean kFollowerInverted = true;
-        public static final boolean kAbsoluteEncoderInverted = true;
-        // OFFSET
-        public static final double kOffset = 0.7140662; // TODO: SET
-        // CONVERSION FACTOR
-        public static final double kPositionConversionFactor = 360.0;
-        // CURRENT LIMITS TODO: TUNE
-        public static final int kStallLimit = 80;
-        public static final int kFreeLimit = 80;
-        // IDLE MODE
-        public static final IdleMode kIdleMode = IdleMode.kBrake;
-    }
 }
