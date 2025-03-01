@@ -72,7 +72,7 @@ public class Constants {
         public static final int kLeaderID = 44;
         public static final int kFollowerID = 43;
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = .02;
+        public static final double kP = .03;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
@@ -85,7 +85,7 @@ public class Constants {
         public static final double kMAXMotionMaxVelocity = 1000;
         public static final double kMAXMotionAllowedError = 1;
         // TOLERANCE FOR PID ERROR
-        public static final double kTolerance = 2.0; // TODO: TUNE
+        public static final double kTolerance = 1.5; // TODO: TUNE
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -105; // TODO: SET
         public static final double kMaximumRotationLimit = 5; // TODO: SET
@@ -96,21 +96,23 @@ public class Constants {
         public static final boolean kFollowerInverted = true;
         public static final boolean kAbsoluteEncoderInverted = true;
         // OFFSET
-        public static final double kOffset = 0.5424425; // TODO: SET
+        public static final double kOffset = 0.8174936; // TODO: SET
         // CONVERSION FACTOR
         public static final double kPositionConversionFactor = 360.0;
         // CURRENT LIMITS TODO: TUNE
-        public static final int kStallLimit = 30;
-        public static final int kFreeLimit = 30;
+        public static final int kStallLimit = 60;
+        public static final int kFreeLimit = 35;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
+        // DEFINING UNSAFE POSITION
+        public static final double kUnsafePosition = -95; //TODO: REPLACE THE FUNNY NUMBER WITH AN ACTUAL POSITION
     }
   
   public static class TiltWristConstants {
         // MOTOR CAN BUS IDS TODO: CONFIRM
         public static final int kMotorID = 41; // CONFIRM
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = 0.01;
+        public static final double kP = 0.015;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
@@ -171,7 +173,7 @@ public class Constants {
         public static final boolean kAbsoluteEncoderInverted = false;
         // CONVERSION FACTOR AND OFFSETS
         public static final double kPositionConversionFactor = 360.0;
-        public static final double kOffset = 0.7550457; // TODO: SET
+        public static final double kOffset = 0.4018732; // TODO: SET
         public static final boolean kZeroCentered = true;
         // CURRENT LIMITS TODO: TUNE
         public static final int kStallLimit = 10;

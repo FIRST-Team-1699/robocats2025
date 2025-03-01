@@ -1,11 +1,16 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants.PivotConstants;
-
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+
+import java.util.function.BooleanSupplier;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
@@ -35,6 +40,8 @@ public class PivotSubsystem extends SubsystemBase {
     // CURRENT POSITION
     public PivotPosition currentTargetPosition;
 
+    private ShuffleboardTab pivotTab;
+
     /** Constructs a pivot. */
     public PivotSubsystem() {
         // MOTORS
@@ -52,6 +59,7 @@ public class PivotSubsystem extends SubsystemBase {
         followConfig = new SparkMaxConfig();
         // CONFIGURE MOTORS
         configureMotors();
+        configureShuffleboard();
     }
 
     /** Sets the configurations for each motor. */
@@ -91,6 +99,10 @@ public class PivotSubsystem extends SubsystemBase {
         followMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
+    private void configureShuffleboard() {
+        pivotTab = Shuffleboard.getTab("Pivot");
+    }
+
     /** Changes hieght/angle of pivot.
      * @param pivotPosition
      * enum that has height value for target position.
@@ -98,27 +110,19 @@ public class PivotSubsystem extends SubsystemBase {
     public Command setPosition(PivotPosition pivotPosition) {
         return runOnce(() -> {
             currentTargetPosition = pivotPosition;
-            feedbackController.setReference(pivotPosition.getDegrees(), SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0);
+            feedbackController.setReference(pivotPosition.getRotations(), SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0);
         });
     }
 
-    /** Changes hieght/angle of pivot.
+    /** Changes height/angle of pivot.
      * @param pivotPosition
      * enum that has height value for target position.
      */
     public Command setSmartPosition(PivotPosition pivotPosition) {
         return runOnce(() -> {
             currentTargetPosition = pivotPosition;
-            feedbackController.setReference(pivotPosition.getDegrees(), SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot1);
+            feedbackController.setReference(pivotPosition.getRotations(), SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot1);
         });
-    }
-
-    /**gets the direction of Pivot, used for determining order of command groups.
-     * @param newPosition
-     * The new position to determine direction
-     */
-    public boolean isPivotRising(PivotPosition newPosition) {
-        return (newPosition.getDegrees() - currentTargetPosition.getDegrees() > 0);
     }
 
     public Command waitUntilAtSetpoint() {
@@ -126,13 +130,22 @@ public class PivotSubsystem extends SubsystemBase {
             return isAtSetpoint();
         });
     }
+    /**Returns if currentTargetPosition is not at ground intake
+     */
+    public boolean isRobotPositionSafe() {
+        return currentTargetPosition.rotations > PivotConstants.kUnsafePosition;
+    }
+
+    public Command moveToSafePosition() {
+        return setPosition(PivotPosition.SAFE_POSITION).onlyIf(() -> !isRobotPositionSafe());
+    }
 
     public boolean isAtSetpoint() {
         return getError() < PivotConstants.kTolerance;
     }
     
     private double getError() {
-        return Math.abs(Math.abs(getPosition()) - Math.abs(currentTargetPosition.getDegrees()));
+        return Math.abs(Math.abs(getPosition()) - Math.abs(currentTargetPosition.getRotations()));
     }
 
     /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
@@ -166,29 +179,34 @@ public class PivotSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Actual Pivot Angle", absoluteEncoder.getPosition());
-        SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getDegrees());
+        SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getRotations());
         SmartDashboard.putNumber("Pivot Error", getError());
         SmartDashboard.putBoolean("Pivot At Setpoint", isAtSetpoint());
+        SmartDashboard.putBoolean("Safe Zone", isRobotPositionSafe());
+
+        // pivotTab.("Setpoint", currentTargetPosition.getRotations());
+        // pivotTab.add("Current Position", absoluteEncoder.getPosition());
+        // pivotTab.add("At Setpoint", isAtSetpoint());
     }
     
     /**Enum, holds position of pivot.
      * @param degreePositionOne
      * Height Pivot must reach to get to state.
      */
-    public enum PivotPosition{
-        STORED(-102), PRIME(-45), COBRA_STANCE(-1),
+    public enum PivotPosition {
+        STORED(-102), PRIME(-45), SAFE_POSITION(-85), COBRA_STANCE(-1),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
-        GROUND_INTAKE(-1), CORAL_STATION_INTAKE(-50),
+        GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-50),
 
         L_ONE(-60), L_TWO(-50), L_THREE(0), L_FOUR(0);
-        private double degrees;
-        PivotPosition(double degrees) {
-            this.degrees = degrees;
+        private double rotations;
+        PivotPosition(double rotations) {
+            this.rotations = rotations;
         }
 
-        public double getDegrees() {
-            return this.degrees;
+        public double getRotations() {
+            return this.rotations;
         }
     }
 }
