@@ -36,9 +36,9 @@ public class IntakeSubsystem extends SubsystemBase {
         config
             .inverted(IntakeConstants.kInverted) 
             .idleMode(IdleMode.kBrake);
-        // config.limitSwitch
-        //     .forwardLimitSwitchEnabled(true)
-        //     .forwardLimitSwitchType(Type.kNormallyOpen);
+        config.limitSwitch
+            .forwardLimitSwitchEnabled(false);
+            // .forwardLimitSwitchType(Type.kNormallyOpen);
 
         motor.configureAsync(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }

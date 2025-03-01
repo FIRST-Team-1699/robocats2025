@@ -4,7 +4,7 @@ import frc.robot.Constants.PivotConstants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 import com.revrobotics.AbsoluteEncoder;
@@ -21,7 +21,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-public class PivotSubsystem implements Subsystem {
+public class PivotSubsystem extends SubsystemBase {
     // TODO: USE ABSOLUTE ENCODER FOR INITALIZATION, RELATIVE OTHERWISE
     // MOTORS
     private SparkMax leadMotor, followMotor;
@@ -98,7 +98,18 @@ public class PivotSubsystem implements Subsystem {
     public Command setPosition(PivotPosition pivotPosition) {
         return runOnce(() -> {
             currentTargetPosition = pivotPosition;
-            feedbackController.setReference(pivotPosition.getDegrees(), SparkBase.ControlType.kPosition);
+            feedbackController.setReference(pivotPosition.getDegrees(), SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        });
+    }
+
+    /** Changes hieght/angle of pivot.
+     * @param pivotPosition
+     * enum that has height value for target position.
+     */
+    public Command setSmartPosition(PivotPosition pivotPosition) {
+        return runOnce(() -> {
+            currentTargetPosition = pivotPosition;
+            feedbackController.setReference(pivotPosition.getDegrees(), SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot1);
         });
     }
 
@@ -107,7 +118,7 @@ public class PivotSubsystem implements Subsystem {
      * The new position to determine direction
      */
     public boolean isPivotRising(PivotPosition newPosition) {
-        return (newPosition.getDegrees() - currentTargetPosition.getDegrees() > 0 );
+        return (newPosition.getDegrees() - currentTargetPosition.getDegrees() > 0);
     }
 
     public Command waitUntilAtSetpoint() {
@@ -121,7 +132,7 @@ public class PivotSubsystem implements Subsystem {
     }
     
     private double getError() {
-        return Math.abs(Math.abs(encoder.getPosition()) - Math.abs(currentTargetPosition.getDegrees()));
+        return Math.abs(Math.abs(getPosition()) - Math.abs(currentTargetPosition.getDegrees()));
     }
 
     /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
@@ -154,8 +165,10 @@ public class PivotSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
-        // SmartDashboard.putNumber("Actual Pivot Angle", absoluteEncoder.getPosition());
-        // SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getDegrees());
+        SmartDashboard.putNumber("Actual Pivot Angle", absoluteEncoder.getPosition());
+        SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getDegrees());
+        SmartDashboard.putNumber("Pivot Error", getError());
+        SmartDashboard.putBoolean("Pivot At Setpoint", isAtSetpoint());
     }
     
     /**Enum, holds position of pivot.
@@ -163,13 +176,12 @@ public class PivotSubsystem implements Subsystem {
      * Height Pivot must reach to get to state.
      */
     public enum PivotPosition{
-        STORED(-102), PRIME(0), COBRA_STANCE(-1),
-        TESTING_PID(-5),
+        STORED(-102), PRIME(-45), COBRA_STANCE(-1),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
-        GROUND_INTAKE(-1), CORAL_STATION_INTAKE(-1),
+        GROUND_INTAKE(-1), CORAL_STATION_INTAKE(-50),
 
-        L_ONE(-1), L_TWO(-1), L_THREE(-1), L_FOUR(-1);
+        L_ONE(-60), L_TWO(-50), L_THREE(0), L_FOUR(0);
         private double degrees;
         PivotPosition(double degrees) {
             this.degrees = degrees;
