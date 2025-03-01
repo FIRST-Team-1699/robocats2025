@@ -60,7 +60,9 @@ public class Constants {
         public static final double kMaximumOutputLimit = .8;
         // INVERSIONS
         public static final boolean kInverted = true;
-        // CURRENT LIMITS TODO: TUNE
+        // CONVERSION FACTOR
+        public static final double kPositionConversionFactor = 360.0;
+        // CURRENT LIMITS TODO: TUNE        
         public static final int kStallLimit = 10;
         public static final int kFreeLimit = 10;
         // IDLE MODE
@@ -91,7 +93,9 @@ public class Constants {
         public static final double kMinimumOutputLimit = -.8;
         public static final double kMaximumOutputLimit = .8;
         // INVERSIONS
-        public static final boolean kInverted = true;
+        public static final boolean kInverted = false;
+        // CONVERSION FACTOR
+        public static final double kPositionConversionFactor = 360.0;
         // CURRENT LIMITS TODO: TUNE
         public static final int kStallLimit = 3;
         public static final int kFreeLimit = 3;
