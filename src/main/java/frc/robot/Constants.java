@@ -28,6 +28,8 @@ public class Constants {
 
     public static class IntakeConstants {
         public static final int kMotorID = 40;
+
+        public static final boolean kInverted = false;
     }
     
     public static class ElevatorConstants {

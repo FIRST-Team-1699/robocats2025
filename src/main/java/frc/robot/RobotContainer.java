@@ -122,10 +122,10 @@ public class RobotContainer {
         //             .handleInterrupt(elevator::stopMotorManual)
         //         );
 
-        operatorController.povUp().whileTrue(elevator.setRaw(.2)).onFalse(elevator.setRaw(0));
-        operatorController.povDown().whileTrue(elevator.setRaw(-.2)).onFalse(elevator.setRaw(0));
-        operatorController.x().onTrue(elevator.setPosition(ElevatorPosition.STORED));
-        operatorController.y().onTrue(elevator.setPosition(ElevatorPosition.PID_TESTING).onlyIf(() -> pivot.currentTargetPosition != PivotPosition.STORED));
+        // operatorController.povUp().whileTrue(elevator.setRaw(.2)).onFalse(elevator.setRaw(0));
+        // operatorController.povDown().whileTrue(elevator.setRaw(-.2)).onFalse(elevator.setRaw(0));
+        // operatorController.x().onTrue(elevator.setPosition(ElevatorPosition.STORED));
+        // operatorController.y().onTrue(elevator.setPosition(ElevatorPosition.PID_TESTING).onlyIf(() -> pivot.currentTargetPosition != PivotPosition.STORED));
 
         // Operator Controller
         // operatorController.povUp().onTrue(pivot.setPosition(PivotPosition.L_FOUR)
@@ -145,13 +145,13 @@ public class RobotContainer {
         // operatorController.rightStick().onTrue(pivot.setPosition(PivotPosition.COBRA_STANCE)
         //     .andThen(pivot.waitUntilAtSetpoint()));
 
-        operatorController.povRight().whileTrue(pivot.setRaw(.2)).onFalse(pivot.setRaw(0));
-        operatorController.povLeft().whileTrue(pivot.setRaw(-.2)).onFalse(pivot.setRaw(0));
-        operatorController.a().onTrue(pivot.setPosition(PivotPosition.STORED).onlyIf(() -> elevator.currentTargetPosition == ElevatorPosition.STORED));
-        operatorController.b().onTrue(pivot.setPosition(PivotPosition.TESTING_PID));
+        // operatorController.povRight().whileTrue(pivot.setRaw(.2)).onFalse(pivot.setRaw(0));
+        // operatorController.povLeft().whileTrue(pivot.setRaw(-.2)).onFalse(pivot.setRaw(0));
+        // operatorController.a().onTrue(pivot.setPosition(PivotPosition.STORED).onlyIf(() -> elevator.currentTargetPosition == ElevatorPosition.STORED));
+        // operatorController.b().onTrue(pivot.setPosition(PivotPosition.TESTING_PID));
 
-        operatorController.rightTrigger().whileTrue(intake.runIntake(.3)).onFalse(intake.stopMotorCommand());
-        operatorController.leftTrigger().whileTrue(intake.runIntake(-.3)).onFalse(intake.stopMotorCommand());
+        driverController.rightTrigger().whileTrue(intake.runIntake(.3)).onFalse(intake.stopMotorCommand());
+        driverController.leftTrigger().whileTrue(intake.runIntake(-.3)).onFalse(intake.stopMotorCommand());
     }
 
     public Command getAutonomousCommand() {

@@ -12,9 +12,9 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class IntakeSubsystem implements Subsystem {
+public class IntakeSubsystem extends SubsystemBase {
 
     private SparkMax motor;
     private SparkMaxConfig config;
@@ -25,6 +25,8 @@ public class IntakeSubsystem implements Subsystem {
 
         config = new SparkMaxConfig();
 
+        currentIntakeSpeed = IntakeSpeed.STOP;
+
         configureMotors();
     }
 
@@ -32,11 +34,11 @@ public class IntakeSubsystem implements Subsystem {
         SparkMaxConfig config = new SparkMaxConfig();
 
         config
-            .inverted(true) 
+            .inverted(IntakeConstants.kInverted) 
             .idleMode(IdleMode.kBrake);
-        config.limitSwitch
-            .forwardLimitSwitchEnabled(true)
-            .forwardLimitSwitchType(Type.kNormallyOpen);
+        // config.limitSwitch
+        //     .forwardLimitSwitchEnabled(true)
+        //     .forwardLimitSwitchType(Type.kNormallyOpen);
 
         motor.configureAsync(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -83,7 +85,7 @@ public class IntakeSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Intake is Running", isRunning());
+        SmartDashboard.putBoolean("Intake is at hard limit", motor.getForwardLimitSwitch().isPressed());
         SmartDashboard.putNumber("Wanted intake speed", currentIntakeSpeed.speed);
         SmartDashboard.putNumber("Current intake speed", motor.get());
     }
