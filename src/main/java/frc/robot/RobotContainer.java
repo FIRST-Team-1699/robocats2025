@@ -53,9 +53,6 @@ public class RobotContainer {
     // WRIST TILT
     private TiltWristSubsystem tiltWrist = new TiltWristSubsystem();
 
-    // INTAKE 
-    private IntakeSubsystem intake = new IntakeSubsystem();
-
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final PivotSubsystem pivot = new PivotSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
