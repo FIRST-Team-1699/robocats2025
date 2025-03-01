@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.841016792935357,
-        "y": 2.6037303474129576
+        "x": 2.5254674595523694,
+        "y": 3.183001190093411
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.572,
-        "y": 2.856
+        "x": 3.0,
+        "y": 3.8
       },
       "prevControl": {
-        "x": 2.712443280031074,
-        "y": 2.6279330910997154
+        "x": 2.0661112495423533,
+        "y": 2.7906720511546994
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "Lollipop lower",

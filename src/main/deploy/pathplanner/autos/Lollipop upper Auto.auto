@@ -73,6 +73,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Charlie Ring's Auto",
   "choreoAuto": false
 }
