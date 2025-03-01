@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LEDController;
+import frc.robot.subsystems.LEDController.TargetRGB;
 
 public class RobotContainer {
     // IO DEVICES
@@ -37,7 +39,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
 
     // LED
-    LEDController leds = new LEDController(-1,pivot,elevator,rotateWrist,tiltWrist);
+    LEDController leds = new LEDController();
 
     public RobotContainer() {
         configureBindings();
@@ -74,8 +76,8 @@ public class RobotContainer {
 
         // OPERATOR CONTROLLER
         // LEDS 
-        operatorController.start().onTrue(new RunCommand(leds::start));
-        operatorController.back().onTrue(new RunCommand(leds::stop));
+        operatorController.start().onTrue(new InstantCommand(() -> leds.changeColor(TargetRGB.BASE)).ignoringDisable(true));
+        operatorController.back().onTrue(new InstantCommand(() -> leds.changeColor(TargetRGB.IN_TRANSITION)).ignoringDisable(true));
     }
 
     public Command getAutonomousCommand() {

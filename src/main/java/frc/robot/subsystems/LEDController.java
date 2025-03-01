@@ -3,11 +3,12 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
 
 
 // NOTE: THIS CLASS MAY NOT WORK INDEPENDENTLY BECAUSE THE REQUIRED SUBSYSTEMS ARE INVISIBLE TO IT 
-public class LEDController implements Subsystem {
+public class LEDController extends SubsystemBase {
     // DECLARATIONS
     private AddressableLED leds;
     private AddressableLEDBuffer ledBuffer;
@@ -16,35 +17,27 @@ public class LEDController implements Subsystem {
     private TargetRGB currentRGB;
     private boolean blink;
 
-    private ElevatorSubsystem elevator;
-    private PivotSubsystem pivot;
-    private RotateWristSubsystem rotateWrist;
-    private TiltWristSubsystem tiltWrist;
-
-    /**LED Constructor is set here
-     * @param port
-     * Location (port) set for LED strips
-     * @param ledLength
-     * The total length of LED strips
-     */
-    public LEDController(
-        PivotSubsystem pivot, ElevatorSubsystem elevator, RotateWristSubsystem rotateWrist, TiltWirstSubsystem tiltWrist) {
+    public LEDController() {
         // Constructor for LED objects
         leds = new AddressableLED(LEDConstants.kPort);
-        ledBuffer = new AddressableLEDBuffer(LEDConstants.kLED_Length);
+        ledBuffer = new AddressableLEDBuffer(LEDConstants.kLEDLength);
 
         // Sets LED length to leds
-        leds.setLength(LEDConstants.kPort);
+        leds.setLength(LEDConstants.kLEDLength);
 
         cycleTicks = 0;
 
         // SUBSYSTEMS TO USE FOR CONDITIONALS
-        elevator = new ElevatorSubsystem();
-        pivot = new PivotSubsystem();
-        rotateWrist = new RotateWristSubsystem();
-        tiltWrist = new TiltWristSubsystem();
+        // elevator = new ElevatorSubsystem();
+        // pivot = new PivotSubsystem();
+        // rotateWrist = new RotateWristSubsystem();
+        // tiltWrist = new TiltWristSubsystem();
+        blink = false;
+
         currentRGB = TargetRGB.NONE;
+        start();
     }
+
     /**Changes the colot of LEDs */
     public void changeColor(TargetRGB targetRGB) {
         // STOPS FROM WASTING RESOURCES VIA RETURN
@@ -76,35 +69,35 @@ public class LEDController implements Subsystem {
         leds.stop();
     }
     /**Runs periodically, uses conditionals to change LED color */
-    @Override
-    public void periodic() {
-        // TODO USE KNOWN DATA FROM EACH SUBSYSTEM AND MAKE A DECISION FOR THE LED STATE BASED ON ALL OPF THE SUBSYSTEMS\
-        cycleTicks++;
-        totalTicks++;
-        if(totalTicks > 50000) {
-            totalTicks = 0;
-        }
-        if(cycleTicks >= 10) {
-            if(!elevator.isAtSetpoint() 
-            || !pivot.isAtSetpoint() 
-            || !rotateWrist.isAtSetpoint()
-            || !tiltWristSusbsytem.isAtSetpoint()) {
-                changeColor(TargetRGB.IN_TRANSITION);
-            } else {
-                if(elevator.currentTargetPosition != ElevatorPositions.STORED) {
-                    changeColor(TargetRGB.AT_POSITION);
-                } else {
-                    changeColor(TargetRGB.BASE);
-                }
-                if(intake.isRunning()) {
-                    blink = true;
-                } else {
-                    blink = false;
-                }
-            } 
-            cycleTicks =0;
-        }
-    }
+    // @Override
+    // public void periodic() {
+    //     // TODO USE KNOWN DATA FROM EACH SUBSYSTEM AND MAKE A DECISION FOR THE LED STATE BASED ON ALL OPF THE SUBSYSTEMS\
+    //     cycleTicks++;
+    //     totalTicks++;
+    //     if(totalTicks > 50000) {
+    //         totalTicks = 0;
+    //     }
+    //     if(cycleTicks >= 10) {
+    //         if(!elevator.isAtSetpoint() 
+    //         || !pivot.isAtSetpoint() 
+    //         || !rotateWrist.isAtSetpoint()
+    //         || !tiltWristSusbsytem.isAtSetpoint()) {
+    //             changeColor(TargetRGB.IN_TRANSITION);
+    //         } else {
+    //             if(elevator.currentTargetPosition != ElevatorPositions.STORED) {
+    //                 changeColor(TargetRGB.AT_POSITION);
+    //             } else {
+    //                 changeColor(TargetRGB.BASE);
+    //             }
+    //             if(intake.isRunning()) {
+    //                 blink = true;
+    //             } else {
+    //                 blink = false;
+    //             }
+    //         } 
+    //         cycleTicks =0;
+    //     }
+    // }
 
     /**enums for determining RGBs of LEDs*/
     public enum TargetRGB {
