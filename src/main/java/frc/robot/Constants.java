@@ -97,8 +97,8 @@ public class Constants {
         // CONVERSION FACTOR
         public static final double kPositionConversionFactor = 360.0;
         // CURRENT LIMITS TODO: TUNE
-        public static final int kStallLimit = 80;
-        public static final int kFreeLimit = 80;
+        public static final int kStallLimit = 20;
+        public static final int kFreeLimit = 20;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
     }
