@@ -21,6 +21,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.RotateWristSubsystem;
 import frc.robot.subsystems.TiltWristSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeSpeed;
+import frc.robot.subsystems.RotateWristSubsystem.RotatePosition;
+import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
 
 public class RobotContainer {
     // IO DEVICES
@@ -54,31 +56,31 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-driverController.getLeftY() * SwerveConstants.kMaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-driverController.getLeftX() * SwerveConstants.kMaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-driverController.getRightX() * SwerveConstants.kMaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
-        );
+        // drivetrain.setDefaultCommand(
+        //     drivetrain.applyRequest(() ->
+        //         drive.withVelocityX(-driverController.getLeftY() * SwerveConstants.kMaxSpeed) // Drive forward with negative Y (forward)
+        //             .withVelocityY(-driverController.getLeftX() * SwerveConstants.kMaxSpeed) // Drive left with negative X (left)
+        //             .withRotationalRate(-driverController.getRightX() * SwerveConstants.kMaxAngularRate) // Drive counterclockwise with negative X (left)
+        //     )
+        // );
 
-        driverController.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        driverController.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-driverController.getLeftY(), -driverController.getLeftX()))
-        ));
+        // driverController.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        // driverController.b().whileTrue(drivetrain.applyRequest(() ->
+        //     point.withModuleDirection(new Rotation2d(-driverController.getLeftY(), -driverController.getLeftX()))
+        // ));
 
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        driverController.back().and(driverController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        driverController.back().and(driverController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        driverController.start().and(driverController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // // Run SysId routines when holding back/start and X/Y.
+        // // Note that each routine should be run exactly once in a single log.
+        // driverController.back().and(driverController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // driverController.back().and(driverController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // driverController.start().and(driverController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        // reset the field-centric heading
-        driverController.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // // reset the field-centric heading
+        // driverController.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        // setup logger
-        drivetrain.registerTelemetry(logger::telemeterize);
+        // // setup logger
+        // drivetrain.registerTelemetry(logger::telemeterize);
 
         // OPERATOR CONTROLLER
         // operatorController.leftTrigger()
@@ -95,31 +97,48 @@ public class RobotContainer {
         // operatorController.povDown().onTrue(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE)
         //     .andThen(tiltWrist.waitUntilAtSetpoint()));
 
-        driverController.x()
-            .onTrue(intake.setWaitingIntake(IntakeSpeed.CORAL));
-        driverController.y()
-            .onTrue(intake.setWaitingIntake(IntakeSpeed.ALGAE));
-        driverController.a()
-            .onTrue(intake.setWaitingIntake(IntakeSpeed.DESCORE_ALGAE));
-        driverController.b()
-            .onTrue(intake.setWaitingIntake(IntakeSpeed.STOP));
+        // driverController.x()
+        //     .onTrue(intake.setWaitingIntake(IntakeSpeed.CORAL));
+        // driverController.y()
+        //     .onTrue(intake.setWaitingIntake(IntakeSpeed.ALGAE));
+        // driverController.a()
+        //     .onTrue(intake.setWaitingIntake(IntakeSpeed.DESCORE_ALGAE));
+        // driverController.b()
+        //     .onTrue(intake.setWaitingIntake(IntakeSpeed.STOP));
 
-        driverController.rightBumper()
-            .whileTrue(intake.runIntake())
-            .onFalse(intake.stopMotorCommand());
-        driverController.leftBumper()
-            .whileTrue(intake.runOutake())
-            .onFalse(intake.stopMotorCommand());
+        // driverController.rightBumper()
+        //     .whileTrue(intake.runIntake())
+        //     .onFalse(intake.stopMotorCommand());
+        // driverController.leftBumper()
+        //     .whileTrue(intake.runOutake())
+        //     .onFalse(intake.stopMotorCommand());
         
-        driverController.rightTrigger()
-            .whileTrue(tiltWrist.setRaw(.05))
-            .onFalse(tiltWrist.setRaw(.05));
-        driverController.rightTrigger()
-            .whileTrue(rotateWrist.setRaw(.05))
-            .onFalse(rotateWrist.setRaw(.05));
-        
+        driverController.povLeft()
+            .onTrue(rotateWrist.setPosition(RotatePosition.VERTICAL));
+        driverController.povRight()
+            .onTrue(rotateWrist.setPosition(RotatePosition.HORIZONTAL));
 
+        driverController.povUp()
+            .onTrue(tiltWrist.setPosition(TiltPosition.STRAIGHT_UP));
 
+        driverController.povDown()
+            .onTrue(tiltWrist.setPosition(TiltPosition.STORED));
+
+        // driverController.povRight()
+        //     .whileTrue(rotateWrist.setRaw(.05))
+        //     .onFalse(rotateWrist.setRaw(0));
+
+        // driverController.povLeft()
+        //     .whileTrue(rotateWrist.setRaw(-.05))
+        //     .onFalse(rotateWrist.setRaw(0));
+
+        // driverController.povUp()
+        //     .whileTrue(tiltWrist.setRaw(.05))
+        //     .onFalse(tiltWrist.setRaw(0));
+
+        // driverController.povDown()
+        //     .whileTrue(tiltWrist.setRaw(-.05))
+        //     .onFalse(tiltWrist.setRaw(0));
     }
 
     public Command getAutonomousCommand() {

@@ -37,6 +37,8 @@ public class RotateWristSubsystem extends SubsystemBase {
 
         feedbackController = motor.getClosedLoopController();
 
+        currentTargetPosition = RotatePosition.HORIZONTAL;
+
         configureMotors();
     }
 
@@ -66,11 +68,11 @@ public class RotateWristSubsystem extends SubsystemBase {
             .zeroOffset(RotateWristConstants.kOffset)
             .zeroCentered(RotateWristConstants.kZeroCentered)
             .inverted(RotateWristConstants.kAbsoluteEncoderInverted);
-        motorConfig.softLimit
-            .forwardSoftLimit(RotateWristConstants.kMaximumRotationLimit)
-            .forwardSoftLimitEnabled(true)
-            .reverseSoftLimit(RotateWristConstants.kMinimumRotationLimit)
-            .reverseSoftLimitEnabled(true);
+        // motorConfig.softLimit
+        //     .forwardSoftLimit(RotateWristConstants.kMaximumRotationLimit)
+        //     .forwardSoftLimitEnabled(true)
+        //     .reverseSoftLimit(RotateWristConstants.kMinimumRotationLimit)
+        //     .reverseSoftLimitEnabled(true);
             
         motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -137,7 +139,7 @@ public class RotateWristSubsystem extends SubsystemBase {
 
     /**Contains desired position for rotational positions */
     public enum RotatePosition {
-        VERTICAL(-1), HORIZONTAL(-1);
+        VERTICAL(90), HORIZONTAL(0);
         double degrees;
         private RotatePosition(double rotationDegrees) {
             this.degrees = rotationDegrees;

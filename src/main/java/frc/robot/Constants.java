@@ -39,7 +39,7 @@ public class Constants {
         // MOTOR CAN BUS IDS TODO: CONFIRM
         public static final int kMotorID = 41; // CONFIRM
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = 0;
+        public static final double kP = 0.01;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
@@ -59,11 +59,11 @@ public class Constants {
         public static final double kMinimumOutputLimit = -.8;
         public static final double kMaximumOutputLimit = .8;
         // INVERSIONS TODO: CONFIRM
-        public static final boolean kInverted = false;
+        public static final boolean kInverted = true;
         public static final boolean kAbsoluteEncoderInverted = false;
         // CONVERSION FACTOR AND OFFSETS
         public static final double kPositionConversionFactor = 360.0;
-        public static final double kOffset = 0.0; // TODO: SET
+        public static final double kOffset = 0.2311125; // TODO: SET
         public static final boolean kZeroCentered = true;
         // CURRENT LIMITS TODO: TUNE        
         public static final int kStallLimit = 10;
@@ -76,7 +76,7 @@ public class Constants {
         // MOTOR CAN BUS IDS TODO: CONFIRM
         public static final int kMotorID = 42;
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = 0;
+        public static final double kP = 0.04;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
@@ -100,7 +100,7 @@ public class Constants {
         public static final boolean kAbsoluteEncoderInverted = false;
         // CONVERSION FACTOR AND OFFSETS
         public static final double kPositionConversionFactor = 360.0;
-        public static final double kOffset = 0.0; // TODO: SET
+        public static final double kOffset = 0.7550457; // TODO: SET
         public static final boolean kZeroCentered = true;
         // CURRENT LIMITS TODO: TUNE
         public static final int kStallLimit = 3;

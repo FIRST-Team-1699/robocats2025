@@ -37,6 +37,8 @@ public class TiltWristSubsystem extends SubsystemBase {
 
         feedbackController = motor.getClosedLoopController();
 
+        currentTargetPosition = TiltPosition.STORED;
+
         configureMotors();
     }
 
@@ -66,11 +68,11 @@ public class TiltWristSubsystem extends SubsystemBase {
             .zeroOffset(TiltWristConstants.kOffset)
             .zeroCentered(TiltWristConstants.kZeroCentered)
             .inverted(TiltWristConstants.kAbsoluteEncoderInverted);
-        motorConfig.softLimit
-            .forwardSoftLimit(TiltWristConstants.kMaximumRotationLimit)
-            .forwardSoftLimitEnabled(true)
-            .reverseSoftLimit(TiltWristConstants.kMinimumRotationLimit)
-            .reverseSoftLimitEnabled(true);
+        // motorConfig.softLimit
+        //     .forwardSoftLimit(TiltWristConstants.kMaximumRotationLimit)
+        //     .forwardSoftLimitEnabled(true)
+        //     .reverseSoftLimit(TiltWristConstants.kMinimumRotationLimit)
+        //     .reverseSoftLimitEnabled(true);
 
         motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -139,10 +141,13 @@ public class TiltWristSubsystem extends SubsystemBase {
 
     /**Contains desired position for rotational positions */
     public enum TiltPosition {
-        STORED(-1), PRIME(-1), COBRA_STANCE(-1),
+        STORED(-110), PRIME(-1), COBRA_STANCE(-1),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_PART_ONE(-1), ALGAE_DESCORE_PART_TWO(-1),
         GROUND_INTAKE(-1), CORAL_STATION_INTAKE(-1),
+
+        STRAIGHT_UP(0),
+        TESTING_PID(-90),
 
         L_ONE(-1), L_TWO(-1), L_THREE(-1), L_FOUR(-1);
         double degreePosition;
