@@ -165,6 +165,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Actual height", encoder.getPosition());
         SmartDashboard.putNumber("Wanted angle", currentTargetPosition.getRotations());
+        SmartDashboard.putBoolean("Elevator At Setpoint", isAtSetpoint());
     }
     
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
@@ -174,16 +175,16 @@ public class ElevatorSubsystem extends SubsystemBase {
         PID_TESTING(20),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
-        GROUND_INTAKE(-1), CORAL_STATION_INTAKE(-1),
+        GROUND_INTAKE(-1), CORAL_STATION_INTAKE(0),
 
-        L_ONE(-1), L_TWO(-1), L_THREE(-1), L_FOUR(-1);
+        L_ONE(0), L_TWO(2.5), L_THREE(11), L_FOUR(47);
 
         private double rotations;
         /**Constrcutor for height for ElevatorPositions (Enum for Elevator poses)
         * @param rotations
         * verticle movement in centimeters
         */
-        ElevatorPosition (double rotations) {
+        ElevatorPosition(double rotations) {
             this.rotations = rotations;
         }
 

@@ -144,12 +144,9 @@ public class TiltWristSubsystem extends SubsystemBase {
         STORED(-110), PRIME(-1), COBRA_STANCE(-1),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_PART_ONE(-1), ALGAE_DESCORE_PART_TWO(-1),
-        GROUND_INTAKE(-1), CORAL_STATION_INTAKE(-1),
+        GROUND_INTAKE(-1), CORAL_STATION_INTAKE(0),
 
-        STRAIGHT_UP(0),
-        TESTING_PID(-90),
-
-        L_ONE(-1), L_TWO(-1), L_THREE(-1), L_FOUR(-1);
+        L_ONE(30), L_TWO(0), L_THREE(-40), L_FOUR(-40);
         double degreePosition;
         private TiltPosition(double degreePosition) {
             this.degreePosition = degreePosition;

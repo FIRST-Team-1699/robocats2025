@@ -8,7 +8,8 @@ import frc.robot.generated.TunerConstants;
 
 public class Constants {
     public static class SwerveConstants {
-        public static final double kMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+        public static final double kSpeedCoefficient = .5;
+        public static final double kMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * kSpeedCoefficient; // kSpeedAt12Volts desired top speed
         public static final double kMaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
         public static final double kTranslationalDeadband = kMaxSpeed * 0.1;
@@ -60,8 +61,8 @@ public class Constants {
         public static final boolean kInverted = false;
         public static final boolean kFollowerInverted = true;
         // CURRENT LIMITS TODO: TUNE
-        public static final int kStallLimit = 80;
-        public static final int kFreeLimit = 80;
+        public static final int kStallLimit = 40;
+        public static final int kFreeLimit = 40;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
     }
@@ -71,20 +72,20 @@ public class Constants {
         public static final int kLeaderID = 44;
         public static final int kFollowerID = 43;
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = .012;
+        public static final double kP = .02;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
         // MAXMOTION CONSTANTS TODO: TUNE
-        public static final double kMAXMotionP = 0;
+        public static final double kMAXMotionP = 0.01;
         public static final double kMAXMotionI = 0;
         public static final double kMAXMotionD = 0;
         public static final double kMAXMotionFF = 0;
-        public static final double kMAXMotionMaxAcceleration = 0;
-        public static final double kMAXMotionMaxVelocity = 0;
-        public static final double kMAXMotionAllowedError = 0;
+        public static final double kMAXMotionMaxAcceleration = 500;
+        public static final double kMAXMotionMaxVelocity = 1000;
+        public static final double kMAXMotionAllowedError = 1;
         // TOLERANCE FOR PID ERROR
-        public static final double kTolerance = 1.0; // TODO: TUNE
+        public static final double kTolerance = 2.0; // TODO: TUNE
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -105; // TODO: SET
         public static final double kMaximumRotationLimit = 5; // TODO: SET
@@ -95,12 +96,12 @@ public class Constants {
         public static final boolean kFollowerInverted = true;
         public static final boolean kAbsoluteEncoderInverted = true;
         // OFFSET
-        public static final double kOffset = 0.7140662; // TODO: SET
+        public static final double kOffset = 0.5424425; // TODO: SET
         // CONVERSION FACTOR
         public static final double kPositionConversionFactor = 360.0;
         // CURRENT LIMITS TODO: TUNE
-        public static final int kStallLimit = 20;
-        public static final int kFreeLimit = 20;
+        public static final int kStallLimit = 30;
+        public static final int kFreeLimit = 30;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
     }
@@ -146,9 +147,9 @@ public class Constants {
         // MOTOR CAN BUS IDS TODO: CONFIRM
         public static final int kMotorID = 42;
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = 0.04;
+        public static final double kP = 0.01;
         public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kD = 0.001;
         public static final double kFF = 0;
         // MAXMOTION CONSTANTS TODO: TUNE
         public static final double kMAXMotionP = 0;
@@ -173,8 +174,8 @@ public class Constants {
         public static final double kOffset = 0.7550457; // TODO: SET
         public static final boolean kZeroCentered = true;
         // CURRENT LIMITS TODO: TUNE
-        public static final int kStallLimit = 3;
-        public static final int kFreeLimit = 3;
+        public static final int kStallLimit = 10;
+        public static final int kFreeLimit = 10;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
     }
