@@ -3,17 +3,17 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
+    "Basic auto",
     "Coral station lower",
     "Coral station upper",
     "Lollipop lower",
     "Lollipop upper",
-    "New Folder",
-    "Basic auto"
+    "Sweeping support"
   ],
   "autoFolders": [
     "4 piece(Prob not happening)",
     "Charlie Ring's Auto",
-    "Charlie Ro's auto"
+    "Main autos"
   ],
   "defaultMaxVel": 5.0292,
   "defaultMaxAccel": 3.0,

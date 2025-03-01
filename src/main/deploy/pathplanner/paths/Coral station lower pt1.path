@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 7.15,
-        "y": 2.0
+        "y": 2.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.944077614231221,
-        "y": 2.2852938508992
+        "x": 6.146731295705013,
+        "y": 2.3872915629805185
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.00175,
-        "y": 2.7184999999999993
+        "x": 5.0,
+        "y": 2.7
       },
       "prevControl": {
-        "x": 5.2474842835102615,
-        "y": 2.7644854532183674
+        "x": 5.401499999996007,
+        "y": 2.7087499999960674
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": "Coral station lower",
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": -45.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

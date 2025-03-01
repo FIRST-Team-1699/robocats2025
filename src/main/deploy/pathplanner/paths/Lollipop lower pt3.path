@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.81,
-        "y": 2.365
+        "x": 1.8,
+        "y": 2.2
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5254674595523694,
-        "y": 3.183001190093411
+        "x": 2.5154674595523696,
+        "y": 3.018001190093411
       },
       "isLocked": false,
       "linkedName": null
@@ -48,7 +48,7 @@
   "folder": "Lollipop lower",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -160.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
