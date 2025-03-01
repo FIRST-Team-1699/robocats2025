@@ -103,6 +103,8 @@ public class Constants {
         public static final int kFreeLimit = 20;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
+        // DEFINING UNSAFE POSITION
+        public static final double kUnsafePosition = -420; //TODO: REPLACE THE FUNNY NUMBER WITH AN ACTUAL POSITION
     }
   
   public static class TiltWristConstants {

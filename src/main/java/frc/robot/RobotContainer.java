@@ -8,12 +8,16 @@ import frc.robot.Constants.SwerveConstants;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
+
+import java.math.RoundingMode;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -48,10 +52,10 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
       
     // WRIST ROTATE
-    private RotateWristSubsystem rotateWrist = new RotateWristSubsystem();
+    private final RotateWristSubsystem rotateWrist = new RotateWristSubsystem();
 
     // WRIST TILT
-    private TiltWristSubsystem tiltWrist = new TiltWristSubsystem();
+    private final TiltWristSubsystem tiltWrist = new TiltWristSubsystem();
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final PivotSubsystem pivot = new PivotSubsystem();
@@ -69,24 +73,6 @@ public class RobotContainer {
         // Driver
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        
-        
-
-        // driverController.povRight()
-        //     .whileTrue(rotateWrist.setRaw(.05))
-        //     .onFalse(rotateWrist.setRaw(0));
-
-        // driverController.povLeft()
-        //     .whileTrue(rotateWrist.setRaw(-.05))
-        //     .onFalse(rotateWrist.setRaw(0));
-
-        // driverController.povUp()
-        //     .whileTrue(tiltWrist.setRaw(.05))
-        //     .onFalse(tiltWrist.setRaw(0));
-
-        // driverController.povDown()
-        //     .whileTrue(tiltWrist.setRaw(-.05))
-        //     .onFalse(tiltWrist.setRaw(0));
         drivetrain.setDefaultCommand(
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(-driverController.getLeftY() * SwerveConstants.kMaxSpeed) // Drive forward with negative Y (forward)
@@ -115,82 +101,69 @@ public class RobotContainer {
         // setup logger
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        // Operator
-        // Raise/Lower Elvator
-        // operatorController.povDown()
-        //     .onTrue(elevator.setPosition(ElevatorPosition.L_ONE)
-        //         .andThen(elevator.waitUntilAtSetpoint()));
-        // operatorController.povLeft()
-        //     .onTrue(elevator.setPosition(ElevatorPosition.L_TWO)
-        //         .andThen(elevator.waitUntilAtSetpoint()));
-        // operatorController.povRight()
-        //     .onTrue(elevator.setPosition(ElevatorPosition.L_THREE)
-        //         .andThen(elevator.waitUntilAtSetpoint()));
-        // operatorController.povUp()
-        //     .onTrue(elevator.setPosition(ElevatorPosition.L_FOUR)
-        //         .andThen(elevator.waitUntilAtSetpoint()));
-        // operatorController.b()
-        //     .onTrue(elevator.setPosition(ElevatorPosition.COBRA_STANCE)
-        //         .andThen(elevator.waitUntilAtSetpoint()));
-        // operatorController.a()
-        //     .onTrue(elevator.setPosition(ElevatorPosition.GROUND_INTAKE)
-        //         .andThen(elevator.waitUntilAtSetpoint()));
-        // operatorController.y()
-        //     .onTrue(elevator.setPosition(ElevatorPosition.CORAL_STATION_INTAKE)
-        //         .andThen(elevator.waitUntilAtSetpoint()));
-        // operatorController.back()
-        //     .onTrue(elevator.setPosition(ElevatorPosition.STORED)
-        //         .andThen(elevator.waitUntilAtSetpoint()));
-        // Zero
-        // operatorController.leftBumper()
-        //     .onTrue(new ZeroElevatorCommand(elevator));
-        // operatorController.leftBumper()
-        //     .whileTrue(elevator.toggleLowerLimit(false).andThen(elevator.lowerElevator().andThen(elevator.stopMotor().alongWith(elevator.resetEncoder().alongWith(elevator.toggleLowerLimit(true))))));
-        // operatorController.leftBumper()
-        //     .whileTrue(
-        //         elevator.zeroElevator()
-        //             .handleInterrupt(elevator::stopMotorManual)
-        //         );
-
-        operatorController.x().onTrue(elevator.setPosition(ElevatorPosition.STORED));
-        operatorController.y().onTrue(elevator.setPosition(ElevatorPosition.PID_TESTING).onlyIf(() -> pivot.currentTargetPosition != PivotPosition.STORED));
+        // operatorController.x().onTrue(elevator.setPosition(ElevatorPosition.STORED));
+        // operatorController.y().onTrue(elevator.setPosition(ElevatorPosition.PID_TESTING).onlyIf(() -> pivot.currentTargetPosition != PivotPosition.STORED));
 
         // Operator Controller
-        // operatorController.povUp().onTrue(pivot.setPosition(PivotPosition.L_FOUR)
-        //     .andThen(pivot.waitUntilAtSetpoint()));
-        // operatorController.povLeft().onTrue(pivot.setPosition(PivotPosition.L_ONE)
-        //     .andThen(pivot.waitUntilAtSetpoint()));
-        // operatorController.povDown().onTrue(pivot.setPosition(PivotPosition.L_TWO)
-        //     .andThen(pivot.waitUntilAtSetpoint()));
-        // operatorController.povRight().onTrue(pivot.setPosition(PivotPosition.L_THREE)
-        //     .andThen(pivot.waitUntilAtSetpoint()));
-        // operatorController.x().onTrue(pivot.setPosition(PivotPosition.GROUND_INTAKE)
-        //     .andThen(pivot.waitUntilAtSetpoint()));
-        // operatorController.y().onTrue(pivot.setPosition(PivotPosition.CORAL_STATION_INTAKE)
-        //     .andThen(pivot.waitUntilAtSetpoint()));
-        // operatorController.leftStick().onTrue(pivot.setPosition(PivotPosition.STORED)
-        //     .andThen(pivot.waitUntilAtSetpoint()));
-        // operatorController.rightStick().onTrue(pivot.setPosition(PivotPosition.COBRA_STANCE)
-        //     .andThen(pivot.waitUntilAtSetpoint()));
+        operatorController.rightTrigger().whileTrue(intake.runIntake(.3)).onFalse(intake.stopMotorCommand());
+        operatorController.leftTrigger().whileTrue(intake.runIntake(-.5)).onFalse(intake.stopMotorCommand());
 
-        driverController.rightTrigger().whileTrue(intake.runIntake(.3)).onFalse(intake.stopMotorCommand());
-        driverController.leftTrigger().whileTrue(intake.runIntake(-.3)).onFalse(intake.stopMotorCommand());
-
-        operatorController.a().onTrue(pivot.setPosition(PivotPosition.STORED).onlyIf(() -> elevator.currentTargetPosition == ElevatorPosition.STORED));
-        operatorController.b().onTrue(pivot.setPosition(PivotPosition.TESTING_PID));
-      
-        operatorController.povLeft()
-            .onTrue(rotateWrist.setPosition(RotatePosition.VERTICAL));
-        operatorController.povRight()
-            .onTrue(rotateWrist.setPosition(RotatePosition.HORIZONTAL));
-
+        operatorController.a()
+            .onTrue(
+                elevator.setPosition(ElevatorPosition.STORED)
+                .andThen(elevator.waitUntilAtSetpoint()
+                .alongWith(tiltWrist.setPosition(TiltPosition.STORED))
+                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
+                .andThen(pivot.setPosition(PivotPosition.STORED)));
+        
         operatorController.povUp()
-            .onTrue(tiltWrist.setPosition(TiltPosition.STRAIGHT_UP));
+            .onTrue(
+                elevator.setPosition(ElevatorPosition.STORED)
+                .andThen(pivot.setPosition(PivotPosition.L_FOUR))
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.L_FOUR)
+                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR)))));
+        
+        operatorController.b()
+            .onTrue(
+                elevator.setPosition(ElevatorPosition.STORED)
+                .andThen(pivot.setPosition(PivotPosition.CORAL_STATION_INTAKE))
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.CORAL_STATION_INTAKE)
+                .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
+                .alongWith(tiltWrist.setPosition(TiltPosition.CORAL_STATION_INTAKE)))));
+
+        operatorController.povRight()
+            .onTrue(
+                elevator.setPosition(ElevatorPosition.STORED)
+                .andThen(pivot.setPosition(PivotPosition.L_THREE))
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.L_THREE)
+                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_THREE)))));
+
+        operatorController.povLeft()
+            .onTrue(
+                elevator.setPosition(ElevatorPosition.STORED)
+                .andThen(pivot.setPosition(PivotPosition.L_TWO))
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.L_TWO)
+                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_TWO)))));
+        
         operatorController.povDown()
-            .onTrue(tiltWrist.setPosition(TiltPosition.STORED));
+            .onTrue(
+                elevator.setPosition(ElevatorPosition.STORED)
+                .andThen(pivot.setPosition(PivotPosition.L_ONE))
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.L_ONE)
+                .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_ONE)))));
     }
 
-    public Command getAutonomousCommand() {
+    public Command getAutonomousCommand() 
+    {
         return AutoBuilder.buildAuto("Coral station lower Auto");
     }
 }
