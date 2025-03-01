@@ -43,7 +43,8 @@ public class IntakeSubsystem extends SubsystemBase {
             .inverted(IntakeConstants.kInverted) 
             .idleMode(IdleMode.kBrake);
         config.limitSwitch
-            .forwardLimitSwitchEnabled(false);
+            .forwardLimitSwitchEnabled(false)
+            .reverseLimitSwitchEnabled(true);
             // .forwardLimitSwitchType(Type.kNormallyOpen);
 
         motor.configureAsync(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -91,7 +92,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Intake is at hard limit", motor.getForwardLimitSwitch().isPressed());
+        SmartDashboard.putBoolean("Intake is at hard limit", motor.getReverseLimitSwitch().isPressed());
         SmartDashboard.putNumber("Wanted intake speed", currentIntakeSpeed.speed);
         SmartDashboard.putNumber("Current intake speed", motor.get());
 

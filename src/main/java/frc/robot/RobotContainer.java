@@ -70,7 +70,7 @@ public class RobotContainer {
     // if(!pivot.isAtSetpoint())
 
     // LED
-    LEDController leds = new LEDController();
+    LEDController leds = new LEDController(elevator, pivot, tiltWrist, rotateWrist, intake);
 
     public RobotContainer() {
         configureBindings();

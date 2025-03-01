@@ -19,6 +19,7 @@ public class Constants {
     public static class LEDConstants {
         public static final int kPort = 0;
         public static final int kLEDLength = 36;
+    }
 
     public static class AutoConstants {
         // TRANSLATION PID
@@ -34,7 +35,7 @@ public class Constants {
     public static class IntakeConstants {
         public static final int kMotorID = 40;
 
-        public static final boolean kInverted = false;
+        public static final boolean kInverted = true;
     }
     
     public static class ElevatorConstants {
