@@ -82,12 +82,12 @@ public class Constants {
         public static final double kD = 0;
         public static final double kFF = 0;
         // MAXMOTION CONSTANTS TODO: TUNE
-        public static final double kMAXMotionP = 0.01;
+        public static final double kMAXMotionP = 0.02;
         public static final double kMAXMotionI = 0;
         public static final double kMAXMotionD = 0;
         public static final double kMAXMotionFF = 0;
-        public static final double kMAXMotionMaxAcceleration = 500;
-        public static final double kMAXMotionMaxVelocity = 1000;
+        public static final double kMAXMotionMaxAcceleration = 50;
+        public static final double kMAXMotionMaxVelocity = 100;
         public static final double kMAXMotionAllowedError = 1;
         // TOLERANCE FOR PID ERROR
         public static final double kTolerance = 1.5; // TODO: TUNE

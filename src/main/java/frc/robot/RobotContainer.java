@@ -114,6 +114,9 @@ public class RobotContainer {
         driverController.b()
             .onTrue(pivot.moveToSafePosition()
             .andThen(elevator.setPosition(ElevatorPosition.CLIMB)));
+        
+        driverController.x()
+            .onTrue(pivot.setClimbPosition());
 
         // reset the field-centric heading
         driverController.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));

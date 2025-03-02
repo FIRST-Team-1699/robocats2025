@@ -118,10 +118,10 @@ public class PivotSubsystem extends SubsystemBase {
      * @param pivotPosition
      * enum that has height value for target position.
      */
-    public Command setSmartPosition(PivotPosition pivotPosition) {
+    public Command setClimbPosition() {
         return runOnce(() -> {
-            currentTargetPosition = pivotPosition;
-            feedbackController.setReference(pivotPosition.getRotations(), SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot1);
+            currentTargetPosition = PivotPosition.CLIMB;
+            feedbackController.setReference(PivotPosition.CLIMB.getRotations(), SparkBase.ControlType.kMAXMotionPosition, ClosedLoopSlot.kSlot1);
         });
     }
 
