@@ -172,7 +172,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     public enum ElevatorPosition {
         // ENUMS FOR POSITIONS
         STORED(0), PRIME(-1), COBRA_STANCE(-1),
-        PID_TESTING(20),
+        
+        CLIMB(10),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
       

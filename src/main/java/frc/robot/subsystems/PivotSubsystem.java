@@ -195,6 +195,7 @@ public class PivotSubsystem extends SubsystemBase {
      */
     public enum PivotPosition {
         STORED(-102), PRIME(-45), SAFE_POSITION(-85), COBRA_STANCE(-1),
+        CLIMB_RAISE(-25),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
         GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-50),
