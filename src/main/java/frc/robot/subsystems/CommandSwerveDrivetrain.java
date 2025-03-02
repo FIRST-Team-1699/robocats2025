@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import frc.robot.Constants.AutoConstants;
+import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+
 import static edu.wpi.first.units.Units.*;
 
 import java.util.function.Supplier;
@@ -26,8 +29,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
-import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -212,9 +213,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 ),
                 new PPHolonomicDriveController(
                     // PID constants for translation
-                    new PIDConstants(10, 0, 0),
+                    new PIDConstants(AutoConstants.kTranslationP, AutoConstants.kTranslationI, AutoConstants.kTranslationD),
                     // PID constants for rotation
-                    new PIDConstants(7, 0, 0)
+                    new PIDConstants(AutoConstants.kRotationP, AutoConstants.kRotationI, AutoConstants.kRotationD)
                 ),
                 config,
                 // Assume the path needs to be flipped for Red vs Blue, this is normally the case
