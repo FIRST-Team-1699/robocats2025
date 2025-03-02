@@ -67,12 +67,11 @@ public class RobotContainer {
     private final PivotSubsystem pivot = new PivotSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
 
-    // LEDController ledcontroller = new LEDController(pivot, elevator, rotateWrits, tiltWrist);
+    // LEDController ledcontroller = new LEDController(elevator, pivot, tiltWrist, rotateWrist, intake);
 
     // if(!pivot.isAtSetpoint())
 
     // LED
-    LEDController leds = new LEDController();
 
     public RobotContainer() {
         configureBindings();
@@ -105,23 +104,23 @@ public class RobotContainer {
         // driverController.start().and(driverController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        driverController.a()
-            .onTrue(
-                elevator.setPosition(ElevatorPosition.STORED)
-                .andThen(elevator.waitUntilAtSetpoint())
-                .andThen(pivot.setPosition(PivotPosition.CLIMB_RAISE))
-                .alongWith(tiltWrist.setPosition(TiltPosition.CLIMB))
-                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)));
+        // driverController.a()
+        //     .onTrue(
+        //         elevator.setPosition(ElevatorPosition.STORED)
+        //         .andThen(elevator.waitUntilAtSetpoint())
+        //         .andThen(pivot.setPosition(PivotPosition.CLIMB_RAISE))
+        //         .alongWith(tiltWrist.setPosition(TiltPosition.CLIMB))
+        //         .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)));
         
-        driverController.x()
-            // .onTrue(pivot.setClimbPosition());
-            .whileTrue(pivot.setRaw(-.25))
-            .onFalse(pivot.setRaw(0));  
+        // driverController.x()
+        //     // .onTrue(pivot.setClimbPosition());
+        //     .whileTrue(pivot.setRaw(-.25))
+        //     .onFalse(pivot.setRaw(0));  
 
-        driverController.b()
-            // .onTrue(pivot.setClimbPosition());
-            .whileTrue(pivot.setRaw(-.35))
-            .onFalse(pivot.setRaw(0)); 
+        // driverController.b()
+        //     // .onTrue(pivot.setClimbPosition());
+        //     .whileTrue(pivot.setRaw(-.35))
+        //     .onFalse(pivot.setRaw(0)); 
 
         // reset the field-centric heading
         driverController.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
