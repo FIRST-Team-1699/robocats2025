@@ -53,10 +53,10 @@ public class LEDController extends SubsystemBase {
         // STOPS FROM WASTING RESOURCES VIA RETURN
         if(currentRGB.equals(targetRGB)) return;
         // ALLOWS LEDS TO TURN ON/OFF, BLINK FOR INTAKE
-        if(blink && totalTicks % 50 <= 25) {
-            setLedBuffer(TargetRGB.NONE);
+        if(blink && totalTicks % 20 <= 10) {
+            changeColor(TargetRGB.NONE);
         } else {
-            setLedBuffer(targetRGB);
+            changeColor(targetRGB);
         }
         leds.setData(ledBuffer);
     }
