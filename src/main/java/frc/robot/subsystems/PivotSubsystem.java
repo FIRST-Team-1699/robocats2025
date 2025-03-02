@@ -26,7 +26,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-public class PivotSubsystem extends SubsystemBase {
+public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     // TODO: USE ABSOLUTE ENCODER FOR INITALIZATION, RELATIVE OTHERWISE
     // MOTORS
     private SparkMax leadMotor, followMotor;
@@ -132,12 +132,12 @@ public class PivotSubsystem extends SubsystemBase {
     }
     /**Returns if currentTargetPosition is not at ground intake
      */
-    public boolean isRobotPositionSafe() {
-        return currentTargetPosition.rotations > PivotConstants.kUnsafePosition;
+    public static boolean isRobotPositionSafe(PivotPosition targetPosition) {
+        return targetPosition.rotations > PivotConstants.kUnsafePosition;
     }
 
     public Command moveToSafePosition() {
-        return setPosition(PivotPosition.SAFE_POSITION).onlyIf(() -> !isRobotPositionSafe());
+        return setPosition(PivotPosition.SAFE_POSITION).onlyIf(() -> !isRobotPositionSafe(currentTargetPosition));
     }
 
     public boolean isAtSetpoint() {
@@ -177,12 +177,18 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     @Override
+    public void close() {
+        leadMotor.close();
+        followMotor.close();
+    }
+
+    @Override
     public void periodic() {
         SmartDashboard.putNumber("Actual Pivot Angle", absoluteEncoder.getPosition());
         SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getRotations());
         SmartDashboard.putNumber("Pivot Error", getError());
         SmartDashboard.putBoolean("Pivot At Setpoint", isAtSetpoint());
-        SmartDashboard.putBoolean("Safe Zone", isRobotPositionSafe());
+        SmartDashboard.putBoolean("Safe Zone", isRobotPositionSafe(currentTargetPosition));
 
         // pivotTab.("Setpoint", currentTargetPosition.getRotations());
         // pivotTab.add("Current Position", absoluteEncoder.getPosition());
