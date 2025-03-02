@@ -1,11 +1,7 @@
 package frc.robot.subsystems;
 
-import java.lang.reflect.Array;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-
-import javax.naming.spi.DirStateFactory.Result;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -30,6 +26,7 @@ public class PhotonCameraManager {
 
     private PhotonPoseEstimator poseEstimator;
 
+    // TODO: GET STANDARD DEVIATION FROM CAMERA AND SET IN CONSTANTS
     public PhotonCameraManager(
         Transform3d robotToCamera, PhotonCamera camera, Matrix<N3, N1> currentStandardDeviation, PoseStrategy primaryStategy, PoseStrategy fallbackStrategy) {
         this.robotToCamera = robotToCamera;
@@ -64,6 +61,7 @@ public class PhotonCameraManager {
 
         } else {
             // Pose present. Start running Heuristic
+
             var estStdDevs = VisionConstants.kSingleTagStdDevs;
             int numTags = 0;
             double avgDist = 0;
@@ -96,17 +94,6 @@ public class PhotonCameraManager {
                         currentStandardDeviation = estStdDevs;
             }
         }
-    }
-
-    public Optional<PhotonPipelineResult> getLatestResult() {
-        if(latestResult.isEmpty()) {
-            
-        }
-        else {
-
-        }
-        //TODO: Iderate through list(Array/List/LinkedList) and return values
-        return null;
     }
 
     public Matrix<N3, N1> getEstimationStdDevs() {

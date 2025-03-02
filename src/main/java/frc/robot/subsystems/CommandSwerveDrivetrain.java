@@ -6,6 +6,9 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.function.Supplier;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -18,6 +21,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -30,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.VisionConstants;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -54,6 +59,22 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
+
+    // VISION CAMERAS
+    // TODO: ADD FUNCTIONAILITY W/ POSITIONAL DATA
+    public final PhotonCameraManager cameraManagerOne = new PhotonCameraManager(
+        VisionConstants.kRobotToCameraOne,
+        new PhotonCamera("1699CameraOne"), 
+        VisionConstants.kMultiTagStdDevs, 
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+        PoseStrategy.LOWEST_AMBIGUITY);
+    
+    public final PhotonCameraManager cameraManagerTwo = new PhotonCameraManager(
+        VisionConstants.kRobotToCameraTwo, 
+        new PhotonCamera("1699CameraTwo"), 
+        VisionConstants.kMultiTagStdDevs, 
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+        PoseStrategy.LOWEST_AMBIGUITY); 
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
@@ -262,6 +283,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     @Override
     public void periodic() {
+
         /*
          * Periodically try to apply the operator perspective.
          * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
@@ -278,6 +300,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 );
                 m_hasAppliedOperatorPerspective = true;
             });
+        }
+
+        var estOne = cameraManagerOne.getEstimatedGlobalPose();
+        var estTwo = cameraManagerOne.getEstimatedGlobalPose();
+
+        if(estOne.isPresent()) {
+            var stdDevs = cameraManagerOne.getEstimationStdDevs();
+            var est = estOne.get();
+            double timestamp = est.timestampSeconds;
+            Pose2d pose = est.estimatedPose.toPose2d();
+            addVisionMeasurement(pose, timestamp, stdDevs);
+        }
+        
+        if(estTwo.isPresent()) {
+            var stdDevs = cameraManagerOne.getEstimationStdDevs();
+            var est = estTwo.get();
+            double timestamp = est.timestampSeconds;
+            Pose2d pose = est.estimatedPose.toPose2d();
+            addVisionMeasurement(pose, timestamp, stdDevs);
         }
     }
 
