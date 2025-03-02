@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Score L4"
+                  "name": null
                 }
               },
               {
@@ -61,7 +61,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Score L4"
+                  "name": null
                 }
               },
               {
@@ -105,7 +105,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Score L4"
+                  "name": null
                 }
               },
               {
@@ -140,6 +140,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Charlie(s) autos",
+  "folder": null,
   "choreoAuto": false
 }
