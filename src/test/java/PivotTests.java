@@ -7,7 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class AlgorithmTests {
+class PivotTests {
     @Test
     void safePositionAlgorithmWhenSafe() {
         assertEquals(true, PivotSubsystem.isRobotPositionSafe(PivotPosition.L_FOUR));
