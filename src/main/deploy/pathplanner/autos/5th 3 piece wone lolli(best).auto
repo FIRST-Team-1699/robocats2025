@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Lollipop lower pt1"
+                  "pathName": "Coral station upper pt1"
                 }
               }
             ]
@@ -24,7 +24,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Lollipop lower pt2"
+                  "pathName": "Coral station upper pt2"
                 }
               }
             ]
@@ -37,7 +37,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Lollipop lower pt3"
+                  "pathName": "Coral station upper pt3"
                 }
               }
             ]
@@ -50,7 +50,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Lollipop lower pt4"
+                  "pathName": "2 CS 2 Lolli pt 1"
                 }
               }
             ]
@@ -63,7 +63,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Lollipop lower pt5"
+                  "pathName": "2 CS 2 Lolli pt 2"
                 }
               }
             ]
@@ -73,6 +73,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Charlie Ring's Auto",
+  "folder": "Main autos",
   "choreoAuto": false
 }

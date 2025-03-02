@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 7.15,
-        "y": 5.5
+        "y": 7.4
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.0881743250003195,
-        "y": 5.63987082512825
+        "x": 3.227249999998159,
+        "y": 7.40825000000186
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.0,
-        "y": 5.3
+        "x": 3.1,
+        "y": 4.2
       },
       "prevControl": {
-        "x": 6.227803792024222,
-        "y": 5.255668089321848
+        "x": 1.9402499999981597,
+        "y": 5.81900000000186
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Coral station upper",
+  "folder": "Sweeping support",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
