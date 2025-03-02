@@ -105,7 +105,7 @@ public class Constants {
         // CONVERSION FACTOR
         public static final double kPositionConversionFactor = 360.0;
         // CURRENT LIMITS TODO: TUNE
-        public static final int kStallLimit = 60;
+        public static final int kStallLimit = 70;
         public static final int kFreeLimit = 35;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
@@ -130,7 +130,7 @@ public class Constants {
         public static final double kMAXMotionMaxVelocity = 0;
         public static final double kMAXMotionAllowedError = 0;
         // TOLERANCE FOR PID ERROR
-        public static final double kTolerance = 1.0; // TODO: TUNE
+        public static final double kTolerance = 2.0; // TODO: TUNE
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -150; // TODO: SET
         public static final double kMaximumRotationLimit = 150; // TODO: SET
@@ -141,7 +141,7 @@ public class Constants {
         public static final boolean kAbsoluteEncoderInverted = false;
         // CONVERSION FACTOR AND OFFSETS
         public static final double kPositionConversionFactor = 360.0;
-        public static final double kOffset = 0.2311125; // TODO: SET
+        public static final double kOffset = 0.2262425; // TODO: SET
         public static final boolean kZeroCentered = true;
         // CURRENT LIMITS TODO: TUNE        
         public static final int kStallLimit = 10;
@@ -178,7 +178,7 @@ public class Constants {
         public static final boolean kAbsoluteEncoderInverted = false;
         // CONVERSION FACTOR AND OFFSETS
         public static final double kPositionConversionFactor = 360.0;
-        public static final double kOffset = 0.4018732; // TODO: SET
+        public static final double kOffset = 0.0789999; // TODO: SET
         public static final boolean kZeroCentered = true;
         // CURRENT LIMITS TODO: TUNE
         public static final int kStallLimit = 10;
