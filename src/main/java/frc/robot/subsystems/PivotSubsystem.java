@@ -5,12 +5,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-
-import java.util.function.BooleanSupplier;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
@@ -132,12 +128,10 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     }
     /**Returns if currentTargetPosition is not at ground intake
      */
-    public static boolean isRobotPositionSafe(PivotPosition targetPosition) {
-        return targetPosition.rotations > PivotConstants.kUnsafePosition;
-    }
+    
 
     public Command moveToSafePosition() {
-        return setPosition(PivotPosition.SAFE_POSITION).onlyIf(() -> !isRobotPositionSafe(currentTargetPosition));
+        return setPosition(PivotPosition.SAFE_POSITION).onlyIf(() -> !currentTargetPosition.canElevatorRetractFromHere());
     }
 
     public boolean isAtSetpoint() {
@@ -188,7 +182,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getRotations());
         SmartDashboard.putNumber("Pivot Error", getError());
         SmartDashboard.putBoolean("Pivot At Setpoint", isAtSetpoint());
-        SmartDashboard.putBoolean("Safe Zone", isRobotPositionSafe(currentTargetPosition));
+        SmartDashboard.putBoolean("Safe Zone", currentTargetPosition.canElevatorRetractFromHere());
 
         // pivotTab.("Setpoint", currentTargetPosition.getRotations());
         // pivotTab.add("Current Position", absoluteEncoder.getPosition());
@@ -213,6 +207,10 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
 
         public double getRotations() {
             return this.rotations;
+        }
+
+        public boolean canElevatorRetractFromHere() {
+            return this.rotations > PivotConstants.kUnsafePosition;
         }
     }
 }

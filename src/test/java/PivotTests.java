@@ -10,49 +10,49 @@ import org.junit.jupiter.api.Test;
 class PivotTests {
     @Test
     void l4SafePosition() {
-        assertEquals(true, PivotSubsystem.isRobotPositionSafe(PivotPosition.L_FOUR));
+        assertEquals(true, PivotPosition.L_FOUR.canElevatorRetractFromHere());
     }
 
     @Test
     void l3SafePosition() {
-        assertEquals(true, PivotSubsystem.isRobotPositionSafe(PivotPosition.L_THREE));
+        assertEquals(true, PivotPosition.L_THREE.canElevatorRetractFromHere());
     }
 
     @Test
     void l2SafePosition() {
-        assertEquals(true, PivotSubsystem.isRobotPositionSafe(PivotPosition.L_TWO));
+        assertEquals(true, PivotPosition.L_TWO.canElevatorRetractFromHere());
     }
 
     @Test
     void l1SafePosition() {
-        assertEquals(true, PivotSubsystem.isRobotPositionSafe(PivotPosition.L_ONE));
+        assertEquals(true, PivotPosition.L_ONE.canElevatorRetractFromHere());
     }
 
     @Test
     void primeSafePosition() {
-        assertEquals(true, PivotSubsystem.isRobotPositionSafe(PivotPosition.PRIME));
+        assertEquals(true, PivotPosition.PRIME.canElevatorRetractFromHere());
     }
 
 
     @Test
     void coralStationSafePosition() {
-        assertEquals(true, PivotSubsystem.isRobotPositionSafe(PivotPosition.CORAL_STATION_INTAKE));
+        assertEquals(true, PivotPosition.CORAL_STATION_INTAKE.canElevatorRetractFromHere());
     }
 
 
     @Test
     void storedSafePosition() {
-        assertEquals(false, PivotSubsystem.isRobotPositionSafe(PivotPosition.STORED));
+        assertEquals(false, PivotPosition.STORED.canElevatorRetractFromHere());
     }
 
     @Test
     void groundIntakeSafePosition() {
-        assertEquals(false, PivotSubsystem.isRobotPositionSafe(PivotPosition.GROUND_INTAKE));
+        assertEquals(false, PivotPosition.GROUND_INTAKE.canElevatorRetractFromHere());
     }
 
     @Test
     void safePositionSafePosition() {
-        assertEquals(true, PivotSubsystem.isRobotPositionSafe(PivotPosition.SAFE_POSITION));
+        assertEquals(true, PivotPosition.SAFE_POSITION.canElevatorRetractFromHere());
     }
 }
 
