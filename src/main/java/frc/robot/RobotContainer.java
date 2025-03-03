@@ -127,6 +127,41 @@ public class RobotContainer {
         // setup logger
         drivetrain.registerTelemetry(logger::telemeterize);
 
+        driverController.rightTrigger()
+            .onTrue(
+                elevator.setPosition(ElevatorPosition.STORED)
+                .andThen(elevator.waitUntilAtSetpoint())
+                .andThen(pivot.setPosition(PivotPosition.SAFE_POSITION)
+                .alongWith(tiltWrist.setPosition(TiltPosition.STORED).alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL))))
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.GROUND_INTAKE))
+                .andThen(elevator.waitUntilAtSetpoint())
+                .andThen(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE)
+                .alongWith(pivot.setPosition(PivotPosition.GROUND_INTAKE)))
+            )
+            .onFalse(
+                new SelectCommand<>( 
+                    Map.of(true, 
+                    pivot.moveToSafePosition()
+                    .alongWith(tiltWrist.setPosition(TiltPosition.PRIME)
+                    .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
+                    .andThen(pivot.waitUntilAtSetpoint())
+                    .andThen(elevator.setPosition(ElevatorPosition.PRIME)
+                    .andThen(tiltWrist.waitUntilAtSetpoint())
+                    .andThen(elevator.waitUntilAtSetpoint())
+                    .andThen(pivot.setPosition(PivotPosition.PRIME))),
+                    false,
+                    pivot.moveToSafePosition()
+                    .alongWith(tiltWrist.setPosition(TiltPosition.STORED)
+                    .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
+                    .andThen(pivot.waitUntilAtSetpoint())
+                    .andThen(elevator.setPosition(ElevatorPosition.STORED)
+                    .andThen(tiltWrist.waitUntilAtSetpoint())
+                    .andThen(elevator.waitUntilAtSetpoint())
+                    .andThen(pivot.setPosition(PivotPosition.STORED)))), 
+                    intake::hasPiece
+                ).onlyIf(pivot.isInGroundIntakePosition())
+            );
         // operatorController.x().onTrue(elevator.setPosition(ElevatorPosition.STORED));
         // operatorController.y().onTrue(elevator.setPosition(ElevatorPosition.PID_TESTING).onlyIf(() -> pivot.currentTargetPosition != PivotPosition.STORED));
 
@@ -203,19 +238,6 @@ public class RobotContainer {
                 .andThen(elevator.setPosition(ElevatorPosition.L_ONE)
                 .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
                 .alongWith(tiltWrist.setPosition(TiltPosition.L_ONE)))));
-
-        operatorController.y()
-            .onTrue(
-                elevator.setPosition(ElevatorPosition.STORED)
-                .andThen(elevator.waitUntilAtSetpoint())
-                .andThen(pivot.setPosition(PivotPosition.SAFE_POSITION)
-                .alongWith(tiltWrist.setPosition(TiltPosition.STORED).alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL))))
-                .andThen(pivot.waitUntilAtSetpoint())
-                .andThen(elevator.setPosition(ElevatorPosition.GROUND_INTAKE))
-                .andThen(elevator.waitUntilAtSetpoint())
-                .andThen(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE)
-                .alongWith(pivot.setPosition(PivotPosition.GROUND_INTAKE)))
-            );
 
         operatorController.rightBumper()
             .onTrue(tiltWrist.setPosition(TiltPosition.L_THREE_PECK).onlyIf(tiltWrist.isInL3Position())
