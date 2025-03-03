@@ -171,14 +171,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
     public enum ElevatorPosition {
         // ENUMS FOR POSITIONS
-        STORED(0), PRIME(-1), COBRA_STANCE(-1),
-        PID_TESTING(20),
+        STORED(0), PRIME(0), COBRA_STANCE(-1),
+        
+        CLIMB(10),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
       
         GROUND_INTAKE(7), CORAL_STATION_INTAKE(0),
 
-        L_ONE(0), L_TWO(2.5), L_THREE(11), L_FOUR(47);
+        L_ONE(0), L_TWO(5), L_THREE(11), L_FOUR(47);
 
         private double rotations;
         /**Constrcutor for height for ElevatorPositions (Enum for Elevator poses)
