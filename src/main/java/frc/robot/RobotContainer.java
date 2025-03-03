@@ -52,7 +52,7 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-
+    private final SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric();
     // SWERVE 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
@@ -88,6 +88,21 @@ public class RobotContainer {
                     .withRotationalRate(-driverController.getRightX() * SwerveConstants.kMaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
+
+        driverController.povUp()
+            .whileTrue(
+                drivetrain.applyRequest(() -> robotCentric.withDriveRequestType(DriveRequestType.OpenLoopVoltage).withVelocityX(.1).withVelocityY(0)
+            ));
+
+        driverController.povLeft()
+            .whileTrue(
+                drivetrain.applyRequest(() -> robotCentric.withDriveRequestType(DriveRequestType.OpenLoopVoltage).withVelocityX(0).withVelocityY(.1)
+            ));
+        
+        driverController.povRight()
+            .whileTrue(
+                drivetrain.applyRequest(() -> robotCentric.withDriveRequestType(DriveRequestType.OpenLoopVoltage).withVelocityX(0).withVelocityY(-.1)
+            ));
 
         // pivot.setDefaultCommand(pivot.printPosition());
         // elevator.setDefaultCommand(elevator.printPosition());
