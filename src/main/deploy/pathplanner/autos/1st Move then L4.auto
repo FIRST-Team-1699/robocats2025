@@ -9,6 +9,18 @@
           "data": {
             "pathName": "Move Basic"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Outtake"
+          }
         }
       ]
     }

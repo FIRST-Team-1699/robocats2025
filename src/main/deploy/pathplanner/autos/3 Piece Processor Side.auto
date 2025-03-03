@@ -11,25 +11,19 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Coral station lower pt1"
+                  "pathName": "Score 3 o'clock"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Move L4"
+                  "name": null
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "Outtake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stored"
+                  "waitTime": 0.5
                 }
               }
             ]
@@ -42,25 +36,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Coral station lower pt2"
+                  "pathName": "3 o'clock to CS"
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "Move CS"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stored"
+                  "waitTime": 0.5
                 }
               }
             ]
@@ -73,25 +55,19 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Coral station lower pt3"
+                  "pathName": "CS to 4 o'clock"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Move L4"
+                  "name": null
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "Outtake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stored"
+                  "waitTime": 0.5
                 }
               }
             ]
@@ -104,25 +80,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Coral station lower pt4"
+                  "pathName": "4 o'clock to CS"
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "Move CS"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stored"
+                  "waitTime": 0.5
                 }
               }
             ]
@@ -135,25 +99,38 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Coral station lower pt5"
+                  "pathName": "CS to 5 o'clock"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Move L4"
+                  "name": null
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "Outtake"
+                  "waitTime": 0.5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "5 o'clock to CS"
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "Stored"
+                  "waitTime": 0.5
                 }
               }
             ]
@@ -163,6 +140,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Main autos",
+  "folder": null,
   "choreoAuto": false
 }
