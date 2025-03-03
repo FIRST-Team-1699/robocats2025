@@ -172,7 +172,7 @@ public class TiltWristSubsystem extends SubsystemBase {
 
     /**Contains desired position for rotational positions */
     public enum TiltPosition {
-        STORED(-110), PRIME(-30), COBRA_STANCE(-1),
+        STORED(-110), PRIME(-20), COBRA_STANCE(-1),
 
         CLIMB(20),
 

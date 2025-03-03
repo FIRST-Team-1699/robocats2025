@@ -135,29 +135,7 @@ public class RobotContainer {
         operatorController.leftTrigger().whileTrue(intake.runIntake(-.3)).onFalse(intake.stopMotorCommand());
 
         operatorController.a()
-            .onTrue(
-                new SelectCommand<>( 
-                    Map.of(true, 
-                    pivot.moveToSafePosition()
-                    .alongWith(tiltWrist.setPosition(TiltPosition.PRIME)
-                    .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
-                    .andThen(pivot.waitUntilAtSetpoint())
-                    .andThen(elevator.setPosition(ElevatorPosition.PRIME)
-                    .andThen(tiltWrist.waitUntilAtSetpoint())
-                    .andThen(elevator.waitUntilAtSetpoint())
-                    .andThen(pivot.setPosition(PivotPosition.PRIME))),
-                    false,
-                    pivot.moveToSafePosition()
-                    .alongWith(tiltWrist.setPosition(TiltPosition.STORED)
-                    .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
-                    .andThen(pivot.waitUntilAtSetpoint())
-                    .andThen(elevator.setPosition(ElevatorPosition.STORED)
-                    .andThen(tiltWrist.waitUntilAtSetpoint())
-                    .andThen(elevator.waitUntilAtSetpoint())
-                    .andThen(pivot.setPosition(PivotPosition.STORED)))), 
-                    intake::hasPiece
-                )
-            );    
+            .onTrue(getStoreCommand());    
         
         operatorController.povUp()
             .onTrue(
@@ -226,6 +204,36 @@ public class RobotContainer {
                 .andThen(tiltWrist.setPosition(TiltPosition.L_THREE).onlyIf(tiltWrist.isInL3PeckPosition()))
                 .andThen(tiltWrist.setPosition(TiltPosition.L_TWO).onlyIf(tiltWrist.isInL2PeckPosition()))
             );
+
+        // AUTOMATED STOWING
+        intake.pieceGained()
+            .onChange(getStoreCommand());
+    }
+
+    public Command getStoreCommand() {
+        return new SelectCommand<>( 
+            Map.of(
+                true, 
+                pivot.moveToSafePosition()
+                    .alongWith(tiltWrist.setPosition(TiltPosition.PRIME)
+                    .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
+                    .andThen(pivot.waitUntilAtSetpoint())
+                    .andThen(elevator.setPosition(ElevatorPosition.PRIME)
+                    .andThen(tiltWrist.waitUntilAtSetpoint())
+                    .andThen(elevator.waitUntilAtSetpoint())
+                    .andThen(pivot.setPosition(PivotPosition.PRIME))),
+                false,
+                pivot.moveToSafePosition()
+                    .alongWith(tiltWrist.setPosition(TiltPosition.STORED)
+                    .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
+                    .andThen(pivot.waitUntilAtSetpoint())
+                    .andThen(elevator.setPosition(ElevatorPosition.STORED)
+                    .andThen(tiltWrist.waitUntilAtSetpoint())
+                    .andThen(elevator.waitUntilAtSetpoint())
+                    .andThen(pivot.setPosition(PivotPosition.STORED)))
+            ), 
+            intake::hasPiece
+        );
     }
 
     public Command getAutonomousCommand() 
