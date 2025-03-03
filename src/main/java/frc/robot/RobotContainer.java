@@ -170,7 +170,9 @@ public class RobotContainer {
         
         operatorController.b()
             .onTrue(
-                elevator.setPosition(ElevatorPosition.STORED)
+                elevator.moveToSafePosition()
+                .andThen(elevator.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.CORAL_STATION_INTAKE))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.CORAL_STATION_INTAKE)
@@ -188,7 +190,9 @@ public class RobotContainer {
 
         operatorController.povLeft()
             .onTrue(
-                elevator.setPosition(ElevatorPosition.STORED)
+                elevator.moveToSafePosition()
+                .andThen(elevator.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.L_TWO))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.L_TWO)
@@ -197,7 +201,9 @@ public class RobotContainer {
         
         operatorController.povDown()
             .onTrue(
-                elevator.setPosition(ElevatorPosition.STORED)
+                elevator.moveToSafePosition()
+                .andThen(elevator.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.L_ONE))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.L_ONE)
