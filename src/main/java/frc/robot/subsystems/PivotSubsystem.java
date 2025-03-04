@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants.PivotConstants;
+import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -146,6 +147,10 @@ public class PivotSubsystem extends SubsystemBase {
     
     private double getError() {
         return Math.abs(Math.abs(getPosition()) - Math.abs(currentTargetPosition.getRotations()));
+    }
+
+    public BooleanSupplier isInGroundIntakePosition() {
+        return () -> currentTargetPosition == PivotPosition.GROUND_INTAKE;
     }
 
     /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
