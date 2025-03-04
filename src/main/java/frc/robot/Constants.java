@@ -169,8 +169,8 @@ public class Constants {
         // TOLERANCE FOR PID ERROR
         public static final double kTolerance = 1.0; // TODO: TUNE
         // LIMIT VALUES
-        public static final double kMinimumRotationLimit = -90; // TODO: SET
-        public static final double kMaximumRotationLimit = 90; // TODO: SET
+        public static final double kMinimumRotationLimit = -90;
+        public static final double kMaximumRotationLimit = 90;
         public static final double kMinimumOutputLimit = -.8;
         public static final double kMaximumOutputLimit = .8;
         // INVERSIONS

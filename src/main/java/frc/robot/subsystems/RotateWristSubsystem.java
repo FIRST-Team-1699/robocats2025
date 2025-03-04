@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase;
@@ -15,6 +17,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
@@ -68,11 +71,11 @@ public class RotateWristSubsystem extends SubsystemBase {
             .zeroOffset(RotateWristConstants.kOffset)
             .zeroCentered(RotateWristConstants.kZeroCentered)
             .inverted(RotateWristConstants.kAbsoluteEncoderInverted);
-        // motorConfig.softLimit
-        //     .forwardSoftLimit(RotateWristConstants.kMaximumRotationLimit)
-        //     .forwardSoftLimitEnabled(true)
-        //     .reverseSoftLimit(RotateWristConstants.kMinimumRotationLimit)
-        //     .reverseSoftLimitEnabled(true);
+        motorConfig.softLimit
+            .forwardSoftLimit(RotateWristConstants.kMaximumRotationLimit)
+            .forwardSoftLimitEnabled(true)
+            .reverseSoftLimit(RotateWristConstants.kMinimumRotationLimit)
+            .reverseSoftLimitEnabled(true);
             
         motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -126,6 +129,22 @@ public class RotateWristSubsystem extends SubsystemBase {
         return run(() -> System.out.println(getPosition()));
     }
 
+    public Command flipWrist() {
+        return new SelectCommand<>(
+            Map.of(
+                true,
+                setPosition(RotatePosition.VERTICAL),
+                false,
+                setPosition(RotatePosition.FLIPPED)
+            ),
+            this::isFlipped
+        );
+    }
+
+    public boolean isFlipped() {
+        return currentTargetPosition == RotatePosition.FLIPPED;
+    }
+
     public void setIdleMode(IdleMode idleMode) {
         motorConfig.idleMode(idleMode);
         motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
@@ -139,7 +158,7 @@ public class RotateWristSubsystem extends SubsystemBase {
 
     /**Contains desired position for rotational positions */
     public enum RotatePosition {
-        VERTICAL(90), HORIZONTAL(0);
+        VERTICAL(90), HORIZONTAL(0), FLIPPED(-90);
         double degrees;
         private RotatePosition(double rotationDegrees) {
             this.degrees = rotationDegrees;
