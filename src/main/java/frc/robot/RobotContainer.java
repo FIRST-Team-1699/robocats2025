@@ -68,7 +68,7 @@ public class RobotContainer {
     private final PivotSubsystem pivot = new PivotSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
 
-    // LEDController ledcontroller = new LEDController(elevator, pivot, tiltWrist, rotateWrist, intake);
+    LEDController ledcontroller = new LEDController(elevator, pivot, tiltWrist, rotateWrist, intake);
 
     // if(!pivot.isAtSetpoint())
 
