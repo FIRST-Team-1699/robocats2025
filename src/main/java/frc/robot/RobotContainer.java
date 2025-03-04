@@ -8,6 +8,7 @@ import frc.robot.Constants.SwerveConstants;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import java.math.RoundingMode;
 import java.util.Map;
@@ -74,6 +75,23 @@ public class RobotContainer {
     // LED
 
     public RobotContainer() {
+        // Adding commands so that they can be seen by pathplanner
+        NamedCommands.registerCommand("Stored", pivot.moveToSafePosition()
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.STORED)
+                .alongWith(tiltWrist.setPosition(TiltPosition.STORED)
+                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
+                .andThen(tiltWrist.waitUntilAtSetpoint())
+                .andThen(elevator.waitUntilAtSetpoint())
+                .andThen(pivot.setPosition(PivotPosition.STORED))));
+        NamedCommands.registerCommand("Outake", intake.runIntake(-.5));
+        NamedCommands.registerCommand("Move L4", elevator.setPosition(ElevatorPosition.STORED)
+                .andThen(pivot.setPosition(PivotPosition.L_FOUR))
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.L_FOUR)
+                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR)))));
+
         configureBindings();
     }
 

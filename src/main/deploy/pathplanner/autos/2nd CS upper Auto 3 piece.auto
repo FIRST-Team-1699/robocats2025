@@ -11,107 +11,25 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score 3 o'clock"
+                  "pathName": "Coral station upper pt1"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": null
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "3 o'clock to CS"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "CS to 4 o'clock"
+                  "name": "Move L4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": null
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "4 o'clock to CS"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "CS to 5 o'clock"
+                  "name": "Outtake"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": null
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
+                  "name": "Stored"
                 }
               }
             ]
@@ -124,13 +42,112 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "5 o'clock to CS"
+                  "pathName": "Coral station upper pt2"
                 }
               },
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 0.5
+                  "name": "Move CS"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stored"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Coral station upper pt3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Move L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Outtake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stored"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Coral station upper pt4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Move CS"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stored"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Coral station upper pt5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Move L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Outtake"
                 }
               }
             ]
@@ -140,6 +157,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Main autos",
   "choreoAuto": false
 }
