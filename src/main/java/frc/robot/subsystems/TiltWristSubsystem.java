@@ -176,7 +176,7 @@ public class TiltWristSubsystem extends SubsystemBase {
 
         CLIMB(20),
 
-        ALGAE_INTAKE(-1), ALGAE_DESCORE_PART_ONE(-1), ALGAE_DESCORE_PART_TWO(-1),
+        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(0), ALGAE_DESCORE_L_THREE(-55),
 
         GROUND_INTAKE(55), CORAL_STATION_INTAKE(-1),
 

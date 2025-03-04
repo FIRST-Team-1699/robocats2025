@@ -225,14 +225,30 @@ public class RobotContainer {
         operatorController.y()
             .onTrue(
                 elevator.setPosition(ElevatorPosition.STORED)
-                .andThen(elevator.waitUntilAtSetpoint())
-                .andThen(pivot.setPosition(PivotPosition.SAFE_POSITION)
-                .alongWith(tiltWrist.setPosition(TiltPosition.STORED).alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL))))
+                .andThen(pivot.setPosition(PivotPosition.ALGAE_DESCORE_L_THREE))
                 .andThen(pivot.waitUntilAtSetpoint())
-                .andThen(elevator.setPosition(ElevatorPosition.GROUND_INTAKE))
-                .andThen(elevator.waitUntilAtSetpoint())
-                .andThen(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE)
-                .alongWith(pivot.setPosition(PivotPosition.GROUND_INTAKE)))
+                .andThen(elevator.setPosition(ElevatorPosition.ALGAE_DESCORE_L_THREE)
+                .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
+                .alongWith(tiltWrist.setPosition(TiltPosition.ALGAE_DESCORE_L_THREE))))
+                // elevator.setPosition(ElevatorPosition.STORED)
+                // .andThen(elevator.waitUntilAtSetpoint())
+                // .andThen(pivot.setPosition(PivotPosition.SAFE_POSITION)
+                // .alongWith(tiltWrist.setPosition(TiltPosition.STORED).alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL))))
+                // .andThen(pivot.waitUntilAtSetpoint())
+                // .andThen(elevator.setPosition(ElevatorPosition.GROUND_INTAKE))
+                // .andThen(elevator.waitUntilAtSetpoint())
+                // .andThen(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE)
+                // .alongWith(pivot.setPosition(PivotPosition.GROUND_INTAKE)))
+            );
+
+        operatorController.x()
+            .onTrue(
+                elevator.setPosition(ElevatorPosition.STORED)
+                .andThen(pivot.setPosition(PivotPosition.ALGAE_DESCORE_L_TWO))
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.ALGAE_DESCORE_L_TWO)
+                .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
+                .alongWith(tiltWrist.setPosition(TiltPosition.ALGAE_DESCORE_L_TWO))))
             );
 
         operatorController.rightBumper()
