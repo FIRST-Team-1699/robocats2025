@@ -148,6 +148,10 @@ public class PivotSubsystem extends SubsystemBase {
         return Math.abs(Math.abs(getPosition()) - Math.abs(currentTargetPosition.getRotations()));
     }
 
+    public BooleanSupplier isInGroundIntakePosition() {
+        return () -> currentTargetPosition == TiltPosition.GROUND_INTAKE;
+    }
+
     /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
     public Command stopMotorCommand() {
         return runOnce(() -> {
