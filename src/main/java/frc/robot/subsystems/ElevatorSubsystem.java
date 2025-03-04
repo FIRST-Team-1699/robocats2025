@@ -199,7 +199,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
 
         public boolean shouldPivotMoveFromHere() {
-            return this.rotations < ElevatorConstants.kUnsafePosition;
+            return this.rotations <= ElevatorConstants.kUnsafePosition;
         }
     }
 }

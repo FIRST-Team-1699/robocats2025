@@ -70,6 +70,8 @@ public class Constants {
         public static final int kFreeLimit = 40;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
+        // UNSAFE POSITION THRESHOLD
+        public static final double kUnsafePosition = 10;
     }
     
     public static class PivotConstants {
