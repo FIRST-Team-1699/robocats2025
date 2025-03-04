@@ -159,26 +159,27 @@ public class RobotContainer {
             )
             .onFalse(
                 new SelectCommand<>( 
-                    Map.of(true, 
-                    pivot.moveToSafePosition()
-                    .alongWith(tiltWrist.setPosition(TiltPosition.PRIME)
-                    .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
-                    .andThen(pivot.waitUntilAtSetpoint())
-                    .andThen(elevator.setPosition(ElevatorPosition.PRIME)
-                    .andThen(tiltWrist.waitUntilAtSetpoint())
-                    .andThen(elevator.waitUntilAtSetpoint())
-                    .andThen(pivot.setPosition(PivotPosition.PRIME))),
-                    false,
-                    pivot.moveToSafePosition()
-                    .alongWith(tiltWrist.setPosition(TiltPosition.STORED)
-                    .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
-                    .andThen(pivot.waitUntilAtSetpoint())
-                    .andThen(elevator.setPosition(ElevatorPosition.STORED)
-                    .andThen(tiltWrist.waitUntilAtSetpoint())
-                    .andThen(elevator.waitUntilAtSetpoint())
-                    .andThen(pivot.setPosition(PivotPosition.STORED)))), 
+                    Map.of(
+                        true, 
+                        pivot.moveToSafePosition()
+                        .alongWith(tiltWrist.setPosition(TiltPosition.PRIME)
+                        .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
+                        .andThen(pivot.waitUntilAtSetpoint())
+                        .andThen(elevator.setPosition(ElevatorPosition.PRIME)
+                        .andThen(tiltWrist.waitUntilAtSetpoint())
+                        .andThen(elevator.waitUntilAtSetpoint())
+                        .andThen(pivot.setPosition(PivotPosition.PRIME))),
+                        false,
+                        pivot.moveToSafePosition()
+                        .alongWith(tiltWrist.setPosition(TiltPosition.STORED)
+                        .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
+                        .andThen(pivot.waitUntilAtSetpoint())
+                        .andThen(elevator.setPosition(ElevatorPosition.STORED)
+                        .andThen(tiltWrist.waitUntilAtSetpoint())
+                        .andThen(elevator.waitUntilAtSetpoint())
+                        .andThen(pivot.setPosition(PivotPosition.STORED)))), 
                     intake::hasPiece
-                ).onlyIf(pivot.isInGroundIntakePosition())
+                )
             );
         // operatorController.x().onTrue(elevator.setPosition(ElevatorPosition.STORED));
         // operatorController.y().onTrue(elevator.setPosition(ElevatorPosition.PID_TESTING).onlyIf(() -> pivot.currentTargetPosition != PivotPosition.STORED));
@@ -209,53 +210,63 @@ public class RobotContainer {
                     .andThen(elevator.waitUntilAtSetpoint())
                     .andThen(pivot.setPosition(PivotPosition.STORED)))), 
                     intake::hasPiece
-                )
+                ).unless(pivot.isInGroundIntakePosition())
             );    
         
         operatorController.povUp()
             .onTrue(
-                elevator.setPosition(ElevatorPosition.STORED)
+                (elevator.setPosition(ElevatorPosition.STORED)
                 .andThen(pivot.setPosition(PivotPosition.L_FOUR))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.L_FOUR)
                 .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
-                .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR)))));
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR)))))
+                .unless(pivot.isInGroundIntakePosition())
+            );
         
         operatorController.b()
             .onTrue(
-                elevator.setPosition(ElevatorPosition.STORED)
+                (elevator.setPosition(ElevatorPosition.STORED)
                 .andThen(pivot.setPosition(PivotPosition.CORAL_STATION_INTAKE))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.CORAL_STATION_INTAKE)
                 .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
-                .alongWith(tiltWrist.setPosition(TiltPosition.CORAL_STATION_INTAKE)))));
+                .alongWith(tiltWrist.setPosition(TiltPosition.CORAL_STATION_INTAKE)))))
+                .unless(pivot.isInGroundIntakePosition())
+            );
 
         operatorController.povRight()
             .onTrue(
-                elevator.setPosition(ElevatorPosition.STORED)
+                (elevator.setPosition(ElevatorPosition.STORED)
                 .andThen(pivot.setPosition(PivotPosition.L_THREE))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.L_THREE)
                 .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
-                .alongWith(tiltWrist.setPosition(TiltPosition.L_THREE)))));
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_THREE)))))
+                .unless(pivot.isInGroundIntakePosition())
+            );
 
         operatorController.povLeft()
             .onTrue(
-                elevator.setPosition(ElevatorPosition.STORED)
+                (elevator.setPosition(ElevatorPosition.STORED)
                 .andThen(pivot.setPosition(PivotPosition.L_TWO))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.L_TWO)
                 .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
-                .alongWith(tiltWrist.setPosition(TiltPosition.L_TWO)))));
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_TWO)))))
+                .unless(pivot.isInGroundIntakePosition())
+            );
         
         operatorController.povDown()
             .onTrue(
-                elevator.setPosition(ElevatorPosition.STORED)
+                (elevator.setPosition(ElevatorPosition.STORED)
                 .andThen(pivot.setPosition(PivotPosition.L_ONE))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.L_ONE)
                 .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
-                .alongWith(tiltWrist.setPosition(TiltPosition.L_ONE)))));
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_ONE)))))
+                .unless(pivot.isInGroundIntakePosition())
+            );
 
         operatorController.rightBumper()
             .onTrue(tiltWrist.setPosition(TiltPosition.L_THREE_PECK).onlyIf(tiltWrist.isInL3Position())
