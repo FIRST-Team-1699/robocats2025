@@ -210,7 +210,7 @@ public class RobotContainer {
                     .andThen(elevator.waitUntilAtSetpoint())
                     .andThen(pivot.setPosition(PivotPosition.STORED)))), 
                     intake::hasPiece
-                ).unless(pivot.isInGroundIntakePosition())
+                )
             );    
         
         operatorController.povUp()
