@@ -199,7 +199,9 @@ public class RobotContainer {
 
         operatorController.povRight()
             .onTrue(
-                elevator.setPosition(ElevatorPosition.STORED)
+                elevator.moveToSafePosition()
+                .andThen(elevator.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.L_THREE))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.L_THREE)

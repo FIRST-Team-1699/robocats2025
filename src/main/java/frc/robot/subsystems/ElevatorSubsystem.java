@@ -170,12 +170,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Elevator Height", encoder.getPosition());
         SmartDashboard.putNumber("Target Elevator Height", currentTargetPosition.getRotations());
         SmartDashboard.putBoolean("Elevator at Setpoint", isAtSetpoint());
+        SmartDashboard.putBoolean("Elevator at safe return point", currentTargetPosition.shouldPivotMoveFromHere());
     }
     
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
     public enum ElevatorPosition {
         // ENUMS FOR POSITIONS
-        STORED(0), PRIME(0), COBRA_STANCE(-1), SAFE_POSITION(10),
+        STORED(0), PRIME(0), COBRA_STANCE(-1), SAFE_POSITION(7),
         
         CLIMB(10),
 
