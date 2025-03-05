@@ -113,6 +113,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         });
     }
 
+    public Command moveToSafePosition() {
+        return setPosition(ElevatorPosition.SAFE_POSITION).onlyIf(() -> !currentTargetPosition.shouldPivotMoveFromHere());
+    }
+
     /**Waits until elevator reaches position within Tolerance.
      * @param ElevatorPosition
      * Enum for elevator height options. 
@@ -166,12 +170,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Elevator Height", encoder.getPosition());
         SmartDashboard.putNumber("Target Elevator Height", currentTargetPosition.getRotations());
         SmartDashboard.putBoolean("Elevator at Setpoint", isAtSetpoint());
+        SmartDashboard.putBoolean("Elevator at safe return point", currentTargetPosition.shouldPivotMoveFromHere());
     }
     
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
     public enum ElevatorPosition {
         // ENUMS FOR POSITIONS
-        STORED(0), PRIME(0), COBRA_STANCE(-1),
+        STORED(0), PRIME(0), COBRA_STANCE(-1), SAFE_POSITION(7),
         
         CLIMB(10),
 
@@ -192,6 +197,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         public double getRotations() {
             return this.rotations;
+        }
+
+        public boolean shouldPivotMoveFromHere() {
+            return this.rotations <= ElevatorConstants.kUnsafePosition;
         }
     }
 }
