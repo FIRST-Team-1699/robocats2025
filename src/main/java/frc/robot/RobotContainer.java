@@ -9,34 +9,25 @@ import frc.robot.Constants.SwerveConstants;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import java.math.RoundingMode;
-
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LEDController;
-import frc.robot.subsystems.LEDController.TargetRGB;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.RotateWristSubsystem;
 import frc.robot.subsystems.TiltWristSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.IntakeSpeed;
 import frc.robot.subsystems.RotateWristSubsystem.RotatePosition;
 import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
 import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.ReefSensorSubsystem;
 import frc.robot.subsystems.PivotSubsystem.PivotPosition;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorPosition;
 
 public class RobotContainer {
@@ -64,6 +55,8 @@ public class RobotContainer {
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final PivotSubsystem pivot = new PivotSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
+
+    private final ReefSensorSubsystem sensors = new ReefSensorSubsystem();
 
     // LEDController ledcontroller = new LEDController(pivot, elevator, rotateWrits, tiltWrist);
 
@@ -108,12 +101,53 @@ public class RobotContainer {
         // setup logger
         drivetrain.registerTelemetry(logger::telemeterize);
 
+        // ALIGNS ROROBOT TO REEF
+        driverController.start()
+            .onTrue(
+                drivetrain.applyRequest(
+                    () -> drive.withRotationalRate(sensors.fixRotationError())
+                ).alongWith(sensors.waitUntilAligned())
+                    .onlyIf(() -> !sensors.isAtAlignedPosition().getAsBoolean())
+        );
+
+        // MOVES ROBOT LEFT OR RIGHT TO SCORE
+        driverController.povLeft()
+            .onTrue(                
+                drivetrain.applyRequest(
+                    // TODO: VERIFY THAT THIS WILL MOVE LEFT RELATIVE TO THE ROBOT
+                    () -> drive.withVelocityX(-.1)
+                ).alongWith(sensors.waitUntilAligned())
+                    .andThen(drivetrain.applyRequest(
+                        () -> drive.withVelocityX(0)
+                    )
+                )   
+                    .onlyIf(sensors.isAtAlignedPosition())
+                    .onlyIf(() ->!sensors.isAtScorePositon().getAsBoolean())
+        );
+
+        driverController.povRight()
+        .onTrue(                
+            drivetrain.applyRequest(
+                // TODO: VERIFY THAT THIS WILL MOVE RIGHT RELATIVE TO THE ROBOT
+                () -> drive.withVelocityX(.1)
+            ).alongWith(sensors.waitUntilAligned())
+            .andThen(drivetrain.applyRequest(
+                () -> drive.withVelocityX(0)
+            )
+        ) 
+                .onlyIf(sensors.isAtAlignedPosition())
+                .onlyIf(() ->!sensors.isAtScorePositon().getAsBoolean())
+        );
+
+
+
         // operatorController.x().onTrue(elevator.setPosition(ElevatorPosition.STORED));
         // operatorController.y().onTrue(elevator.setPosition(ElevatorPosition.PID_TESTING).onlyIf(() -> pivot.currentTargetPosition != PivotPosition.STORED));
 
         // Operator Controller
         operatorController.rightTrigger().whileTrue(intake.runIntake(.3)).onFalse(intake.stopMotorCommand());
         operatorController.leftTrigger().whileTrue(intake.runIntake(-.5)).onFalse(intake.stopMotorCommand());
+
 
         operatorController.a()
             .onTrue(
