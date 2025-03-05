@@ -73,42 +73,42 @@ public class LEDController extends SubsystemBase {
     }
 
     /**Runs periodically, uses conditionals to change LED color */
-    @Override
-    public void periodic() {
-        cycleTicks++;
-        blinkTicks++;
-        if(blinkTicks > 50000) {
-            blinkTicks = 0;
-        }
-        if(cycleTicks >= 10) {
-            if(!elevator.isAtSetpoint() 
-            || !pivot.isAtSetpoint() 
-            || !rotateWrist.isAtSetpoint()
-            || !tiltWrist.isAtSetpoint()) {
-                changeColor(TargetRGB.IN_TRANSITION);
-            } else {
-                if(intake.hasPiece()) {
-                    changeColor(TargetRGB.OBTAINED_CORAL);
-                } else {
-                    if(pivot.currentTargetPosition == PivotPosition.STORED) {
-                        changeColor(TargetRGB.BASE);
-                    } else {
-                        changeColor(TargetRGB.REACHED_POSITION);
-                    }
-                }
-            } 
-            cycleTicks = 0;
-        }
-        if(intake.isRunning()) {
-            blink = true;
-        } else {
-            blink = false;
-        }
+    // @Override
+    // public void periodic() {
+    //     cycleTicks++;
+    //     blinkTicks++;
+    //     if(blinkTicks > 50000) {
+    //         blinkTicks = 0;
+    //     }
+    //     if(cycleTicks >= 10) {
+    //         if(!elevator.isAtSetpoint() 
+    //         || !pivot.isAtSetpoint() 
+    //         || !rotateWrist.isAtSetpoint()
+    //         || !tiltWrist.isAtSetpoint()) {
+    //             changeColor(TargetRGB.IN_TRANSITION);
+    //         } else {
+    //             if(intake.hasPiece()) {
+    //                 changeColor(TargetRGB.OBTAINED_CORAL);
+    //             } else {
+    //                 if(pivot.currentTargetPosition == PivotPosition.STORED) {
+    //                     changeColor(TargetRGB.BASE);
+    //                 } else {
+    //                     changeColor(TargetRGB.REACHED_POSITION);
+    //                 }
+    //             }
+    //         } 
+    //         cycleTicks = 0;
+    //     }
+    //     if(intake.isRunning()) {
+    //         blink = true;
+    //     } else {
+    //         blink = false;
+    //     }
 
-        SmartDashboard.putBoolean("LEDs Blinking", blink);
-        SmartDashboard.putNumber("Cycle Ticks", cycleTicks);
-        SmartDashboard.putNumber("Blink Ticks", blinkTicks);
-    }
+    //     SmartDashboard.putBoolean("LEDs Blinking", blink);
+    //     SmartDashboard.putNumber("Cycle Ticks", cycleTicks);
+    //     SmartDashboard.putNumber("Blink Ticks", blinkTicks);
+    // }
 
     /**enums for determining RGBs of LEDs*/
     public enum TargetRGB {
