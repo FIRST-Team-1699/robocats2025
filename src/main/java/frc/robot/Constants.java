@@ -70,6 +70,8 @@ public class Constants {
         public static final int kFreeLimit = 40;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
+        // UNSAFE POSITION THRESHOLD
+        public static final double kUnsafePosition = 7;
     }
     
     public static class PivotConstants {
@@ -77,7 +79,7 @@ public class Constants {
         public static final int kLeaderID = 44;
         public static final int kFollowerID = 43;
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = .03;
+        public static final double kP = .05;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
@@ -94,8 +96,8 @@ public class Constants {
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -105; // TODO: SET
         public static final double kMaximumRotationLimit = 5; // TODO: SET
-        public static final double kMinimumOutputLimit = -.8;
-        public static final double kMaximumOutputLimit = .8;
+        public static final double kMinimumOutputLimit = -.5;
+        public static final double kMaximumOutputLimit = .7;
         // INVERSIONS
         public static final boolean kInverted = false;
         public static final boolean kFollowerInverted = true;
@@ -178,7 +180,7 @@ public class Constants {
         public static final boolean kAbsoluteEncoderInverted = false;
         // CONVERSION FACTOR AND OFFSETS
         public static final double kPositionConversionFactor = 360.0;
-        public static final double kOffset = 0.0789999; // TODO: SET
+        public static final double kOffset = 0.9200116; // TODO: SET
         public static final boolean kZeroCentered = true;
         // CURRENT LIMITS TODO: TUNE
         public static final int kStallLimit = 10;
