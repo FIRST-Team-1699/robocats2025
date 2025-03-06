@@ -79,7 +79,7 @@ public class Constants {
         public static final int kLeaderID = 44;
         public static final int kFollowerID = 43;
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = .03;
+        public static final double kP = .05;
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
@@ -96,8 +96,8 @@ public class Constants {
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -105; // TODO: SET
         public static final double kMaximumRotationLimit = 5; // TODO: SET
-        public static final double kMinimumOutputLimit = -.8;
-        public static final double kMaximumOutputLimit = .8;
+        public static final double kMinimumOutputLimit = -.5;
+        public static final double kMaximumOutputLimit = .7;
         // INVERSIONS
         public static final boolean kInverted = false;
         public static final boolean kFollowerInverted = true;
