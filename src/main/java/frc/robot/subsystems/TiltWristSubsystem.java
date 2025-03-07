@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
-
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase;
@@ -126,34 +124,6 @@ public class TiltWristSubsystem extends SubsystemBase {
         return absoluteEncoder.getPosition();
     }
 
-    public TiltPosition getTargetPosition() {
-        return currentTargetPosition;
-    }
-
-    public BooleanSupplier isInL4Position() {
-        return () -> currentTargetPosition == TiltPosition.L_FOUR;
-    }
-
-    public BooleanSupplier isInL3Position() {
-        return () -> currentTargetPosition == TiltPosition.L_THREE;
-    }
-
-    public BooleanSupplier isInL2Position() {
-        return () -> currentTargetPosition == TiltPosition.L_TWO;
-    }
-
-    public BooleanSupplier isInL4PeckPosition() {
-        return () -> currentTargetPosition == TiltPosition.L_FOUR_PECK;
-    }
-
-    public BooleanSupplier isInL3PeckPosition() {
-        return () -> currentTargetPosition == TiltPosition.L_THREE_PECK;
-    }
-
-    public BooleanSupplier isInL2PeckPosition() {
-        return () -> currentTargetPosition == TiltPosition.L_TWO_PECK;
-    }
-
     public Command printPosition() {
         return run(() -> System.out.println(getPosition()));
     }
@@ -172,16 +142,13 @@ public class TiltWristSubsystem extends SubsystemBase {
 
     /**Contains desired position for rotational positions */
     public enum TiltPosition {
-        STORED(-110), PRIME(-30), COBRA_STANCE(-1),
-
-        CLIMB(20),
+        STORED(-110), PRIME(-1), COBRA_STANCE(-1),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_PART_ONE(-1), ALGAE_DESCORE_PART_TWO(-1),
 
         GROUND_INTAKE(55), CORAL_STATION_INTAKE(-1),
 
-        L_ONE(30), L_TWO(-5), L_THREE(-30), L_FOUR(-30),
-        L_TWO_PECK(20), L_THREE_PECK(-55), L_FOUR_PECK(-55);
+        L_ONE(30), L_TWO(0), L_THREE(-40), L_FOUR(-40);
 
         double degreePosition;
         private TiltPosition(double degreePosition) {

@@ -114,10 +114,10 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
      * @param pivotPosition
      * enum that has height value for target position.
      */
-    public Command setClimbPosition() {
+    public Command setSmartPosition(PivotPosition pivotPosition) {
         return runOnce(() -> {
-            currentTargetPosition = PivotPosition.CLIMB_LOWER;
-            feedbackController.setReference(PivotPosition.CLIMB_LOWER.getRotations(), SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot1);
+            currentTargetPosition = pivotPosition;
+            feedbackController.setReference(pivotPosition.getRotations(), SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot1);
         });
     }
 
@@ -182,8 +182,6 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getRotations());
         SmartDashboard.putNumber("Pivot Error", getError());
         SmartDashboard.putBoolean("Pivot At Setpoint", isAtSetpoint());
-        SmartDashboard.putBoolean("Safe Zone", isRobotPositionSafe());
-        SmartDashboard.putNumber("Output Current", leadMotor.getOutputCurrent());
         SmartDashboard.putBoolean("Safe Zone", currentTargetPosition.canElevatorRetractFromHere());
 
         // pivotTab.("Setpoint", currentTargetPosition.getRotations());
@@ -196,8 +194,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
      * Height Pivot must reach to get to state.
      */
     public enum PivotPosition {
-        STORED(-102), PRIME(0), SAFE_POSITION(-80), COBRA_STANCE(-1),
-        CLIMB_RAISE(-25), CLIMB_LOWER(-50),
+        STORED(-102), PRIME(-45), SAFE_POSITION(-85), COBRA_STANCE(-1),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
         GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-50),

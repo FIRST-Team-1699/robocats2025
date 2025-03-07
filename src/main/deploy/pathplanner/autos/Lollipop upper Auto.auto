@@ -5,74 +5,39 @@
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Pt1 lollipop upper"
-                }
-              }
-            ]
+            "pathName": "Pt1 lollipop upper"
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Pt2 lollipop upper"
-                }
-              }
-            ]
+            "pathName": "Pt2 lollipop upper"
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Pt3 lollipop upper"
-                }
-              }
-            ]
+            "pathName": "Pt3 lollipop upper"
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Pt4 lollipop upper"
-                }
-              }
-            ]
+            "pathName": "Pt4 lollipop upper"
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Pt5 lollipop upper"
-                }
-              }
-            ]
+            "pathName": "Pt5 lollipop upper"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Charlie Ring's Auto",
+  "folder": null,
   "choreoAuto": false
 }
