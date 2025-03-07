@@ -184,7 +184,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       
         GROUND_INTAKE(7), CORAL_STATION_INTAKE(0),
 
-        L_ONE(0), L_TWO(5), L_THREE(11), L_FOUR(47);
+        L_ONE(0), L_TWO(6), L_THREE(9), L_FOUR(47);
 
         private double rotations;
         /**Constrcutor for height for ElevatorPositions (Enum for Elevator poses)
