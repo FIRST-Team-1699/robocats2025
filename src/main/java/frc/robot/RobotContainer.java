@@ -36,7 +36,7 @@ import frc.robot.subsystems.TiltWristSubsystem;
 import frc.robot.subsystems.RotateWristSubsystem.RotatePosition;
 import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
 import frc.robot.subsystems.PivotSubsystem;
-import frc.robot.subsystems.ReefSensorSubsystem;
+// import frc.robot.subsystems.ReefSensorSubsystem;
 import frc.robot.subsystems.PivotSubsystem.PivotPosition;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorPosition;
@@ -68,7 +68,7 @@ public class RobotContainer {
     private final IntakeSubsystem intake = new IntakeSubsystem();
 
     // LEDController ledcontroller = new LEDController(elevator, pivot, tiltWrist, rotateWrist, intake);
-    private final ReefSensorSubsystem sensors = new ReefSensorSubsystem();
+    // private final ReefSensorSubsystem sensors = new ReefSensorSubsystem();
 
     // LEDController ledcontroller = new LEDController(pivot, elevator, rotateWrits, tiltWrist);
 
@@ -156,8 +156,9 @@ public class RobotContainer {
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.GROUND_INTAKE))
                 .andThen(elevator.waitUntilAtSetpoint())
-                .andThen(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE)
+                .andThen(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE_HORIZONTAL)
                 .alongWith(pivot.setPosition(PivotPosition.GROUND_INTAKE)))
+                .andThen(intake.runIntake(.4))
             )
             .onFalse(
                 new SelectCommand<>( 
@@ -181,7 +182,46 @@ public class RobotContainer {
                         .andThen(elevator.waitUntilAtSetpoint())
                         .andThen(pivot.setPosition(PivotPosition.STORED)))), 
                     intake::hasPiece
-                )
+                ).alongWith(intake.stopMotorCommand())
+            );
+
+        driverController.leftTrigger()
+        .onTrue(
+            elevator.setPosition(ElevatorPosition.STORED)
+            .andThen(elevator.waitUntilAtSetpoint())
+            .andThen(pivot.setPosition(PivotPosition.SAFE_POSITION)
+            .alongWith(tiltWrist.setPosition(TiltPosition.STORED)
+            .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL))))
+            .andThen(pivot.waitUntilAtSetpoint())
+            .andThen(elevator.setPosition(ElevatorPosition.GROUND_INTAKE))
+            .andThen(elevator.waitUntilAtSetpoint())
+            .andThen(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE_VERTICAL)
+            .alongWith(pivot.setPosition(PivotPosition.GROUND_INTAKE)))
+            .andThen(intake.runIntake(.4))
+        )
+            .onFalse(
+                new SelectCommand<>( 
+                    Map.of(
+                        true, 
+                        pivot.moveToSafePosition()
+                        .alongWith(tiltWrist.setPosition(TiltPosition.PRIME)
+                        .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
+                        .andThen(pivot.waitUntilAtSetpoint())
+                        .andThen(elevator.setPosition(ElevatorPosition.PRIME)
+                        .andThen(tiltWrist.waitUntilAtSetpoint())
+                        .andThen(elevator.waitUntilAtSetpoint())
+                        .andThen(pivot.setPosition(PivotPosition.PRIME))),
+                        false,
+                        pivot.moveToSafePosition()
+                        .alongWith(tiltWrist.setPosition(TiltPosition.STORED)
+                        .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
+                        .andThen(pivot.waitUntilAtSetpoint())
+                        .andThen(elevator.setPosition(ElevatorPosition.STORED)
+                        .andThen(tiltWrist.waitUntilAtSetpoint())
+                        .andThen(elevator.waitUntilAtSetpoint())
+                        .andThen(pivot.setPosition(PivotPosition.STORED)))), 
+                    intake::hasPiece
+                ).alongWith(intake.stopMotorCommand())
             );
 
         // operatorController.x().onTrue(elevator.setPosition(ElevatorPosition.STORED));
@@ -230,7 +270,7 @@ public class RobotContainer {
         
         operatorController.b()
             .onTrue(
-                elevator.moveToSafePosition()
+                (elevator.moveToSafePosition()
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.CORAL_STATION_INTAKE))
@@ -243,7 +283,7 @@ public class RobotContainer {
 
         operatorController.povRight()
             .onTrue(
-                elevator.moveToSafePosition()
+                (elevator.moveToSafePosition()
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.L_THREE))
@@ -256,7 +296,7 @@ public class RobotContainer {
 
         operatorController.povLeft()
             .onTrue(
-                elevator.moveToSafePosition()
+                (elevator.moveToSafePosition()
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.L_TWO))
@@ -269,7 +309,7 @@ public class RobotContainer {
         
         operatorController.povDown()
             .onTrue(
-                elevator.moveToSafePosition()
+                (elevator.moveToSafePosition()
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.L_ONE))
@@ -278,6 +318,7 @@ public class RobotContainer {
                 .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
                 .alongWith(tiltWrist.setPosition(TiltPosition.L_ONE)))))
                 .unless(pivot.isInGroundIntakePosition())
+            );
 
         operatorController.y()
             .onTrue(

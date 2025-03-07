@@ -9,6 +9,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
+import java.util.function.BooleanSupplier;
+
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -187,7 +191,6 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getRotations());
         SmartDashboard.putNumber("Pivot Error", getError());
         SmartDashboard.putBoolean("Pivot At Setpoint", isAtSetpoint());
-        SmartDashboard.putBoolean("Safe Zone", isRobotPositionSafe());
         SmartDashboard.putNumber("Output Current", leadMotor.getOutputCurrent());
         SmartDashboard.putBoolean("Safe Zone", currentTargetPosition.canElevatorRetractFromHere());
 
