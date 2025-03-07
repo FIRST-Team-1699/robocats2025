@@ -176,12 +176,12 @@ public class TiltWristSubsystem extends SubsystemBase {
 
         CLIMB(20),
 
-        ALGAE_INTAKE(-1), ALGAE_DESCORE_PART_ONE(-1), ALGAE_DESCORE_PART_TWO(-1),
+        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(20), ALGAE_DESCORE_L_THREE(20),
 
         GROUND_INTAKE(55), CORAL_STATION_INTAKE(-1),
 
-        L_ONE(30), L_TWO(-5), L_THREE(-30), L_FOUR(-30),
-        L_TWO_PECK(20), L_THREE_PECK(-55), L_FOUR_PECK(-55);
+        L_ONE(30), L_TWO(-20), L_THREE(-15), L_FOUR(-30),
+        L_TWO_PECK(20), L_THREE_PECK(-70), L_FOUR_PECK(-70);
 
         double degreePosition;
         private TiltPosition(double degreePosition) {

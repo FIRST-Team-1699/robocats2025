@@ -4,6 +4,9 @@ import static edu.wpi.first.units.Units.*;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface.RegionOfInterest;
+import au.grapplerobotics.interfaces.LaserCanInterface.TimingBudget;
 import frc.robot.generated.TunerConstants;
 
 public class Constants {
@@ -20,7 +23,7 @@ public class Constants {
         public static final int kPort = 0;
         public static final int kLEDLength = 36;
     }
-    
+  
     public static class AutoConstants {
         // TRANSLATION PID
         public static final double kTranslationP = 10;
@@ -70,6 +73,8 @@ public class Constants {
         public static final int kFreeLimit = 40;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
+        // UNSAFE POSITION THRESHOLD
+        public static final double kUnsafePosition = 7;
     }
     
     public static class PivotConstants {
@@ -77,9 +82,9 @@ public class Constants {
         public static final int kLeaderID = 44;
         public static final int kFollowerID = 43;
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = .03;
+        public static final double kP = .05;
         public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kD = 0.001;
         public static final double kFF = 0;
         // MAXMOTION CONSTANTS TODO: TUNE
         public static final double kMAXMotionP = 0.02;
@@ -94,8 +99,8 @@ public class Constants {
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -105; // TODO: SET
         public static final double kMaximumRotationLimit = 5; // TODO: SET
-        public static final double kMinimumOutputLimit = -.8;
-        public static final double kMaximumOutputLimit = .8;
+        public static final double kMinimumOutputLimit = -.5;
+        public static final double kMaximumOutputLimit = .7;
         // INVERSIONS
         public static final boolean kInverted = false;
         public static final boolean kFollowerInverted = true;
@@ -178,12 +183,28 @@ public class Constants {
         public static final boolean kAbsoluteEncoderInverted = false;
         // CONVERSION FACTOR AND OFFSETS
         public static final double kPositionConversionFactor = 360.0;
-        public static final double kOffset = 0.0789999; // TODO: SET
+        public static final double kOffset = 0.9200116; // TODO: SET
         public static final boolean kZeroCentered = true;
         // CURRENT LIMITS TODO: TUNE
         public static final int kStallLimit = 10;
         public static final int kFreeLimit = 10;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
+    }
+
+    public static class ReefSensorConstants {
+        // TODO: SET
+        public static final int kLeftLaserID = -1;
+        public static final int kRightLaserID = -1;  
+
+        // TODO: TUNE
+        public static final RegionOfInterest kLeftRegionOfIntrest = new LaserCan.RegionOfInterest(8, 8, 16, 16);
+        public static final RegionOfInterest kRightRegionOfIntrest = new LaserCan.RegionOfInterest(8, 8, 16, 16);
+        
+        // TODO: TUNE (NOTE THAT LOW TIMING_BUDGET MAY CAUSE INACCURACY, BUT INCREASES SPEED)
+        public static final TimingBudget K_TIMING_BUDGET = TimingBudget.TIMING_BUDGET_33MS;
+
+        public static final int kAlignmentTolerance = -1;
+        public static final int kReefDetectionTolerance = -1;
     }
 }
