@@ -4,6 +4,9 @@ import static edu.wpi.first.units.Units.*;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface.RegionOfInterest;
+import au.grapplerobotics.interfaces.LaserCanInterface.TimingBudget;
 import frc.robot.generated.TunerConstants;
 
 public class Constants {
@@ -20,7 +23,7 @@ public class Constants {
         public static final int kPort = 0;
         public static final int kLEDLength = 36;
     }
-    
+  
     public static class AutoConstants {
         // TRANSLATION PID
         public static final double kTranslationP = 10;
@@ -187,5 +190,21 @@ public class Constants {
         public static final int kFreeLimit = 10;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
+    }
+
+    public static class ReefSensorConstants {
+        // TODO: SET
+        public static final int kLeftLaserID = -1;
+        public static final int kRightLaserID = -1;  
+
+        // TODO: TUNE
+        public static final RegionOfInterest kLeftRegionOfIntrest = new LaserCan.RegionOfInterest(8, 8, 16, 16);
+        public static final RegionOfInterest kRightRegionOfIntrest = new LaserCan.RegionOfInterest(8, 8, 16, 16);
+        
+        // TODO: TUNE (NOTE THAT LOW TIMING_BUDGET MAY CAUSE INACCURACY, BUT INCREASES SPEED)
+        public static final TimingBudget K_TIMING_BUDGET = TimingBudget.TIMING_BUDGET_33MS;
+
+        public static final int kAlignmentTolerance = -1;
+        public static final int kReefDetectionTolerance = -1;
     }
 }
