@@ -11,7 +11,25 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Lollipop lower pt1"
+                  "pathName": "Sweep #1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Move L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Outtake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stored"
                 }
               }
             ]
@@ -24,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Lollipop lower pt2"
+                  "pathName": "Sweep #2"
                 }
               }
             ]
@@ -37,7 +55,31 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Lollipop lower pt3"
+                  "pathName": "Sweep #3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Move L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Outtake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stored"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 4.0
                 }
               }
             ]
@@ -50,20 +92,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Lollipop lower pt4"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Lollipop lower pt5"
+                  "pathName": "Sweep #4"
                 }
               }
             ]
@@ -73,6 +102,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Charlie Ring's Auto",
+  "folder": "Main autos",
   "choreoAuto": false
 }
