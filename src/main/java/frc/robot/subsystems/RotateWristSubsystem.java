@@ -37,7 +37,7 @@ public class RotateWristSubsystem extends SubsystemBase {
 
         feedbackController = motor.getClosedLoopController();
 
-        currentTargetPosition = RotatePosition.HORIZONTAL;
+        currentTargetPosition = RotatePosition.VERTICAL;
 
         configureMotors();
     }
@@ -100,6 +100,10 @@ public class RotateWristSubsystem extends SubsystemBase {
         return getError() < RotateWristConstants.kTolerance;
     }
 
+    public boolean isAtLEDTolerance() {
+        return getError() < 3;
+    }
+
     /**Returns double, representing error between target position and actual position */
     public double getError() {
         return Math.abs(Math.abs(currentTargetPosition.degrees) - Math.abs(absoluteEncoder.getPosition()));
@@ -135,6 +139,7 @@ public class RotateWristSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Actual Rotate Wrist Angle", absoluteEncoder.getPosition());
         SmartDashboard.putNumber("Wanted Rotate Wrist Angle", currentTargetPosition.degrees);
+        SmartDashboard.putBoolean("At Rotate Setpoint", isAtSetpoint());
     }
 
     /**Contains desired position for rotational positions */

@@ -76,7 +76,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public boolean isRunning() {
-        return currentIntakeSpeed.speed != 0;
+        return motor.get() != 0;
     }
 
     public Command stopMotorCommand() {
@@ -88,7 +88,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public boolean hasPiece() {
-        return motor.getForwardLimitSwitch().isPressed();
+        return motor.getReverseLimitSwitch().isPressed();
     }
 
     // public Command setRaw(double speed) {

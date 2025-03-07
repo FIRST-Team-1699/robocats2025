@@ -62,9 +62,9 @@ public class Constants {
         public static final double kTolerance = 1.0; // TODO: TUNE
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -5; // TODO: SET
-        public static final double kMaximumRotationLimit = 100; // TODO: SET
-        public static final double kMinimumOutputLimit = -.8;
-        public static final double kMaximumOutputLimit = .8;
+        public static final double kMaximumRotationLimit = 50; // TODO: SET
+        public static final double kMinimumOutputLimit = -.85;
+        public static final double kMaximumOutputLimit = .85;
         // INVERSIONS
         public static final boolean kInverted = false;
         public static final boolean kFollowerInverted = true;
@@ -99,8 +99,8 @@ public class Constants {
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -105; // TODO: SET
         public static final double kMaximumRotationLimit = 5; // TODO: SET
-        public static final double kMinimumOutputLimit = -.5;
-        public static final double kMaximumOutputLimit = .7;
+        public static final double kMinimumOutputLimit = -.6;
+        public static final double kMaximumOutputLimit = .75;
         // INVERSIONS
         public static final boolean kInverted = false;
         public static final boolean kFollowerInverted = true;
@@ -172,7 +172,7 @@ public class Constants {
         public static final double kMAXMotionMaxVelocity = 0;
         public static final double kMAXMotionAllowedError = 1.0;
         // TOLERANCE FOR PID ERROR
-        public static final double kTolerance = 1.0; // TODO: TUNE
+        public static final double kTolerance = 2.0; // TODO: TUNE
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -90; // TODO: SET
         public static final double kMaximumRotationLimit = 90; // TODO: SET

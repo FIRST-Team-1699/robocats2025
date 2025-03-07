@@ -109,6 +109,9 @@ public class TiltWristSubsystem extends SubsystemBase {
         return Math.abs(Math.abs(currentTargetPosition.degreePosition) - Math.abs(absoluteEncoder.getPosition()));
     }
 
+    public boolean isAtLEDTolerance() {
+        return getError() < 3.0;
+    }
     /**returns command to stop motor */
     public Command stopMotorCommand() {
         return runOnce(() -> {

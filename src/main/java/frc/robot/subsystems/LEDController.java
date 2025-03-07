@@ -51,10 +51,10 @@ public class LEDController extends SubsystemBase {
     /**Changes the colot of LEDs */
     public void changeColor(TargetRGB targetRGB) {
         // STOPS FROM WASTING RESOURCES VIA RETURN
-        if(currentRGB.equals(targetRGB)) return;
         // ALLOWS LEDS TO TURN ON/OFF, BLINK FOR INTAKE
-        if(blink && blinkTicks % 20 <= 10) {
+        if(blink && blinkTicks < 10) {
             setColorDirectly(TargetRGB.NONE);
+            System.out.println("BLINKING OFF");
         } else {
             setColorDirectly(targetRGB);
         }
@@ -63,7 +63,7 @@ public class LEDController extends SubsystemBase {
 
     public void setColorDirectly(TargetRGB targetRGB) {
         for(int i = 0; i < LEDConstants.kLEDLength; i++) {
-            ledBuffer.setRGB(i, targetRGB.red, targetRGB.blue, targetRGB.green);
+            ledBuffer.setRGB(i, targetRGB.red, targetRGB.green, targetRGB.blue);
         }
         leds.setData(ledBuffer);
         currentRGB = targetRGB;
@@ -85,14 +85,14 @@ public class LEDController extends SubsystemBase {
     public void periodic() {
         cycleTicks++;
         blinkTicks++;
-        if(blinkTicks > 50000) {
+        if(blinkTicks > 20) {
             blinkTicks = 0;
         }
         if(cycleTicks >= 10) {
             if(!elevator.isAtSetpoint() 
-            || !pivot.isAtSetpoint() 
-            || !rotateWrist.isAtSetpoint()
-            || !tiltWrist.isAtSetpoint()) {
+            || !pivot.isAtLEDTolerance() 
+            || !rotateWrist.isAtLEDTolerance()
+            || !tiltWrist.isAtLEDTolerance()) {
                 changeColor(TargetRGB.IN_TRANSITION);
             } else {
                 if(intake.hasPiece()) {
@@ -122,7 +122,7 @@ public class LEDController extends SubsystemBase {
     public enum TargetRGB {
         NONE(0, 0, 0),
 
-        BASE(18, 148, 255), // Blue
+        BASE(18, 255, 148), // Blue
 
         IN_TRANSITION(255, 13, 13),// Red
 
@@ -130,7 +130,7 @@ public class LEDController extends SubsystemBase {
 
         IS_PECKING(255, 255, 255),// White
 
-        REACHED_POSITION(49, 255, 13);//Green
+        REACHED_POSITION(5, 255, 10);//Green
 
         // VARIABLES TO SET INTS for LEDs' enums
         int red;
