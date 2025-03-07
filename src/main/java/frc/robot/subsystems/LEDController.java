@@ -126,7 +126,7 @@ public class LEDController extends SubsystemBase {
 
         IN_TRANSITION(255, 13, 13),// Red
 
-        OBTAINED_CORAL(240, 200, 0),// Gold
+        OBTAINED_CORAL(255, 180, 0),// Gold
 
         IS_PECKING(255, 255, 255),// White
 
