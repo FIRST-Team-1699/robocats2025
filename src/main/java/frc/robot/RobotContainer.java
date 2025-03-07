@@ -156,6 +156,7 @@ public class RobotContainer {
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE)
                 .alongWith(pivot.setPosition(PivotPosition.GROUND_INTAKE)))
+                .andThen(intake.runIntake(.4))
             )
             .onFalse(
                 new SelectCommand<>( 
@@ -179,7 +180,7 @@ public class RobotContainer {
                         .andThen(elevator.waitUntilAtSetpoint())
                         .andThen(pivot.setPosition(PivotPosition.STORED)))), 
                     intake::hasPiece
-                )
+                ).alongWith(intake.stopMotorCommand())
             );
         // operatorController.x().onTrue(elevator.setPosition(ElevatorPosition.STORED));
         // operatorController.y().onTrue(elevator.setPosition(ElevatorPosition.PID_TESTING).onlyIf(() -> pivot.currentTargetPosition != PivotPosition.STORED));
