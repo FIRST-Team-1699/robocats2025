@@ -17,6 +17,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -93,7 +94,11 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("Intake", intake.runIntake(.4));
 
+        NamedCommands.registerCommand("Stop Intake", intake.stopMotorCommand());
+
         NamedCommands.registerCommand("Wait Until Loaded", new WaitUntilCommand(() -> intake.hasPiece()));
+
+        NamedCommands.registerCommand("Wait Until Unloaded", new WaitUntilCommand(() -> !intake.hasPiece()));
 
         NamedCommands.registerCommand("Move L4", 
             elevator.setPosition(ElevatorPosition.STORED)
@@ -104,7 +109,7 @@ public class RobotContainer {
             .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR))))
         );
 
-        NamedCommands.registerCommand("Station Intake", 
+        NamedCommands.registerCommand("Move CS", 
             elevator.moveToSafePosition()
             .andThen(elevator.waitUntilAtSetpoint())
             .andThen(elevator.setPosition(ElevatorPosition.STORED))
@@ -358,15 +363,6 @@ public class RobotContainer {
                 .andThen(elevator.setPosition(ElevatorPosition.ALGAE_DESCORE_L_THREE)
                 .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
                 .alongWith(tiltWrist.setPosition(TiltPosition.ALGAE_DESCORE_L_THREE))))
-                // elevator.setPosition(ElevatorPosition.STORED)
-                // .andThen(elevator.waitUntilAtSetpoint())
-                // .andThen(pivot.setPosition(PivotPosition.SAFE_POSITION)
-                // .alongWith(tiltWrist.setPosition(TiltPosition.STORED).alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL))))
-                // .andThen(pivot.waitUntilAtSetpoint())
-                // .andThen(elevator.setPosition(ElevatorPosition.GROUND_INTAKE))
-                // .andThen(elevator.waitUntilAtSetpoint())
-                // .andThen(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE)
-                // .alongWith(pivot.setPosition(PivotPosition.GROUND_INTAKE)))
             );
 
         operatorController.x()
@@ -381,14 +377,31 @@ public class RobotContainer {
             );
 
         operatorController.rightBumper()
-            .onTrue(tiltWrist.setPosition(TiltPosition.L_THREE_PECK).onlyIf(tiltWrist.isInL3Position())
-                .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_PECK).onlyIf(tiltWrist.isInL4Position()))
-                .andThen(tiltWrist.setPosition(TiltPosition.L_TWO_PECK).onlyIf(tiltWrist.isInL2Position()))
+            .onTrue(
+                new SelectCommand<>(
+                        Map.of(
+                        RotatePosition.VERTICAL,
+                        tiltWrist.setPosition(TiltPosition.L_THREE_PECK).onlyIf(tiltWrist.isInL3Position())
+                        .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_PECK).onlyIf(tiltWrist.isInL4Position()))
+                        .andThen(tiltWrist.setPosition(TiltPosition.L_TWO_PECK).onlyIf(tiltWrist.isInL2Position())),
+                        RotatePosition.VERTICAL_FLIPPED,
+                        tiltWrist.setPosition(TiltPosition.L_THREE_PECK).onlyIf(tiltWrist.isInL3Position())
+                        .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_PECK).onlyIf(tiltWrist.isInL4Position()))
+                        .andThen(tiltWrist.setPosition(TiltPosition.L_TWO_PECK).onlyIf(tiltWrist.isInL2Position())),
+                        RotatePosition.HORIZONTAL,
+                        new PrintCommand("Not in a scoring position")
+                    ),
+                    rotateWrist::getRotatePosition
+                )
             )
             .onFalse(tiltWrist.setPosition(TiltPosition.L_FOUR).onlyIf(tiltWrist.isInL4PeckPosition())
                 .andThen(tiltWrist.setPosition(TiltPosition.L_THREE).onlyIf(tiltWrist.isInL3PeckPosition()))
                 .andThen(tiltWrist.setPosition(TiltPosition.L_TWO).onlyIf(tiltWrist.isInL2PeckPosition()))
             );
+
+        operatorController.leftBumper()
+            .onTrue((rotateWrist.setPosition(RotatePosition.VERTICAL_FLIPPED).onlyIf(() -> tiltWrist.isInL2L3L4().getAsBoolean() && rotateWrist.isVertical().getAsBoolean()))
+                .andThen(rotateWrist.setPosition(RotatePosition.VERTICAL).onlyIf(() -> tiltWrist.isInL2L3L4().getAsBoolean() && rotateWrist.isVerticalFlipped().getAsBoolean())));
     }
 
     private Command setDefaultSpeed() {
