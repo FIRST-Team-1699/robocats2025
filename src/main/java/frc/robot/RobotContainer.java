@@ -4,28 +4,21 @@
 
 package frc.robot;
 
+import frc.robot.Constants.ReefSensorConstants;
 import frc.robot.Constants.SwerveConstants;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import java.math.RoundingMode;
 import java.util.Map;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -35,6 +28,7 @@ import frc.robot.subsystems.RotateWristSubsystem;
 import frc.robot.subsystems.TiltWristSubsystem;
 import frc.robot.subsystems.RotateWristSubsystem.RotatePosition;
 import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
+import frc.robot.util.ReefDistanceSensor;
 import frc.robot.subsystems.PivotSubsystem;
 // import frc.robot.subsystems.ReefSensorSubsystem;
 import frc.robot.subsystems.PivotSubsystem.PivotPosition;
@@ -66,6 +60,10 @@ public class RobotContainer {
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final PivotSubsystem pivot = new PivotSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
+
+    private final ReefDistanceSensor rightSensor = new ReefDistanceSensor(ReefSensorConstants.kRightID, ReefSensorConstants.kRightDistanceFromCenter, ReefSensorConstants.kRightDistanceFromSide);
+    private final ReefDistanceSensor leftSensor = new ReefDistanceSensor(ReefSensorConstants.kLeftID, ReefSensorConstants.kLeftDistanceFromCenter, ReefSensorConstants.kLeftDistanceFromSide);
+    private final ReefDistanceSensor centerSensor = new ReefDistanceSensor(ReefSensorConstants.kCenterID, ReefSensorConstants.kCenterDistanceFromCenter, ReefSensorConstants.kCenterDistanceFromSide);
 
     LEDController ledcontroller = new LEDController(elevator, pivot, tiltWrist, rotateWrist, intake);
 
