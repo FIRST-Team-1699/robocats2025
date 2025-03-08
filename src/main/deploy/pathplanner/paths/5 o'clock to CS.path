@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 3.6,
-        "y": 2.8
+        "y": 2.9
       },
       "prevControl": null,
       "nextControl": {
         "x": 4.046431015734489,
-        "y": 3.173615795868717
+        "y": 3.273615795868717
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Scoring C"
     },
     {
       "anchor": {
-        "x": 1.5,
-        "y": 1.0
+        "x": 1.35,
+        "y": 0.95
       },
       "prevControl": {
-        "x": 2.1185198901279056,
-        "y": 1.5651882345701238
+        "x": 1.9685198901279057,
+        "y": 1.5151882345701237
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Lower CS"
     }
   ],
   "rotationTargets": [],

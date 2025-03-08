@@ -15,12 +15,6 @@
                 }
               },
               {
-                "type": "named",
-                "data": {
-                  "name": null
-                }
-              },
-              {
                 "type": "wait",
                 "data": {
                   "waitTime": 0.5
@@ -59,12 +53,6 @@
                 }
               },
               {
-                "type": "named",
-                "data": {
-                  "name": null
-                }
-              },
-              {
                 "type": "wait",
                 "data": {
                   "waitTime": 0.5
@@ -100,12 +88,6 @@
                 "type": "path",
                 "data": {
                   "pathName": "CS to 5 o'clock"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": null
                 }
               },
               {

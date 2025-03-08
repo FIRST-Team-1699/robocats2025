@@ -12,20 +12,20 @@
         "y": 3.8655329342789413
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Scoring B"
     },
     {
       "anchor": {
-        "x": 1.75,
+        "x": 1.8,
         "y": 4.0
       },
       "prevControl": {
-        "x": 2.4215890943455793,
+        "x": 2.471589094345579,
         "y": 3.8795450555090993
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Middle Lolli"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.0292,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,

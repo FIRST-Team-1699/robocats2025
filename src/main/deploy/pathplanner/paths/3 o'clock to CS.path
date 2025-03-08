@@ -12,20 +12,20 @@
         "y": 1.8009813577749014
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Scoring E"
     },
     {
       "anchor": {
-        "x": 1.5,
-        "y": 1.0
+        "x": 1.35,
+        "y": 0.95
       },
       "prevControl": {
-        "x": 1.7026408649288853,
-        "y": 1.1840700478625352
+        "x": 1.5526408649288854,
+        "y": 1.1340700478625352
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Lower CS"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -126.72423586704265
+    "rotation": -126.0
   },
   "reversed": false,
   "folder": null,

@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 4.1,
-        "y": 5.5
+        "x": 3.95,
+        "y": 5.3
       },
       "prevControl": {
-        "x": 4.459432883126091,
-        "y": 5.6586031325275785
+        "x": 4.3094328831260915,
+        "y": 5.458603132527578
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Scoring K"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.0292,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,

@@ -12,20 +12,20 @@
         "y": 2.496778824021149
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Scoring C"
     },
     {
       "anchor": {
-        "x": 1.81,
-        "y": 2.3647028688524587
+        "x": 1.8,
+        "y": 2.2
       },
       "prevControl": {
-        "x": 2.8839366540237386,
-        "y": 2.770903476552737
+        "x": 2.8739366540237388,
+        "y": 2.6062006077002784
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Lower Lollie"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.0292,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -160.0
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "Lollipop lower",
