@@ -208,7 +208,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
      * Height Pivot must reach to get to state.
      */
     public enum PivotPosition {
-        STORED(-102), PRIME(-50), SAFE_POSITION(-75), COBRA_STANCE(-1),
+        STORED(-102), PRIME(-60), SAFE_POSITION(-75), COBRA_STANCE(-1),
         CLIMB_RAISE(-25), CLIMB_LOWER(-50),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-65), ALGAE_DESCORE_L_THREE(-47),
