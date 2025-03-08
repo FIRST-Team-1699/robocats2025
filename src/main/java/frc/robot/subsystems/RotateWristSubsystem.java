@@ -154,6 +154,8 @@ public class RotateWristSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Actual Rotate Wrist Angle", absoluteEncoder.getPosition());
         SmartDashboard.putNumber("Wanted Rotate Wrist Angle", currentTargetPosition.degrees);
         SmartDashboard.putBoolean("At Rotate Setpoint", isAtSetpoint());
+        SmartDashboard.putBoolean("IsVertical", isVertical().getAsBoolean());
+        SmartDashboard.putBoolean("IsFlipped", isVerticalFlipped().getAsBoolean());
     }
 
     /**Contains desired position for rotational positions */

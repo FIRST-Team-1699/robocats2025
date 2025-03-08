@@ -146,15 +146,15 @@ public class TiltWristSubsystem extends SubsystemBase {
     }
 
     public BooleanSupplier isInL4PeckPosition() {
-        return () -> currentTargetPosition == TiltPosition.L_FOUR_PECK || currentTargetPosition == TiltPosition.L_FOUR_PECK_FLIPPED;
+        return () -> currentTargetPosition == TiltPosition.L_FOUR_PECK;
     }
 
     public BooleanSupplier isInL3PeckPosition() {
-        return () -> currentTargetPosition == TiltPosition.L_THREE_PECK || currentTargetPosition == TiltPosition.L_THREE_PECK_FLIPPED;
+        return () -> currentTargetPosition == TiltPosition.L_THREE_PECK;
     }
 
     public BooleanSupplier isInL2PeckPosition() {
-        return () -> currentTargetPosition == TiltPosition.L_TWO_PECK || currentTargetPosition == TiltPosition.L_TWO_PECK_FLIPPED;
+        return () -> currentTargetPosition == TiltPosition.L_TWO_PECK;
     }
 
     public BooleanSupplier isInL2L3L4() {
@@ -175,6 +175,7 @@ public class TiltWristSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Actual Tilt Wrist Angle", absoluteEncoder.getPosition());
         SmartDashboard.putNumber("Wanted Tilt Wrist Angle", currentTargetPosition.degreePosition);
         SmartDashboard.putBoolean("At Tilt Setpoint", isAtSetpoint());
+        SmartDashboard.putBoolean("Is In Scoring Tilt", isInL2L3L4().getAsBoolean());
     }
 
     /**Contains desired position for rotational positions */
@@ -188,8 +189,7 @@ public class TiltWristSubsystem extends SubsystemBase {
         GROUND_INTAKE_HORIZONTAL(55), GROUND_INTAKE_VERTICAL(15), CORAL_STATION_INTAKE(-1),
 
         L_ONE(30), L_TWO(-20), L_THREE(-15), L_FOUR(-30),
-        L_TWO_PECK(20), L_THREE_PECK(-70), L_FOUR_PECK(-70),
-        L_TWO_PECK_FLIPPED(-60), L_THREE_PECK_FLIPPED(40), L_FOUR_PECK_FLIPPED(10);
+        L_TWO_PECK(20), L_THREE_PECK(-70), L_FOUR_PECK(-70);
 
         double degreePosition;
         private TiltPosition(double degreePosition) {

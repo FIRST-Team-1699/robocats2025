@@ -48,6 +48,7 @@ public class IntakeSubsystem extends SubsystemBase {
         config.limitSwitch
             .forwardLimitSwitchEnabled(false)
             .reverseLimitSwitchEnabled(false);
+        config.openLoopRampRate(.5);
             // .forwardLimitSwitchType(Type.kNormallyOpen);
 
         motor.configureAsync(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
