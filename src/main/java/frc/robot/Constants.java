@@ -187,7 +187,7 @@ public class Constants {
         public static final double kOffset = 0.9200116; // TODO: SET
         public static final boolean kZeroCentered = true;
         // CURRENT LIMITS TODO: TUNE
-        public static final int kStallLimit = 10;
+        public static final int kStallLimit = 20;
         public static final int kFreeLimit = 10;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
