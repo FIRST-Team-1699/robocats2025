@@ -11,28 +11,16 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Move L4"
+                  "name": "Move L1"
                 }
               },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Move Basic L4"
+                  "pathName": "Move Basic L1"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Peck"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
           }
         },
         {
@@ -45,6 +33,18 @@
           "type": "named",
           "data": {
             "name": "Wait Until Unloaded"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move Descore L2"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
           }
         },
         {
