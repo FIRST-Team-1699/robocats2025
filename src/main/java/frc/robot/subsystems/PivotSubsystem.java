@@ -70,7 +70,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
             .inverted(PivotConstants.kInverted)
             .idleMode(PivotConstants.kIdleMode)
             .smartCurrentLimit(PivotConstants.kStallLimit, PivotConstants.kFreeLimit)
-            .closedLoopRampRate(.5);
+            .closedLoopRampRate(.001);
         leadConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             .pidf(PivotConstants.kP, PivotConstants.kI, PivotConstants.kD, PivotConstants.kFF, ClosedLoopSlot.kSlot0)

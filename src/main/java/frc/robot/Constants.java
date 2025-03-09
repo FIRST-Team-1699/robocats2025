@@ -123,9 +123,9 @@ public class Constants {
         // MOTOR CAN BUS IDS TODO: CONFIRM
         public static final int kMotorID = 41; // CONFIRM
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = 0.025;
+        public static final double kP = 0.02;
         public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kD = 0.01;
         public static final double kFF = 0;
         // MAXMOTION CONSTANTS TODO: TUNE
         public static final double kMAXMotionP = 0;
