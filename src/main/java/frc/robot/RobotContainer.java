@@ -84,7 +84,7 @@ public class RobotContainer {
                     false,
                     pivot.moveToSafePosition()
                     .alongWith(tiltWrist.setPosition(TiltPosition.STORED)
-                    .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
+                    .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
                     .andThen(pivot.waitUntilAtSetpoint())
                     .andThen(elevator.setPosition(ElevatorPosition.STORED)
                     .andThen(tiltWrist.waitUntilAtSetpoint())
@@ -93,7 +93,7 @@ public class RobotContainer {
                 intake::hasPiece
             ).alongWith(intake.stopMotorCommand()));
 
-        NamedCommands.registerCommand("Outake", intake.runIntake(-.3));
+        NamedCommands.registerCommand("Outtake", intake.runIntake(-.4));
 
         NamedCommands.registerCommand("Intake", intake.runIntake(.4));
 
@@ -110,6 +110,17 @@ public class RobotContainer {
             .andThen(elevator.setPosition(ElevatorPosition.L_FOUR)
             .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
             .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR))))
+        );
+
+        NamedCommands.registerCommand("Move L1",
+            elevator.moveToSafePosition()
+            .andThen(elevator.waitUntilAtSetpoint())
+            .andThen(elevator.setPosition(ElevatorPosition.STORED))
+            .andThen(pivot.setPosition(PivotPosition.L_ONE))
+            .andThen(pivot.waitUntilAtSetpoint())
+            .andThen(elevator.setPosition(ElevatorPosition.L_ONE)
+            .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
+            .alongWith(tiltWrist.setPosition(TiltPosition.L_ONE))))
         );
 
         NamedCommands.registerCommand("Move CS", 
@@ -208,7 +219,7 @@ public class RobotContainer {
                         false,
                         pivot.moveToSafePosition()
                         .alongWith(tiltWrist.setPosition(TiltPosition.STORED)
-                        .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
+                        .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
                         .andThen(pivot.waitUntilAtSetpoint())
                         .andThen(elevator.setPosition(ElevatorPosition.STORED)
                         .andThen(tiltWrist.waitUntilAtSetpoint())
@@ -251,7 +262,7 @@ public class RobotContainer {
                         false,
                         pivot.moveToSafePosition()
                         .alongWith(tiltWrist.setPosition(TiltPosition.STORED)
-                        .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
+                        .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
                         .andThen(pivot.waitUntilAtSetpoint())
                         .andThen(elevator.setPosition(ElevatorPosition.STORED)
                         .andThen(tiltWrist.waitUntilAtSetpoint())
@@ -287,7 +298,7 @@ public class RobotContainer {
                     false,
                     pivot.moveToSafePosition()
                     .alongWith(tiltWrist.setPosition(TiltPosition.STORED)
-                    .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
+                    .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
                     .andThen(pivot.waitUntilAtSetpoint())
                     .andThen(elevator.setPosition(ElevatorPosition.STORED)
                     .andThen(tiltWrist.waitUntilAtSetpoint())
@@ -434,6 +445,6 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() 
     {
-        return AutoBuilder.buildAuto("Coral station lower Auto");
+        return AutoBuilder.buildAuto("1st Coral station lower L1");
     }
 }

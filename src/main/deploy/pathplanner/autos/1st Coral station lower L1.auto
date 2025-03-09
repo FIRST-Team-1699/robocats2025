@@ -9,9 +9,22 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "parallel",
                 "data": {
-                  "pathName": "Coral station lower L1 pt1"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Coral station lower L1 pt1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Move L1"
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -78,9 +91,35 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "parallel",
                 "data": {
-                  "pathName": "Coral station lower L1 pt3"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Coral station lower L1 pt3"
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Move L1"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -153,9 +192,35 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "parallel",
                 "data": {
-                  "pathName": "Coral station lower L1 pt5"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Coral station lower L1 pt5"
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 1.0
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Move L1"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {
