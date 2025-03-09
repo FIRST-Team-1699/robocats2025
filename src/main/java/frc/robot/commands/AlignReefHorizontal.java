@@ -36,15 +36,15 @@ public class AlignReefHorizontal extends Command {
     @Override
     public void execute() {
         if(alignRight) {
-            swerve.applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(0).withVelocityY(yController.calculate(rightSensor.getSideError())).withRotationalRate(0));
+            swerve.applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(0).withVelocityY(yController.calculate(rightSensor.getSideError())).withRotationalRate(0)).schedule();;
         } else {
-            swerve.applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(0).withVelocityY(yController.calculate(leftSensor.getSideError())).withRotationalRate(0));
+            swerve.applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityX(0).withVelocityY(yController.calculate(leftSensor.getSideError())).withRotationalRate(0)).schedule();;
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-        swerve.applyRequest(() -> new SwerveRequest.PointWheelsAt().withModuleDirection(Rotation2d.fromDegrees(90)));
+        swerve.applyRequest(() -> new SwerveRequest.PointWheelsAt().withModuleDirection(Rotation2d.fromDegrees(90))).schedule();;
     }
 
     @Override

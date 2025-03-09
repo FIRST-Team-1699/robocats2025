@@ -11,7 +11,7 @@ public class ReefDistanceSensor {
     private LaserCan sensor;
     private int mmFromCenter, mmFromSide;
 
-    public ReefDistanceSensor(int canID, int mmFromCenter, int mmFromSide) {
+    public ReefDistanceSensor(int canID, int mmFromCenter, int mmFromSide, RegionOfInterest interest) {
         this.sensor = new LaserCan(canID);
         this.mmFromCenter = mmFromCenter;
         this.mmFromSide = mmFromSide;
@@ -19,7 +19,7 @@ public class ReefDistanceSensor {
         try {
             sensor.setRangingMode(RangingMode.SHORT);
             sensor.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);
-            sensor.setRegionOfInterest(new RegionOfInterest(8, 8, 6, 6));
+            sensor.setRegionOfInterest(interest);
         } catch (ConfigurationFailedException e) {
             e.printStackTrace();
         }
@@ -28,7 +28,7 @@ public class ReefDistanceSensor {
     public int getCenterError() {
         Measurement measurement = sensor.getMeasurement();
         if(measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
-            return measurement.distance_mm - mmFromCenter;
+            return -(measurement.distance_mm - mmFromCenter);
         }
         return 0;
     }
@@ -36,7 +36,7 @@ public class ReefDistanceSensor {
     public int getSideError() {
         Measurement measurement = sensor.getMeasurement();
         if(measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
-            return measurement.distance_mm - mmFromSide;
+            return -(measurement.distance_mm - mmFromSide);
         }
         return 0;
     }

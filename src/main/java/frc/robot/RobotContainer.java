@@ -65,9 +65,9 @@ public class RobotContainer {
     private final PivotSubsystem pivot = new PivotSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
 
-    private final ReefDistanceSensor rightSensor = new ReefDistanceSensor(ReefSensorConstants.kRightID, ReefSensorConstants.kRightDistanceFromCenter, ReefSensorConstants.kRightDistanceFromSide);
-    private final ReefDistanceSensor leftSensor = new ReefDistanceSensor(ReefSensorConstants.kLeftID, ReefSensorConstants.kLeftDistanceFromCenter, ReefSensorConstants.kLeftDistanceFromSide);
-    private final ReefDistanceSensor centerSensor = new ReefDistanceSensor(ReefSensorConstants.kCenterID, ReefSensorConstants.kCenterDistanceFromCenter, ReefSensorConstants.kCenterDistanceFromSide);
+    private final ReefDistanceSensor rightSensor = new ReefDistanceSensor(ReefSensorConstants.kRightID, ReefSensorConstants.kRightDistanceFromCenter, ReefSensorConstants.kRightDistanceFromSide, ReefSensorConstants.rightRegion);
+    private final ReefDistanceSensor leftSensor = new ReefDistanceSensor(ReefSensorConstants.kLeftID, ReefSensorConstants.kLeftDistanceFromCenter, ReefSensorConstants.kLeftDistanceFromSide, ReefSensorConstants.leftRegion);
+    private final ReefDistanceSensor centerSensor = new ReefDistanceSensor(ReefSensorConstants.kCenterID, ReefSensorConstants.kCenterDistanceFromCenter, ReefSensorConstants.kCenterDistanceFromSide, ReefSensorConstants.centerRegion);
 
     LEDSubsystem ledcontroller = new LEDSubsystem(elevator, pivot, tiltWrist, rotateWrist, intake);
 
@@ -219,8 +219,8 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         driverController.leftBumper()
-            .onTrue(new CenterToReef(drivetrain, leftSensor, rightSensor, centerSensor, false)
-                .andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, false)));
+            .whileTrue(new CenterToReef(drivetrain, leftSensor, rightSensor, centerSensor, false));
+                //.andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, false)));
 
         driverController.rightBumper()
             .onTrue(new CenterToReef(drivetrain, leftSensor, rightSensor, centerSensor, true)

@@ -26,17 +26,20 @@ public class Constants {
     }
 
     public static class ReefSensorConstants {
-        public static final int kLeftID = -1;
+        public static final int kLeftID = 9;
         public static final int kLeftDistanceFromCenter = 0;
         public static final int kLeftDistanceFromSide = 0;
+        public static final RegionOfInterest leftRegion = new RegionOfInterest(2, 8, 4, 4);
 
-        public static final int kCenterID = -1;
-        public static final int kCenterDistanceFromCenter = 0;
+        public static final int kCenterID = 8;
+        public static final int kCenterDistanceFromCenter = 95;
         public static final int kCenterDistanceFromSide = 0;
+        public static final RegionOfInterest centerRegion = new RegionOfInterest(8, 8, 16, 16);
 
-        public static final int kRightID = -1;
-        public static final int kRightDistanceFromCenter = 0;
-        public static final int kRightDistanceFromSide = 0; // TODO: SET
+        public static final int kRightID = 7;
+        public static final int kRightDistanceFromCenter = 118;
+        public static final int kRightDistanceFromSide = 280; 
+        public static final RegionOfInterest rightRegion = new RegionOfInterest(2, 8, 4, 4);
     }
   
     public static class AutoConstants {

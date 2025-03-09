@@ -20,43 +20,52 @@ public class CenterToReef extends Command {
         this.leftSensor = leftSensor;
         this.rightSensor = rightSensor;
         this.centerSensor = centerSensor;
-        addRequirements(swerve);
 
-        xController = new ProfiledPIDController(0.001, 0, 0, new TrapezoidProfile.Constraints(2, .5));
-        thetaController = new ProfiledPIDController(0.001, 0, 0, new TrapezoidProfile.Constraints(2, .5));
+        xController = new ProfiledPIDController(0.003, 0, 0, new TrapezoidProfile.Constraints(2, .5));
+        thetaController = new ProfiledPIDController(0.01, 0, 0, new TrapezoidProfile.Constraints(2, .5));
 
         this.alignRight = alignRight;
     }
 
     @Override
     public void initialize() {
-        xController.setGoal(0);
-        xController.setTolerance(5);
-        thetaController.setGoal(0);
-        thetaController.setTolerance(5);
+        System.out.println("CENTER TO REEF INITIALIZED");
     }
 
     @Override
     public void execute() {
-        if(alignRight) {
-            double thetaOutput = thetaController.calculate(leftSensor.getCenterError() - centerSensor.getCenterError());
-            double xOutput = xController.calculate(-centerSensor.getCenterError());
-            swerve.applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityY(0).withVelocityX(xOutput).withRotationalRate(thetaOutput));
+        double rightError = rightSensor.getCenterError();
+        double centerError = centerSensor.getCenterError();
+        // if(alignRight) {
+        //     double thetaOutput = thetaController.calculate(leftSensor.getCenterError() - centerSensor.getCenterError());
+        //     double xOutput = xController.calculate(-centerSensor.getCenterError());
+        //     swerve.applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityY(0).withVelocityX(xOutput).withRotationalRate(thetaOutput)).schedule();;
+        // } else {
+        double thetaOutput;
+        double xOutput = xController.calculate(-centerError, 0);
+        if(rightError - centerError < 5) {
+            thetaOutput = 0;
         } else {
-            double thetaOutput = thetaController.calculate(rightSensor.getCenterError() - centerSensor.getCenterError());
-            double xOutput = xController.calculate(-centerSensor.getCenterError());
-            swerve.applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityY(0).withVelocityX(xOutput).withRotationalRate(thetaOutput));
+            thetaOutput = thetaController.calculate(rightError - centerError, 0);
         }
+        swerve.applyRequest(() -> new SwerveRequest.RobotCentric().withVelocityY(0).withVelocityX(xOutput).withRotationalRate(thetaOutput)).schedule();;
+        // }
+        System.out.println("CENTERING TO REEF");
+        System.out.println("LEFT OUTPUT: " + xOutput);
+        System.out.println("THETA OUTPUT: " + thetaOutput);
     }
 
     @Override
     public void end(boolean interrupted) {
-        swerve.applyRequest(() -> new SwerveRequest.PointWheelsAt().withModuleDirection(Rotation2d.fromDegrees(90)));
+        System.out.println("DONE CENTERING TO REEF" + interrupted);
+        swerve.getDefaultCommand().schedule();
     }
 
     @Override
     public boolean isFinished() {
-        if(xController.atGoal() && thetaController.atGoal()) {
+        double rightError = rightSensor.getCenterError();
+        double centerError = centerSensor.getCenterError();
+        if(Math.abs(Math.abs(rightError) - Math.abs(centerError)) < 5 && Math.abs(centerError) < 5) {
             return true;
         }
         return false;
