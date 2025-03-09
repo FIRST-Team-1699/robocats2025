@@ -9,7 +9,7 @@ import frc.robot.subsystems.PivotSubsystem.PivotPosition;
 
 
 // NOTE: THIS CLASS MAY NOT WORK INDEPENDENTLY BECAUSE THE REQUIRED SUBSYSTEMS ARE INVISIBLE TO IT 
-public class LEDController extends SubsystemBase {
+public class LEDSubsystem extends SubsystemBase {
     // DECLARATIONS
     private AddressableLED leds;
     private AddressableLEDBuffer ledBuffer;
@@ -24,7 +24,7 @@ public class LEDController extends SubsystemBase {
     private TiltWristSubsystem tiltWrist;
     private IntakeSubsystem intake;
 
-    public LEDController(ElevatorSubsystem elevator, PivotSubsystem pivot, TiltWristSubsystem tiltWrist, RotateWristSubsystem rotateWrist, IntakeSubsystem intake) {
+    public LEDSubsystem(ElevatorSubsystem elevator, PivotSubsystem pivot, TiltWristSubsystem tiltWrist, RotateWristSubsystem rotateWrist, IntakeSubsystem intake) {
         // Constructor for LED objects
         leds = new AddressableLED(LEDConstants.kPort);
         ledBuffer = new AddressableLEDBuffer(LEDConstants.kLEDLength);
@@ -88,24 +88,35 @@ public class LEDController extends SubsystemBase {
         if(blinkTicks > 20) {
             blinkTicks = 0;
         }
+        // if(cycleTicks >= 10) {
+        //     if(!elevator.isAtSetpoint() 
+        //     || !pivot.isAtLEDTolerance() 
+        //     || !rotateWrist.isAtLEDTolerance()
+        //     || !tiltWrist.isAtLEDTolerance()) {
+        //         changeColor(TargetRGB.IN_TRANSITION);
+        //     } else {
+        //         if(intake.hasPiece()) {
+        //             changeColor(TargetRGB.OBTAINED_CORAL);
+        //         } else {
+        //             if(pivot.currentTargetPosition == PivotPosition.STORED) {
+        //                 changeColor(TargetRGB.BASE);
+        //             } else {
+        //                 changeColor(TargetRGB.REACHED_POSITION);
+        //             }
+        //         }
+        //     } 
+        //     cycleTicks = 0;
+        // }
         if(cycleTicks >= 10) {
-            if(!elevator.isAtSetpoint() 
-            || !pivot.isAtLEDTolerance() 
-            || !rotateWrist.isAtLEDTolerance()
-            || !tiltWrist.isAtLEDTolerance()) {
-                changeColor(TargetRGB.IN_TRANSITION);
+            if(intake.hasPiece()) {
+                changeColor(TargetRGB.OBTAINED_CORAL);
             } else {
-                if(intake.hasPiece()) {
-                    changeColor(TargetRGB.OBTAINED_CORAL);
+                if(pivot.currentTargetPosition == PivotPosition.STORED) {
+                    changeColor(TargetRGB.BASE);
                 } else {
-                    if(pivot.currentTargetPosition == PivotPosition.STORED) {
-                        changeColor(TargetRGB.BASE);
-                    } else {
-                        changeColor(TargetRGB.REACHED_POSITION);
-                    }
+                    changeColor(TargetRGB.REACHED_POSITION);
                 }
-            } 
-            cycleTicks = 0;
+            }
         }
         if(intake.isRunning()) {
             blink = true;
