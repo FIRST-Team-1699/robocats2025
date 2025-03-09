@@ -93,7 +93,7 @@ public class RobotContainer {
                 intake::hasPiece
             ).alongWith(intake.stopMotorCommand()));
 
-        NamedCommands.registerCommand("Outtake", intake.runIntake(-.4));
+        NamedCommands.registerCommand("Outtake", intake.runIntake(-.6));
 
         NamedCommands.registerCommand("Intake", intake.runIntake(.4));
 
@@ -110,6 +110,15 @@ public class RobotContainer {
             .andThen(elevator.setPosition(ElevatorPosition.L_FOUR)
             .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
             .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR))))
+        );
+
+        NamedCommands.registerCommand("Move Descore L3", 
+            elevator.setPosition(ElevatorPosition.STORED)
+            .andThen(pivot.setPosition(PivotPosition.ALGAE_DESCORE_L_THREE))
+            .andThen(pivot.waitUntilAtSetpoint())
+            .andThen(elevator.setPosition(ElevatorPosition.ALGAE_DESCORE_L_THREE)
+            .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
+            .alongWith(tiltWrist.setPosition(TiltPosition.ALGAE_DESCORE_L_THREE))))
         );
 
         NamedCommands.registerCommand("Move L1",

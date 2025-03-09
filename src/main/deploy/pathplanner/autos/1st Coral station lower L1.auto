@@ -38,6 +38,18 @@
                 "data": {
                   "name": "Wait Until Unloaded"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Move Descore L3"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
               }
             ]
           }
@@ -46,6 +58,12 @@
           "type": "sequential",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
               {
                 "type": "parallel",
                 "data": {
@@ -63,12 +81,6 @@
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
                 }
               },
               {
@@ -148,6 +160,12 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
                 "type": "parallel",
                 "data": {
                   "commands": [
@@ -164,12 +182,6 @@
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
                 }
               },
               {
