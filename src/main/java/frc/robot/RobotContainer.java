@@ -14,12 +14,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import java.util.Map;
-import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -38,6 +38,7 @@ import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.PivotSubsystem.PivotPosition;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorPosition;
+import frc.robot.subsystems.LEDSubsystem.TargetRGB;
 
 public class RobotContainer {
     // IO DEVICES
@@ -69,7 +70,7 @@ public class RobotContainer {
     private final ReefDistanceSensor leftSensor = new ReefDistanceSensor(ReefSensorConstants.kLeftID, ReefSensorConstants.kLeftDistanceFromCenter, ReefSensorConstants.kLeftDistanceFromSide);
     private final ReefDistanceSensor centerSensor = new ReefDistanceSensor(ReefSensorConstants.kCenterID, ReefSensorConstants.kCenterDistanceFromCenter, ReefSensorConstants.kCenterDistanceFromSide);
 
-    LEDSubsystem ledcontroller = new LEDSubsystem(elevator, pivot, tiltWrist, rotateWrist, intake);
+    private final LEDSubsystem ledcontroller = new LEDSubsystem(elevator, pivot, tiltWrist, rotateWrist, intake);
 
     public RobotContainer() {
         // Adding commands so that they can be seen by pathplanner
@@ -219,12 +220,21 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         driverController.leftBumper()
-            .onTrue(new CenterToReef(drivetrain, leftSensor, rightSensor, centerSensor, false)
-                .andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, false)));
+        .onTrue(new CenterToReef(drivetrain, leftSensor, rightSensor, centerSensor, false)
+            .alongWith(ledcontroller.enableOveride(), 
+                new InstantCommand(() -> ledcontroller.setColorDirectly(TargetRGB.IN_TRANSITION)))
+            .andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, false))
+                .andThen(new InstantCommand(() -> ledcontroller.setColorDirectly(TargetRGB.REACHED_POSITION)))
+                    .andThen(ledcontroller.disableOveride()));
+
 
         driverController.rightBumper()
             .onTrue(new CenterToReef(drivetrain, leftSensor, rightSensor, centerSensor, true)
-                .andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, true)));
+                .alongWith(ledcontroller.enableOveride(), 
+                    new InstantCommand(() -> ledcontroller.setColorDirectly(TargetRGB.IN_TRANSITION)))
+                .andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, true))
+                    .andThen(new InstantCommand(() -> ledcontroller.setColorDirectly(TargetRGB.REACHED_POSITION)))
+                        .andThen(ledcontroller.disableOveride()));
 
         driverController.rightTrigger()
             .onTrue(
