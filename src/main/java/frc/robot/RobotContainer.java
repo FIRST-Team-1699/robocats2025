@@ -4,7 +4,10 @@
 
 package frc.robot;
 
+import frc.robot.Constants.ReefSensorConstants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.commands.AlignReefHorizontal;
+import frc.robot.commands.CenterToReef;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -16,11 +19,9 @@ import java.util.function.BooleanSupplier;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import frc.robot.generated.TunerConstants;
@@ -31,6 +32,7 @@ import frc.robot.subsystems.RotateWristSubsystem;
 import frc.robot.subsystems.TiltWristSubsystem;
 import frc.robot.subsystems.RotateWristSubsystem.RotatePosition;
 import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
+import frc.robot.util.ReefDistanceSensor;
 import frc.robot.subsystems.PivotSubsystem;
 // import frc.robot.subsystems.ReefSensorSubsystem;
 import frc.robot.subsystems.PivotSubsystem.PivotPosition;
@@ -62,6 +64,10 @@ public class RobotContainer {
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final PivotSubsystem pivot = new PivotSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
+
+    private final ReefDistanceSensor rightSensor = new ReefDistanceSensor(ReefSensorConstants.kRightID, ReefSensorConstants.kRightDistanceFromCenter, ReefSensorConstants.kRightDistanceFromSide);
+    private final ReefDistanceSensor leftSensor = new ReefDistanceSensor(ReefSensorConstants.kLeftID, ReefSensorConstants.kLeftDistanceFromCenter, ReefSensorConstants.kLeftDistanceFromSide);
+    private final ReefDistanceSensor centerSensor = new ReefDistanceSensor(ReefSensorConstants.kCenterID, ReefSensorConstants.kCenterDistanceFromCenter, ReefSensorConstants.kCenterDistanceFromSide);
 
     LEDSubsystem ledcontroller = new LEDSubsystem(elevator, pivot, tiltWrist, rotateWrist, intake);
 
@@ -211,6 +217,14 @@ public class RobotContainer {
         driverController.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         // setup logger
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        driverController.leftBumper()
+            .onTrue(new CenterToReef(drivetrain, leftSensor, rightSensor, centerSensor, false)
+                .andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, false)));
+
+        driverController.rightBumper()
+            .onTrue(new CenterToReef(drivetrain, leftSensor, rightSensor, centerSensor, true)
+                .andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, true)));
 
         driverController.rightTrigger()
             .onTrue(
