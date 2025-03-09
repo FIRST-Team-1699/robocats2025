@@ -6,6 +6,8 @@ package frc.robot;
 
 import frc.robot.Constants.ReefSensorConstants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.commands.AlignReefHorizontal;
+import frc.robot.commands.CenterToReef;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -141,6 +143,14 @@ public class RobotContainer {
         driverController.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         // setup logger
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        driverController.leftBumper()
+            .onTrue(new CenterToReef(drivetrain, leftSensor, rightSensor, centerSensor, false)
+                .andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, false)));
+
+        driverController.rightBumper()
+            .onTrue(new CenterToReef(drivetrain, leftSensor, rightSensor, centerSensor, true)
+                .andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, true)));
 
         driverController.rightTrigger()
             .onTrue(
