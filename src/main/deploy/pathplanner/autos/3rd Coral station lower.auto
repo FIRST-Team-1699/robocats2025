@@ -9,77 +9,47 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "parallel",
                 "data": {
-                  "pathName": "Coral station lower pt1"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Coral station lower pt1"
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.25
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Move L4"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Move L4"
+                  "name": "Peck"
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "Outtake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stored"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Coral station lower pt2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Move CS"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stored"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Coral station lower pt3"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Move L4"
+                  "waitTime": 0.5
                 }
               },
               {
@@ -91,7 +61,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Stored"
+                  "name": "Wait Until Unloaded"
                 }
               }
             ]
@@ -102,27 +72,53 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "parallel",
                 "data": {
-                  "pathName": "Coral station lower pt4"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Coral station lower pt2"
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.2
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Move CS"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Intake"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Move CS"
+                  "name": "Wait Until Loaded"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stored"
+                  "name": "Stop Intake"
                 }
               }
             ]
@@ -133,21 +129,191 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "parallel",
                 "data": {
-                  "pathName": "Coral station lower pt5"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Coral station lower pt3"
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.5
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Move L4"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Move L4"
+                  "name": "Peck"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "Outtake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Wait Until Unloaded"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Coral station lower pt4"
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.2
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Move CS"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Intake"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Wait Until Loaded"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Coral station lower pt5"
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.5
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Move L4"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Peck"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Outtake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Wait Until Unloaded"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop Intake"
                 }
               },
               {

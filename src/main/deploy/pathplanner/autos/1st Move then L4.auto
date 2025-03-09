@@ -5,21 +5,52 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Move Basic"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Move L4"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Move Basic"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Move L4"
+            "name": "Peck"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Outtake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Wait Until Unloaded"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stored"
           }
         }
       ]

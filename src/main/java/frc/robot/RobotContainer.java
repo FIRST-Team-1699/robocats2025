@@ -103,6 +103,12 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("Wait Until Unloaded", new WaitUntilCommand(() -> !intake.hasPiece()));
 
+        NamedCommands.registerCommand("Peck", 
+            tiltWrist.setPosition(TiltPosition.L_THREE_PECK).onlyIf(tiltWrist.isInL3Position())
+            .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_PECK).onlyIf(tiltWrist.isInL4Position()))
+            .andThen(tiltWrist.setPosition(TiltPosition.L_TWO_PECK).onlyIf(tiltWrist.isInL2Position()))
+        );
+
         NamedCommands.registerCommand("Move L4", 
             elevator.setPosition(ElevatorPosition.STORED)
             .andThen(pivot.setPosition(PivotPosition.L_FOUR))
@@ -110,6 +116,7 @@ public class RobotContainer {
             .andThen(elevator.setPosition(ElevatorPosition.L_FOUR)
             .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
             .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR))))
+            .andThen(elevator.waitUntilAtSetpoint())
         );
 
         NamedCommands.registerCommand("Move Descore L3", 
@@ -454,6 +461,6 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() 
     {
-        return AutoBuilder.buildAuto("1st Coral station lower L1");
+        return AutoBuilder.buildAuto("1st Move then L4");
     }
 }
