@@ -1,0 +1,62 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Move L1"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Move Basic L1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Outtake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Wait Until Unloaded"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move Descore L2"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stored"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Main autos",
+  "choreoAuto": false
+}
