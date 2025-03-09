@@ -157,6 +157,10 @@ public class TiltWristSubsystem extends SubsystemBase {
         return () -> currentTargetPosition == TiltPosition.L_TWO_PECK;
     }
 
+    public BooleanSupplier isInL2L3L4() {
+        return () -> currentTargetPosition == TiltPosition.L_FOUR || currentTargetPosition == TiltPosition.L_THREE || currentTargetPosition == TiltPosition.L_TWO;
+    }
+
     public Command printPosition() {
         return run(() -> System.out.println(getPosition()));
     }
@@ -171,6 +175,7 @@ public class TiltWristSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Actual Tilt Wrist Angle", absoluteEncoder.getPosition());
         SmartDashboard.putNumber("Wanted Tilt Wrist Angle", currentTargetPosition.degreePosition);
         SmartDashboard.putBoolean("At Tilt Setpoint", isAtSetpoint());
+        SmartDashboard.putBoolean("Is In Scoring Tilt", isInL2L3L4().getAsBoolean());
     }
 
     /**Contains desired position for rotational positions */
@@ -183,7 +188,7 @@ public class TiltWristSubsystem extends SubsystemBase {
 
         GROUND_INTAKE_HORIZONTAL(55), GROUND_INTAKE_VERTICAL(15), CORAL_STATION_INTAKE(-1),
 
-        L_ONE(30), L_TWO(-20), L_THREE(-15), L_FOUR(-30),
+        L_ONE(25), L_TWO(-20), L_THREE(-15), L_FOUR(-30),
         L_TWO_PECK(20), L_THREE_PECK(-70), L_FOUR_PECK(-70);
 
         double degreePosition;

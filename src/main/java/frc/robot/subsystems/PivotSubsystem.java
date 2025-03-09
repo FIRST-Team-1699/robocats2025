@@ -69,7 +69,8 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         leadConfig
             .inverted(PivotConstants.kInverted)
             .idleMode(PivotConstants.kIdleMode)
-            .smartCurrentLimit(PivotConstants.kStallLimit, PivotConstants.kFreeLimit);
+            .smartCurrentLimit(PivotConstants.kStallLimit, PivotConstants.kFreeLimit)
+            .closedLoopRampRate(.5);
         leadConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             .pidf(PivotConstants.kP, PivotConstants.kI, PivotConstants.kD, PivotConstants.kFF, ClosedLoopSlot.kSlot0)
@@ -208,13 +209,13 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
      * Height Pivot must reach to get to state.
      */
     public enum PivotPosition {
-        STORED(-102), PRIME(-50), SAFE_POSITION(-75), COBRA_STANCE(-1),
+        STORED(-102), PRIME(-60), SAFE_POSITION(-75), COBRA_STANCE(-1),
         CLIMB_RAISE(-25), CLIMB_LOWER(-50),
 
-        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-65), ALGAE_DESCORE_L_THREE(-47),
+        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-62), ALGAE_DESCORE_L_THREE(-47),
         GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-50),
 
-        L_ONE(-60), L_TWO(-55), L_THREE(0), L_FOUR(0);
+        L_ONE(-65), L_TWO(-55), L_THREE(0), L_FOUR(0);
         private double rotations;
         PivotPosition(double rotations) {
             this.rotations = rotations;

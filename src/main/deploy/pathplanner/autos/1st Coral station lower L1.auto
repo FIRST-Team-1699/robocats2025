@@ -15,41 +15,16 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Coral station lower pt1"
+                        "pathName": "Coral station lower L1 pt1"
                       }
                     },
                     {
-                      "type": "sequential",
+                      "type": "named",
                       "data": {
-                        "commands": [
-                          {
-                            "type": "wait",
-                            "data": {
-                              "waitTime": 0.25
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Move L4"
-                            }
-                          }
-                        ]
+                        "name": "Move L1"
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Peck"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
                 }
               },
               {
@@ -63,6 +38,18 @@
                 "data": {
                   "name": "Wait Until Unloaded"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Move Descore L3"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
               }
             ]
           }
@@ -72,38 +59,25 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
                 "type": "parallel",
                 "data": {
                   "commands": [
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Coral station lower pt2"
+                        "pathName": "Coral station lower L1 pt2"
                       }
                     },
                     {
-                      "type": "sequential",
+                      "type": "named",
                       "data": {
-                        "commands": [
-                          {
-                            "type": "wait",
-                            "data": {
-                              "waitTime": 0.2
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Move CS"
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Intake"
-                            }
-                          }
-                        ]
+                        "name": "Move CS"
                       }
                     }
                   ]
@@ -135,7 +109,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Coral station lower pt3"
+                        "pathName": "Coral station lower L1 pt3"
                       }
                     },
                     {
@@ -145,31 +119,19 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 0.5
+                              "waitTime": 1.0
                             }
                           },
                           {
                             "type": "named",
                             "data": {
-                              "name": "Move L4"
+                              "name": "Move L1"
                             }
                           }
                         ]
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Peck"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
                 }
               },
               {
@@ -198,38 +160,25 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
                 "type": "parallel",
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "named",
                       "data": {
-                        "pathName": "Coral station lower pt4"
+                        "name": "Move CS"
                       }
                     },
                     {
-                      "type": "sequential",
+                      "type": "path",
                       "data": {
-                        "commands": [
-                          {
-                            "type": "wait",
-                            "data": {
-                              "waitTime": 0.2
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Move CS"
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "Intake"
-                            }
-                          }
-                        ]
+                        "pathName": "Coral station lower L1 pt4"
                       }
                     }
                   ]
@@ -261,7 +210,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Coral station lower pt5"
+                        "pathName": "Coral station lower L1 pt5"
                       }
                     },
                     {
@@ -271,31 +220,19 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 0.5
+                              "waitTime": 1.0
                             }
                           },
                           {
                             "type": "named",
                             "data": {
-                              "name": "Move L4"
+                              "name": "Move L1"
                             }
                           }
                         ]
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Peck"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
                 }
               },
               {
@@ -314,12 +251,6 @@
                 "type": "named",
                 "data": {
                   "name": "Stop Intake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stored"
                 }
               }
             ]

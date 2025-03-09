@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase;
@@ -135,16 +137,30 @@ public class RotateWristSubsystem extends SubsystemBase {
         motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
+    public BooleanSupplier isVertical() {
+        return () -> currentTargetPosition == RotatePosition.VERTICAL;
+    }
+
+    public BooleanSupplier isVerticalFlipped() {
+        return () -> currentTargetPosition == RotatePosition.VERTICAL_FLIPPED;
+    }
+
+    public RotatePosition getRotatePosition() {
+        return currentTargetPosition;
+    }
+
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Actual Rotate Wrist Angle", absoluteEncoder.getPosition());
         SmartDashboard.putNumber("Wanted Rotate Wrist Angle", currentTargetPosition.degrees);
         SmartDashboard.putBoolean("At Rotate Setpoint", isAtSetpoint());
+        SmartDashboard.putBoolean("IsVertical", isVertical().getAsBoolean());
+        SmartDashboard.putBoolean("IsFlipped", isVerticalFlipped().getAsBoolean());
     }
 
     /**Contains desired position for rotational positions */
     public enum RotatePosition {
-        VERTICAL(90), HORIZONTAL(0);
+        VERTICAL(90), HORIZONTAL(0), VERTICAL_FLIPPED(-90);
         double degrees;
         private RotatePosition(double rotationDegrees) {
             this.degrees = rotationDegrees;
