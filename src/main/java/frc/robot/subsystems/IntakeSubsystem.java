@@ -6,9 +6,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
-import java.util.function.BooleanSupplier;
-
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -46,9 +43,7 @@ public class IntakeSubsystem extends SubsystemBase {
             .inverted(IntakeConstants.kInverted) 
             .idleMode(IdleMode.kBrake);
         config.limitSwitch
-            .forwardLimitSwitchEnabled(false)
-            .reverseLimitSwitchEnabled(false);
-        config.openLoopRampRate(.2);
+            .forwardLimitSwitchEnabled(false);
             // .forwardLimitSwitchType(Type.kNormallyOpen);
 
         motor.configureAsync(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -77,7 +72,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public boolean isRunning() {
-        return motor.get() != 0;
+        return currentIntakeSpeed.speed != 0;
     }
 
     public Command stopMotorCommand() {
@@ -88,10 +83,6 @@ public class IntakeSubsystem extends SubsystemBase {
         return runOnce(() -> motor.set(percentage));
     }
 
-    public boolean hasPiece() {
-        return motor.getReverseLimitSwitch().isPressed();
-    }
-
     // public Command setRaw(double speed) {
     //     return runOnce(()-> {
     //         motor.set(speed);
@@ -100,7 +91,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Intake is at hard limit", hasPiece());
+        SmartDashboard.putBoolean("Intake is at hard limit", motor.getForwardLimitSwitch().isPressed());
         SmartDashboard.putNumber("Wanted intake speed", currentIntakeSpeed.speed);
         SmartDashboard.putNumber("Current intake speed", motor.get());
 

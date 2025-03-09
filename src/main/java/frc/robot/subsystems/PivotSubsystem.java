@@ -1,15 +1,14 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants.PivotConstants;
-import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-
-import java.util.function.BooleanSupplier;
 
 import java.util.function.BooleanSupplier;
 
@@ -27,7 +26,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
+public class PivotSubsystem extends SubsystemBase {
     // TODO: USE ABSOLUTE ENCODER FOR INITALIZATION, RELATIVE OTHERWISE
     // MOTORS
     private SparkMax leadMotor, followMotor;
@@ -69,8 +68,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         leadConfig
             .inverted(PivotConstants.kInverted)
             .idleMode(PivotConstants.kIdleMode)
-            .smartCurrentLimit(PivotConstants.kStallLimit, PivotConstants.kFreeLimit)
-            .closedLoopRampRate(.5);
+            .smartCurrentLimit(PivotConstants.kStallLimit, PivotConstants.kFreeLimit);
         leadConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             .pidf(PivotConstants.kP, PivotConstants.kI, PivotConstants.kD, PivotConstants.kFF, ClosedLoopSlot.kSlot0)
@@ -120,10 +118,10 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
      * @param pivotPosition
      * enum that has height value for target position.
      */
-    public Command setClimbPosition() {
+    public Command setSmartPosition(PivotPosition pivotPosition) {
         return runOnce(() -> {
-            currentTargetPosition = PivotPosition.CLIMB_LOWER;
-            feedbackController.setReference(PivotPosition.CLIMB_LOWER.getRotations(), SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot1);
+            currentTargetPosition = pivotPosition;
+            feedbackController.setReference(pivotPosition.getRotations(), SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot1);
         });
     }
 
@@ -134,26 +132,20 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     }
     /**Returns if currentTargetPosition is not at ground intake
      */
-    
+    public boolean isRobotPositionSafe() {
+        return currentTargetPosition.rotations > PivotConstants.kUnsafePosition;
+    }
 
     public Command moveToSafePosition() {
-        return setPosition(PivotPosition.SAFE_POSITION).onlyIf(() -> !currentTargetPosition.canElevatorRetractFromHere());
+        return setPosition(PivotPosition.SAFE_POSITION).onlyIf(() -> !isRobotPositionSafe());
     }
 
     public boolean isAtSetpoint() {
         return getError() < PivotConstants.kTolerance;
     }
-
-    public boolean isAtLEDTolerance() {
-        return getError() < 2.5;
-    }
     
     private double getError() {
         return Math.abs(Math.abs(getPosition()) - Math.abs(currentTargetPosition.getRotations()));
-    }
-
-    public BooleanSupplier isInGroundIntakePosition() {
-        return () -> currentTargetPosition == PivotPosition.GROUND_INTAKE;
     }
 
     /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
@@ -185,19 +177,12 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     }
 
     @Override
-    public void close() {
-        leadMotor.close();
-        followMotor.close();
-    }
-
-    @Override
     public void periodic() {
         SmartDashboard.putNumber("Actual Pivot Angle", absoluteEncoder.getPosition());
         SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getRotations());
         SmartDashboard.putNumber("Pivot Error", getError());
         SmartDashboard.putBoolean("Pivot At Setpoint", isAtSetpoint());
-        SmartDashboard.putNumber("Output Current", leadMotor.getOutputCurrent());
-        SmartDashboard.putBoolean("Safe Zone", currentTargetPosition.canElevatorRetractFromHere());
+        SmartDashboard.putBoolean("Safe Zone", isRobotPositionSafe());
 
         // pivotTab.("Setpoint", currentTargetPosition.getRotations());
         // pivotTab.add("Current Position", absoluteEncoder.getPosition());
@@ -209,13 +194,12 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
      * Height Pivot must reach to get to state.
      */
     public enum PivotPosition {
-        STORED(-102), PRIME(-60), SAFE_POSITION(-75), COBRA_STANCE(-1),
-        CLIMB_RAISE(-25), CLIMB_LOWER(-50),
+        STORED(-102), PRIME(-45), SAFE_POSITION(-85), COBRA_STANCE(-1),
 
-        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-62), ALGAE_DESCORE_L_THREE(-47),
+        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-1), ALGAE_DESCORE_L_THREE(-1),
         GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-50),
 
-        L_ONE(-65), L_TWO(-55), L_THREE(0), L_FOUR(0);
+        L_ONE(-60), L_TWO(-50), L_THREE(0), L_FOUR(0);
         private double rotations;
         PivotPosition(double rotations) {
             this.rotations = rotations;
@@ -223,10 +207,6 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
 
         public double getRotations() {
             return this.rotations;
-        }
-
-        public boolean canElevatorRetractFromHere() {
-            return this.rotations > PivotConstants.kUnsafePosition;
         }
     }
 }
