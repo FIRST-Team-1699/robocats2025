@@ -124,8 +124,17 @@ public class RobotContainer {
             .andThen(pivot.setPosition(PivotPosition.ALGAE_DESCORE_L_THREE))
             .andThen(pivot.waitUntilAtSetpoint())
             .andThen(elevator.setPosition(ElevatorPosition.ALGAE_DESCORE_L_THREE)
-            .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
+            .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)   
             .alongWith(tiltWrist.setPosition(TiltPosition.ALGAE_DESCORE_L_THREE))))
+        );
+
+        NamedCommands.registerCommand("Move Descore L2", 
+            elevator.setPosition(ElevatorPosition.STORED)
+            .andThen(pivot.setPosition(PivotPosition.ALGAE_DESCORE_L_TWO))
+            .andThen(pivot.waitUntilAtSetpoint())
+            .andThen(elevator.setPosition(ElevatorPosition.ALGAE_DESCORE_L_TWO)
+            .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
+            .alongWith(tiltWrist.setPosition(TiltPosition.ALGAE_DESCORE_L_TWO))))
         );
 
         NamedCommands.registerCommand("Move L1",
@@ -461,6 +470,6 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() 
     {
-        return AutoBuilder.buildAuto("1st Move then L4");
+        return AutoBuilder.buildAuto("Move then L1");
     }
 }
