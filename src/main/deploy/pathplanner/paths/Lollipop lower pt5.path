@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.75,
-        "y": 3.887
+        "x": 1.8,
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2088557159603286,
-        "y": 4.002797040956788
+        "x": 2.231601319763996,
+        "y": 4.05810817223964
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Middle Lolli"
     },
     {
       "anchor": {
-        "x": 3.0568647540983607,
-        "y": 4.162858606557377
+        "x": 3.1,
+        "y": 4.2
       },
       "prevControl": {
-        "x": 1.643240214053029,
-        "y": 3.8041264748870973
+        "x": 1.8225896717366468,
+        "y": 4.043241156068086
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Scoring A"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -48,7 +48,7 @@
   "folder": "Lollipop lower",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 165.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

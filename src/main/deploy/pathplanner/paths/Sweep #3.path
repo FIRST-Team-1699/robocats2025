@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 1.8,
-        "y": 5.85
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8716392025046282,
-        "y": 5.708404527682731
+        "x": 2.0470350645915305,
+        "y": 3.961611500911623
       },
       "isLocked": false,
-      "linkedName": "Upper Lolli"
+      "linkedName": "Middle Lolli"
     },
     {
       "anchor": {
-        "x": 3.6,
-        "y": 5.1
+        "x": 3.0,
+        "y": 3.8
       },
       "prevControl": {
-        "x": 2.3035379388286423,
-        "y": 5.651064275386934
+        "x": 2.067560657536048,
+        "y": 3.945310673736084
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Scoring L"
+      "linkedName": "Scoring B"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Lollipop upper",
+  "folder": "Sweeping support",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

@@ -11,13 +11,25 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score 3 o'clock"
+                  "pathName": "Sweep #1"
                 }
               },
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 0.5
+                  "name": "Move L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Outtake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stored"
                 }
               }
             ]
@@ -30,13 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "3 o'clock to CS"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
+                  "pathName": "Sweep #2"
                 }
               }
             ]
@@ -49,13 +55,31 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CS to 4 o'clock"
+                  "pathName": "Sweep #3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Move L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Outtake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stored"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.5
+                  "waitTime": 4.0
                 }
               }
             ]
@@ -68,51 +92,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "4 o'clock to CS"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "CS to 5 o'clock"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "5 o'clock to CS"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
+                  "pathName": "Sweep #4"
                 }
               }
             ]
@@ -122,6 +102,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Main autos",
   "choreoAuto": false
 }

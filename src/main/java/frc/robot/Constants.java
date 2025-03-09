@@ -113,7 +113,7 @@ public class Constants {
         public static final double kUnsafePosition = -95; //TODO: REPLACE THE FUNNY NUMBER WITH AN ACTUAL POSITION
     }
   
-  public static class TiltWristConstants {
+    public static class TiltWristConstants {
         // MOTOR CAN BUS IDS TODO: CONFIRM
         public static final int kMotorID = 41; // CONFIRM
         // RAW PID CONSTANTS TODO: TUNE

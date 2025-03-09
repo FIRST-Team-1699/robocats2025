@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.8,
-        "y": 5.85
+        "x": 3.0,
+        "y": 3.8
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8716392025046282,
-        "y": 5.708404527682731
+        "x": 2.488345141040971,
+        "y": 4.60347074593919
       },
       "isLocked": false,
-      "linkedName": "Upper Lolli"
+      "linkedName": "Scoring B"
     },
     {
       "anchor": {
-        "x": 3.6,
-        "y": 5.1
+        "x": 1.8,
+        "y": 5.85
       },
       "prevControl": {
-        "x": 2.3035379388286423,
-        "y": 5.651064275386934
+        "x": 2.0820818451404826,
+        "y": 5.391663613476345
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Scoring L"
+      "linkedName": "Upper Lolli"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Lollipop upper",
+  "folder": "Sweeping support",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

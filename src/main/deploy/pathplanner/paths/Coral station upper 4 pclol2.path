@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8716392025046282,
-        "y": 5.708404527682731
+        "x": 2.1534555666775166,
+        "y": 5.392750776168213
       },
       "isLocked": false,
       "linkedName": "Upper Lolli"
     },
     {
       "anchor": {
-        "x": 3.6,
-        "y": 5.1
+        "x": 3.1,
+        "y": 4.2
       },
       "prevControl": {
-        "x": 2.3035379388286423,
-        "y": 5.651064275386934
+        "x": 2.5525432235757974,
+        "y": 4.909341562338183
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Scoring L"
+      "linkedName": "Scoring A"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Lollipop upper",
+  "folder": "Coral station upper",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0
