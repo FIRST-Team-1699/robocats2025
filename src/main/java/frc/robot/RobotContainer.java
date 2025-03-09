@@ -19,8 +19,9 @@ import java.util.function.BooleanSupplier;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
-
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import frc.robot.generated.TunerConstants;
@@ -68,7 +69,7 @@ public class RobotContainer {
     private final ReefDistanceSensor leftSensor = new ReefDistanceSensor(ReefSensorConstants.kLeftID, ReefSensorConstants.kLeftDistanceFromCenter, ReefSensorConstants.kLeftDistanceFromSide);
     private final ReefDistanceSensor centerSensor = new ReefDistanceSensor(ReefSensorConstants.kCenterID, ReefSensorConstants.kCenterDistanceFromCenter, ReefSensorConstants.kCenterDistanceFromSide);
 
-    LEDController ledcontroller = new LEDController(elevator, pivot, tiltWrist, rotateWrist, intake);
+    LEDSubsystem ledcontroller = new LEDSubsystem(elevator, pivot, tiltWrist, rotateWrist, intake);
 
     public RobotContainer() {
         // Adding commands so that they can be seen by pathplanner
