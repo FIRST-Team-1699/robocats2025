@@ -17,6 +17,7 @@ import java.util.Map;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -71,6 +72,8 @@ public class RobotContainer {
     private final ReefDistanceSensor centerSensor = new ReefDistanceSensor(ReefSensorConstants.kCenterID, ReefSensorConstants.kCenterDistanceFromCenter, ReefSensorConstants.kCenterDistanceFromSide);
 
     private final LEDSubsystem ledcontroller = new LEDSubsystem(elevator, pivot, tiltWrist, rotateWrist, intake);
+
+    public static boolean isAligning = false;
 
     public RobotContainer() {
         // Adding commands so that they can be seen by pathplanner
@@ -220,21 +223,12 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         driverController.leftBumper()
-        .onTrue(new CenterToReef(drivetrain, leftSensor, rightSensor, centerSensor, false)
-            .alongWith(ledcontroller.enableOveride(), 
-                new InstantCommand(() -> ledcontroller.setColorDirectly(TargetRGB.IN_TRANSITION)))
-            .andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, false))
-                .andThen(new InstantCommand(() -> ledcontroller.setColorDirectly(TargetRGB.REACHED_POSITION)))
-                    .andThen(ledcontroller.disableOveride()));
-
+            .onTrue(new CenterToReef(drivetrain, leftSensor, rightSensor, centerSensor, false)
+                .andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, false)));
 
         driverController.rightBumper()
             .onTrue(new CenterToReef(drivetrain, leftSensor, rightSensor, centerSensor, true)
-                .alongWith(ledcontroller.enableOveride(), 
-                    new InstantCommand(() -> ledcontroller.setColorDirectly(TargetRGB.IN_TRANSITION)))
-                .andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, true))
-                    .andThen(new InstantCommand(() -> ledcontroller.setColorDirectly(TargetRGB.REACHED_POSITION)))
-                        .andThen(ledcontroller.disableOveride()));
+                .andThen(new AlignReefHorizontal(drivetrain, leftSensor, rightSensor, centerSensor, true)));
 
         driverController.rightTrigger()
             .onTrue(

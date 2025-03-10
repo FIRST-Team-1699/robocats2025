@@ -3,17 +3,15 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.subsystems.PivotSubsystem.PivotPosition;
-import frc.robot.util.ReefDistanceSensor;
 
 
 // NOTE: THIS CLASS MAY NOT WORK INDEPENDENTLY BECAUSE THE REQUIRED SUBSYSTEMS ARE INVISIBLE TO IT 
 public class LEDSubsystem extends SubsystemBase {
     // DECLARATIONS
-    private boolean overideEnabled;
     private AddressableLED leds;
     private AddressableLEDBuffer ledBuffer;
     private double cycleTicks, blinkTicks;
@@ -45,7 +43,6 @@ public class LEDSubsystem extends SubsystemBase {
         this.tiltWrist = tiltWrist;
         this.intake = intake;
 
-        overideEnabled = false;
         blink = false;
 
         currentRGB = TargetRGB.BASE;
@@ -85,19 +82,6 @@ public class LEDSubsystem extends SubsystemBase {
         leds.stop();
     }
 
-    public Command enableOveride() {
-        return runOnce(() -> {
-            overideEnabled = true;
-        });
-    }
-
-    public Command disableOveride() {
-        return runOnce(() -> {
-            cycleTicks = 0;
-            overideEnabled = false;
-        });
-    }
-
     /**Runs periodically, uses conditionals to change LED color */
     @Override
     public void periodic() {
@@ -107,14 +91,18 @@ public class LEDSubsystem extends SubsystemBase {
             blinkTicks = 0;
         }
 
-        if(cycleTicks >= 10 && !overideEnabled) {
-            if(intake.hasPiece()) {
-                changeColor(TargetRGB.OBTAINED_CORAL);
+        if(cycleTicks >= 10) {
+            if(RobotContainer.isAligning) {
+                changeColor(TargetRGB.IN_TRANSITION);
             } else {
-                if(pivot.currentTargetPosition == PivotPosition.STORED) {
-                    changeColor(TargetRGB.BASE);
+                if(intake.hasPiece()) {
+                    changeColor(TargetRGB.OBTAINED_CORAL);
                 } else {
-                    changeColor(TargetRGB.REACHED_POSITION);
+                    if(pivot.currentTargetPosition == PivotPosition.STORED) {
+                        changeColor(TargetRGB.BASE);
+                    } else {
+                        changeColor(TargetRGB.REACHED_POSITION);
+                    }
                 }
             }
         }
@@ -124,7 +112,6 @@ public class LEDSubsystem extends SubsystemBase {
             blink = false;
         }
 
-        SmartDashboard.putBoolean("Overide Enabled: ", overideEnabled);
         SmartDashboard.putBoolean("LEDs Blinking: ", blink);
         SmartDashboard.putNumber("Cycle Ticks: ", cycleTicks);
         SmartDashboard.putNumber("Blink Ticks: ", blinkTicks);

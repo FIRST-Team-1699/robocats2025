@@ -5,7 +5,9 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.util.ReefDistanceSensor;
 
@@ -31,6 +33,7 @@ public class AlignReefHorizontal extends Command {
     public void initialize() {
         yController.setGoal(0);
         yController.setTolerance(5);
+        RobotContainer.isAligning = true;
     }
 
     @Override
@@ -45,6 +48,7 @@ public class AlignReefHorizontal extends Command {
     @Override
     public void end(boolean interrupted) {
         swerve.applyRequest(() -> new SwerveRequest.PointWheelsAt().withModuleDirection(Rotation2d.fromDegrees(90)));
+        RobotContainer.isAligning = false;
     }
 
     @Override
