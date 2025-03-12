@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.6,
-        "y": 5.1
+        "x": 3.8,
+        "y": 5.2
       },
       "prevControl": {
-        "x": 3.2961223234136967,
-        "y": 5.339640058572248
+        "x": 3.4961223234136964,
+        "y": 5.439640058572248
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -59.99999999999999
   },
   "reversed": false,
   "folder": "Coral station upper",

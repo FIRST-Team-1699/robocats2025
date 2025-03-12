@@ -198,12 +198,10 @@ public class RobotContainer {
         //         .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)));
         
         // driverController.x()
-        //     // .onTrue(pivot.setClimbPosition());
-        //     .whileTrue(pivot.setRaw(-.25))
+        //     .whileTrue(pivot.setRaw(-.3))
         //     .onFalse(pivot.setRaw(0));  
 
         // driverController.b()
-        //     // .onTrue(pivot.setClimbPosition());
         //     .whileTrue(pivot.setRaw(-.35))
         //     .onFalse(pivot.setRaw(0)); 
 
@@ -468,8 +466,8 @@ public class RobotContainer {
     //     return () -> tiltWrist.isInL2L3L4().getAsBoolean() && rotateWrist.isVertical().getAsBoolean();
     // }
 
-    public Command getAutonomousCommand() 
-    {
-        return AutoBuilder.buildAuto("Move then L1");
-    }
+    // public Command getAutonomousCommand() 
+    // {
+    //     return AutoBuilder.buildAuto("Move then L1");
+    // }
 }

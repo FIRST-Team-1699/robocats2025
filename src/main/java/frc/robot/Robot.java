@@ -4,41 +4,71 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+  private Command autoCommand;
 
   private final RobotContainer m_robotContainer;
 
+  private final SendableChooser<String> autoChooser;
+
+  private final String processor3L1Descore2 = "Processor3Piece2Descore";
+  private final String barge3L1Descore2 = "NotProcessor3Piece2Descore";
+  private final String center1L4 = "Center1L4";
+  private final String center1L1Descore1 = "Center1L1Descore1";
+
+  private Optional<Alliance> lastAlliance;
+  private String selectedAutoString;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    autoChooser = new SendableChooser<>();
+    autoChooser.addOption("Processor 3 L1 Descore 2", processor3L1Descore2);
+    autoChooser.addOption("Barge 3 L1 Descore 2", barge3L1Descore2);
+    autoChooser.addOption("Center 1 L4 Descore 1", center1L4);
+    autoChooser.setDefaultOption("Center 1 L1 Descore 1", center1L1Descore1);
+    SmartDashboard.putData(autoChooser);
+
+    lastAlliance = DriverStation.getAlliance();
+    selectedAutoString = autoChooser.getSelected();
+    autoCommand = AutoBuilder.buildAuto(autoChooser.getSelected());
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run(); 
-    if(m_autonomousCommand == null) {
-      m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    }
   }
 
   @Override
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    if(!DriverStation.getAlliance().equals(lastAlliance) || !autoChooser.getSelected().equalsIgnoreCase(selectedAutoString)) {
+      lastAlliance = DriverStation.getAlliance();
+      selectedAutoString = autoChooser.getSelected();
+      autoCommand = AutoBuilder.buildAuto(selectedAutoString);
+    }
+  }
 
   @Override
   public void disabledExit() {}
 
   @Override
   public void autonomousInit() {
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+    if (autoCommand != null) {
+      autoCommand.schedule();
     }
   }
 
@@ -50,8 +80,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+    if (autoCommand != null) {
+      autoCommand.cancel();
     }
   }
 

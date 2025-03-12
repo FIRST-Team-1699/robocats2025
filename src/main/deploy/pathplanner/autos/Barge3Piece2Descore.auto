@@ -15,7 +15,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Coral station lower L1 pt1"
+                        "pathName": "Coral station upper pt1"
                       }
                     },
                     {
@@ -71,7 +71,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Coral station lower L1 pt2"
+                        "pathName": "Coral station upper pt2"
                       }
                     },
                     {
@@ -109,7 +109,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Coral station lower L1 pt3"
+                        "pathName": "Coral station upper pt3"
                       }
                     },
                     {
@@ -144,12 +144,6 @@
                 "type": "named",
                 "data": {
                   "name": "Wait Until Unloaded"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stop Intake"
                 }
               }
             ]
@@ -178,7 +172,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Coral station lower L1 pt4"
+                        "pathName": "Coral station upper pt4"
                       }
                     }
                   ]
@@ -210,7 +204,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Coral station lower L1 pt5"
+                        "pathName": "Coral station upper pt5"
                       }
                     },
                     {
@@ -245,6 +239,18 @@
                 "type": "named",
                 "data": {
                   "name": "Wait Until Unloaded"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Move Descore L2"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
                 }
               },
               {
