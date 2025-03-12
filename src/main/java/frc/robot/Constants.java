@@ -147,7 +147,7 @@ public class Constants {
         public static final boolean kAbsoluteEncoderInverted = false;
         // CONVERSION FACTOR AND OFFSETS
         public static final double kPositionConversionFactor = 360.0;
-        public static final double kOffset = 0.2262425; // TODO: SET
+        public static final double kOffset = 0.2262425; // TODO: SET CHARLIE THIS IS THE NUMBER YOU NEED
         public static final boolean kZeroCentered = true;
         // CURRENT LIMITS TODO: TUNE        
         public static final int kStallLimit = 20;

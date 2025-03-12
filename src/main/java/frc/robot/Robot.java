@@ -24,7 +24,7 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> autoChooser;
 
   private final String processor3L1Descore2 = "Processor3Piece2Descore";
-  private final String barge3L1Descore2 = "NotProcessor3Piece2Descore";
+  private final String barge3L1Descore2 = "Barge3Piece2Descore";
   private final String center1L4 = "Center1L4";
   private final String center1L1Descore1 = "Center1L1Descore1";
 
