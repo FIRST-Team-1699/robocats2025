@@ -197,9 +197,9 @@ public class RobotContainer {
         //         .alongWith(tiltWrist.setPosition(TiltPosition.CLIMB))
         //         .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)));
         
-        // driverController.x()
-        //     .whileTrue(pivot.setRaw(-.3))
-        //     .onFalse(pivot.setRaw(0));  
+        // // driverController.x()
+        // //     .whileTrue(pivot.setRaw(-.3))
+        // //     .onFalse(pivot.setRaw(0));  
 
         // driverController.b()
         //     .whileTrue(pivot.setRaw(-.35))
