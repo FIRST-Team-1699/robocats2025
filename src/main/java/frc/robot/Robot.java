@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 
 public class Robot extends TimedRobot {
   private Command autoCommand;
@@ -27,6 +28,7 @@ public class Robot extends TimedRobot {
   private final String barge3L1Descore2 = "Barge3Piece2Descore";
   private final String center1L4 = "Center1L4";
   private final String center1L1Descore1 = "Center1L1Descore1";
+  private final String doNothing = "DoNothing";
 
   private Optional<Alliance> lastAlliance;
   private String selectedAutoString;
@@ -37,6 +39,7 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Processor 3 L1 Descore 2", processor3L1Descore2);
     autoChooser.addOption("Barge 3 L1 Descore 2", barge3L1Descore2);
     autoChooser.addOption("Center 1 L4 Descore 1", center1L4);
+    autoChooser.addOption("Do Nothing", doNothing);
     autoChooser.setDefaultOption("Center 1 L1 Descore 1", center1L1Descore1);
     SmartDashboard.putData(autoChooser);
 
@@ -58,7 +61,11 @@ public class Robot extends TimedRobot {
     if(!DriverStation.getAlliance().equals(lastAlliance) || !autoChooser.getSelected().equalsIgnoreCase(selectedAutoString)) {
       lastAlliance = DriverStation.getAlliance();
       selectedAutoString = autoChooser.getSelected();
-      autoCommand = AutoBuilder.buildAuto(selectedAutoString);
+      if(selectedAutoString == doNothing) {
+        autoCommand = new PrintCommand("Do Nothing");
+      } else {
+        autoCommand = AutoBuilder.buildAuto(selectedAutoString);
+      }
     }
   }
 
