@@ -77,11 +77,11 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public boolean isRunning() {
-        return motor.get() != 0;
+        return motor.get() != 0 && motor.get() != 0.05;
     }
 
     public Command stopMotorCommand() {
-        return runOnce(() -> motor.set(0));
+        return runOnce(() -> motor.set(0.05));
     }
 
     public Command runIntake(double percentage) {
