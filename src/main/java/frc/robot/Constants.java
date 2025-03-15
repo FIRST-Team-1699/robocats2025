@@ -102,6 +102,8 @@ public class Constants {
         public static final double kMaximumRotationLimit = 5; // TODO: SET
         public static final double kMinimumOutputLimit = -.7;
         public static final double kMaximumOutputLimit = .75;
+        public static final double kMinimumClimbOutputLimit = -.35;
+        public static final double kMaximumClimbOutputLimit = .35;
         // INVERSIONS
         public static final boolean kInverted = false;
         public static final boolean kFollowerInverted = true;

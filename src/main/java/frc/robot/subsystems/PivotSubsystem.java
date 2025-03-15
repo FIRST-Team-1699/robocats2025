@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import frc.robot.Servo;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -73,14 +74,9 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         leadConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             .pidf(PivotConstants.kP, PivotConstants.kI, PivotConstants.kD, PivotConstants.kFF, ClosedLoopSlot.kSlot0)
-            .pidf(PivotConstants.kMAXMotionP, PivotConstants.kMAXMotionI, PivotConstants.kMAXMotionD, PivotConstants.kMAXMotionFF, ClosedLoopSlot.kSlot1)
+            .pidf(PivotConstants.kP, PivotConstants.kI, PivotConstants.kD, PivotConstants.kFF, ClosedLoopSlot.kSlot1)
             .outputRange(PivotConstants.kMinimumOutputLimit, PivotConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot0)
-            .outputRange(PivotConstants.kMinimumOutputLimit, PivotConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot1)
-        .maxMotion
-            .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot1)
-            .maxAcceleration(PivotConstants.kMAXMotionMaxAcceleration, ClosedLoopSlot.kSlot1)
-            .maxVelocity(PivotConstants.kMAXMotionMaxVelocity, ClosedLoopSlot.kSlot1)
-            .allowedClosedLoopError(PivotConstants.kMAXMotionAllowedError, ClosedLoopSlot.kSlot1);
+            .outputRange(PivotConstants.kMinimumClimbOutputLimit, PivotConstants.kMaximumClimbOutputLimit, ClosedLoopSlot.kSlot1);
         leadConfig.encoder
             .positionConversionFactor(PivotConstants.kPositionConversionFactor);
         leadConfig.absoluteEncoder
@@ -110,6 +106,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
      */
     public Command setPosition(PivotPosition pivotPosition) {
         return runOnce(() -> {
+            Servo.getInstance().disableServo();
             currentTargetPosition = pivotPosition;
             feedbackController.setReference(pivotPosition.getRotations(), SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0);
         });
@@ -122,7 +119,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     public Command setClimbPosition() {
         return runOnce(() -> {
             currentTargetPosition = PivotPosition.CLIMB_LOWER;
-            feedbackController.setReference(PivotPosition.CLIMB_LOWER.getRotations(), SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot1);
+            feedbackController.setReference(PivotPosition.CLIMB_LOWER.getRotations(), SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot1);
         });
     }
 
@@ -164,6 +161,9 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
 
     public Command setRaw(double percentage) {
         return runOnce(() -> {
+            if(percentage > 0) {
+                Servo.getInstance().disableServo();
+            }
             leadMotor.set(percentage);
         });
     }
@@ -209,7 +209,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
      */
     public enum PivotPosition {
         STORED(-102), PRIME(-60), SAFE_POSITION(-75), COBRA_STANCE(-1),
-        CLIMB_RAISE(-25), CLIMB_LOWER(-50),
+        CLIMB_RAISE(-25), CLIMB_LOWER(-98),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-67), ALGAE_DESCORE_L_THREE(-47),
         GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-50),

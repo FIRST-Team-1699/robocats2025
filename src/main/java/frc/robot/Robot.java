@@ -25,7 +25,9 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> autoChooser;
 
   private final String processor3L1Descore2 = "Processor3Piece2Descore";
+  private final String processor3L1NoDescore = "Processor3PieceNoDescore";
   private final String barge3L1Descore2 = "Barge3Piece2Descore";
+  private final String barge3L1NoDescore = "Barge3PieceNoDescore";
   private final String center1L4 = "Center1L4";
   private final String center1L1Descore1 = "Center1L1Descore1";
   private final String doNothing = "DoNothing";
@@ -36,11 +38,13 @@ public class Robot extends TimedRobot {
   public Robot() {
     m_robotContainer = new RobotContainer();
     autoChooser = new SendableChooser<>();
-    autoChooser.addOption("Processor 3 L1 Descore 2", processor3L1Descore2);
-    autoChooser.addOption("Barge 3 L1 Descore 2", barge3L1Descore2);
-    autoChooser.addOption("Center 1 L4 Descore 1", center1L4);
-    autoChooser.addOption("Do Nothing", doNothing);
-    autoChooser.setDefaultOption("Center 1 L1 Descore 1", center1L1Descore1);
+    // autoChooser.addOption("Processor 3 L1 Descore 2", processor3L1Descore2);
+    // autoChooser.addOption("PROCESSOR FOR 1153 NO DESCORE 3 L1", processor3L1NoDescore);
+    // autoChooser.addOption("Barge 3 L1 Descore 2", barge3L1Descore2);
+    autoChooser.setDefaultOption("BARGE FOR 1153 NO DESCORE 3 L1", barge3L1NoDescore);
+    // autoChooser.addOption("Center 1 L4 Descore 1", center1L4);
+    // autoChooser.addOption("Do Nothing", doNothing);
+    // autoChooser.setDefaultOption("Center 1 L1 Descore 1", center1L1Descore1);
     SmartDashboard.putData(autoChooser);
 
     lastAlliance = DriverStation.getAlliance();
@@ -59,6 +63,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     if(!DriverStation.getAlliance().equals(lastAlliance) || !autoChooser.getSelected().equalsIgnoreCase(selectedAutoString)) {
+      System.out.println(DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get().toString() : "NOT READY YET");
       lastAlliance = DriverStation.getAlliance();
       selectedAutoString = autoChooser.getSelected();
       if(selectedAutoString == doNothing) {

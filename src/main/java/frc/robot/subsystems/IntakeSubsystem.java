@@ -48,7 +48,7 @@ public class IntakeSubsystem extends SubsystemBase {
         config.limitSwitch
             .forwardLimitSwitchEnabled(false)
             .reverseLimitSwitchEnabled(false);
-        config.openLoopRampRate(.2);
+        config.openLoopRampRate(.1);
             // .forwardLimitSwitchType(Type.kNormallyOpen);
 
         motor.configureAsync(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -64,24 +64,16 @@ public class IntakeSubsystem extends SubsystemBase {
      * @param toReverseIntake
      * Boolean to determine to reverse or run intake
      */
-    public Command runIntake() {
-        return runOnce(() -> {
-            motor.set(currentIntakeSpeed.speed);
-        });
-    }
-
-    public Command runOutake() {
-        return runOnce(() -> {
-            motor.set(-currentIntakeSpeed.speed);
-        });
+    public Command outtake() {
+        return runOnce(() -> motor.set(-.4));
     }
 
     public boolean isRunning() {
-        return motor.get() != 0 && motor.get() != 0.05;
+        return motor.get() != 0;
     }
 
     public Command stopMotorCommand() {
-        return runOnce(() -> motor.set(0.05));
+        return runOnce(() -> motor.set(0));
     }
 
     public Command runIntake(double percentage) {

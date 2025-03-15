@@ -32,6 +32,7 @@ import frc.robot.subsystems.TiltWristSubsystem;
 import frc.robot.subsystems.RotateWristSubsystem.RotatePosition;
 import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
 import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.Servo;
 // import frc.robot.subsystems.ReefSensorSubsystem;
 import frc.robot.subsystems.PivotSubsystem.PivotPosition;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -63,6 +64,8 @@ public class RobotContainer {
     private final PivotSubsystem pivot = new PivotSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
 
+    private final Servo servo = Servo.getInstance();
+
     LEDSubsystem ledcontroller = new LEDSubsystem(elevator, pivot, tiltWrist, rotateWrist, intake);
 
     public RobotContainer() {
@@ -93,7 +96,7 @@ public class RobotContainer {
                 intake::hasPiece
             ).alongWith(intake.stopMotorCommand()));
 
-        NamedCommands.registerCommand("Outtake", intake.runIntake(-.6));
+        NamedCommands.registerCommand("Outtake", intake.runIntake(-.4));
 
         NamedCommands.registerCommand("Intake", intake.runIntake(.4));
 
@@ -189,21 +192,26 @@ public class RobotContainer {
         // driverController.start().and(driverController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        // driverController.a()
-        //     .onTrue(
-        //         elevator.setPosition(ElevatorPosition.STORED)
-        //         .andThen(elevator.waitUntilAtSetpoint())
-        //         .andThen(pivot.setPosition(PivotPosition.CLIMB_RAISE))
-        //         .alongWith(tiltWrist.setPosition(TiltPosition.CLIMB))
-        //         .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)));
+        driverController.a()
+            .onTrue(
+                elevator.setPosition(ElevatorPosition.STORED)
+                .andThen(elevator.waitUntilAtSetpoint())
+                .andThen(pivot.setPosition(PivotPosition.CLIMB_RAISE))
+                .alongWith(tiltWrist.setPosition(TiltPosition.CLIMB))
+                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)));
         
-        // // driverController.x()
-        // //     .whileTrue(pivot.setRaw(-.3))
-        // //     .onFalse(pivot.setRaw(0));  
+        driverController.b()
+            .onTrue(
+                pivot.setClimbPosition()
+                .andThen(servo.activateServo())
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(pivot.stopMotorCommand()));
 
-        // driverController.b()
-        //     .whileTrue(pivot.setRaw(-.35))
-        //     .onFalse(pivot.setRaw(0)); 
+        driverController.x()
+            .onTrue(
+                pivot.stopMotorCommand()
+                .alongWith(servo.activateServo())
+            );
 
         // reset the field-centric heading
         driverController.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -296,13 +304,9 @@ public class RobotContainer {
                 ).alongWith(intake.stopMotorCommand().alongWith(setDefaultSpeed()))
             );
 
-        // operatorController.x().onTrue(elevator.setPosition(ElevatorPosition.STORED));
-        // operatorController.y().onTrue(elevator.setPosition(ElevatorPosition.PID_TESTING).onlyIf(() -> pivot.currentTargetPosition != PivotPosition.STORED));
-
         // Operator Controller
         operatorController.rightTrigger().whileTrue(intake.runIntake(.4)).onFalse(intake.stopMotorCommand());
         operatorController.leftTrigger().whileTrue(intake.runIntake(-.3)).onFalse(intake.stopMotorCommand());
-
 
         operatorController.a()
             .onTrue(
