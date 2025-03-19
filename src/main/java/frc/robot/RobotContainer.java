@@ -162,8 +162,11 @@ public class RobotContainer {
             .alongWith(tiltWrist.setPosition(TiltPosition.CORAL_STATION_INTAKE))))
         );
 
-        driverController.a().onTrue(pivot.setTrapezoidPosition(PivotPosition.L_FOUR));
-        driverController.b().onTrue(pivot.setTrapezoidPosition(PivotPosition.STORED));
+        driverController.a().onTrue(pivot.setTrapezoidPosition(PivotPosition.CORAL_STATION_INTAKE));
+        driverController.b().onTrue(pivot.setTrapezoidPosition(PivotPosition.CLIMB_RAISE));
+        driverController.y().onTrue(pivot.setTrapezoidPosition(PivotPosition.STORED));
+        driverController.x().onTrue(pivot.setTrapezoidPosition(PivotPosition.L_FOUR));
+
         // configureBindings();
     }
 

@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import frc.robot.Servo;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -48,6 +50,10 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
 
     private Timer timer;
     private TrapezoidProfile trapezoid;
+    private ArmFeedforward feedforward;
+
+    private double startingVelocity = 0;
+    private double startingPosition = 0;
 
     /** Constructs a pivot. */
     public PivotSubsystem() {
@@ -69,7 +75,8 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         configureShuffleboard();
 
         timer = new Timer();
-        trapezoid = new TrapezoidProfile(new TrapezoidProfile.Constraints(45, 45));
+        trapezoid = new TrapezoidProfile(new TrapezoidProfile.Constraints(200, 800));
+        feedforward = new ArmFeedforward(0, 0.523, 2.6);
     }
 
     /** Sets the configurations for each motor. */
@@ -122,19 +129,37 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     }
 
     public Command setTrapezoidPosition(PivotPosition position) {
-        double startPosition = absoluteEncoder.getPosition();
-        double startVelocity = absoluteEncoder.getVelocity();
         return startRun(
             () -> {
                 timer.reset();
                 timer.start();
+                startingPosition = absoluteEncoder.getPosition();
+                startingVelocity = absoluteEncoder.getVelocity();
             },
             () -> {
-                double setpoint = trapezoid.calculate(timer.get(), new TrapezoidProfile.State(absoluteEncoder.getPosition(), absoluteEncoder.getVelocity()), new TrapezoidProfile.State(position.rotations, 0)).position;
-                feedbackController.setReference(setpoint, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0);
-                System.out.println(setpoint);
+                TrapezoidProfile.State setpoint = trapezoid.calculate(timer.get() + 0.02, new TrapezoidProfile.State(startingPosition, startingVelocity), new TrapezoidProfile.State(position.rotations, 0));
+                System.out.println(setpoint.position);
+                feedbackController.setReference(setpoint.position, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, feedforward.calculate(Rotation2d.fromDegrees(setpoint.position).getRadians(), Rotation2d.fromDegrees(setpoint.velocity).getRadians()));
             }
         );
+    }
+
+    public double getPositionRadians() {
+        return Rotation2d.fromDegrees(absoluteEncoder.getPosition() + 90).getRadians();
+    }
+
+    public Command tuneFeedforwardPosition() {
+        return startRun(() -> {
+            timer.reset();
+            timer.start();
+            System.out.println("running test");
+        },
+        () -> {
+            TrapezoidProfile.State setpoint = trapezoid.calculate(timer.get() + .02, new TrapezoidProfile.State(-102, 0), new TrapezoidProfile.State(-90, 0));
+            leadMotor.setVoltage(feedforward.calculate(Rotation2d.fromDegrees(setpoint.position).getRadians(), Rotation2d.fromDegrees(5).getRadians()));
+            System.out.println("testing");
+            System.out.println(feedforward.calculate(getPositionRadians(), Rotation2d.fromDegrees(5).getRadians()));
+        });
     }
 
     /** Changes height/angle of pivot.
