@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import frc.robot.Servo;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -10,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
+import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.function.BooleanSupplier;
 
 import java.util.function.BooleanSupplier;
@@ -25,7 +28,6 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
@@ -43,6 +45,9 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     public PivotPosition currentTargetPosition;
 
     private ShuffleboardTab pivotTab;
+
+    private Timer timer;
+    private TrapezoidProfile trapezoid;
 
     /** Constructs a pivot. */
     public PivotSubsystem() {
@@ -62,6 +67,9 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         // CONFIGURE MOTORS
         configureMotors();
         configureShuffleboard();
+
+        timer = new Timer();
+        trapezoid = new TrapezoidProfile(new TrapezoidProfile.Constraints(45, 45));
     }
 
     /** Sets the configurations for each motor. */
@@ -81,6 +89,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
             .positionConversionFactor(PivotConstants.kPositionConversionFactor);
         leadConfig.absoluteEncoder
             .positionConversionFactor(PivotConstants.kPositionConversionFactor)
+            .velocityConversionFactor(PivotConstants.kPositionConversionFactor)
             .zeroOffset(PivotConstants.kOffset)
             .zeroCentered(true)
             .inverted(PivotConstants.kAbsoluteEncoderInverted);
@@ -110,6 +119,22 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
             currentTargetPosition = pivotPosition;
             feedbackController.setReference(pivotPosition.getRotations(), SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0);
         });
+    }
+
+    public Command setTrapezoidPosition(PivotPosition position) {
+        double startPosition = absoluteEncoder.getPosition();
+        double startVelocity = absoluteEncoder.getVelocity();
+        return startRun(
+            () -> {
+                timer.reset();
+                timer.start();
+            },
+            () -> {
+                double setpoint = trapezoid.calculate(timer.get(), new TrapezoidProfile.State(absoluteEncoder.getPosition(), absoluteEncoder.getVelocity()), new TrapezoidProfile.State(position.rotations, 0)).position;
+                feedbackController.setReference(setpoint, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0);
+                System.out.println(setpoint);
+            }
+        );
     }
 
     /** Changes height/angle of pivot.
