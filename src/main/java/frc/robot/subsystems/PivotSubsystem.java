@@ -1,3 +1,4 @@
+
 package frc.robot.subsystems;
 
 import frc.robot.Servo;
@@ -53,7 +54,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     private ArmFeedforward feedforward;
 
     private double startingVelocity = 0;
-    private double startingPosition = 0;
+    private double startingPosition;
 
     /** Constructs a pivot. */
     public PivotSubsystem() {
@@ -67,6 +68,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         feedbackController = leadMotor.getClosedLoopController();
         // SETS TARGET POSITION
         currentTargetPosition = PivotPosition.STORED;
+        startingPosition = currentTargetPosition.rotations;
         // CONFIGS
         leadConfig = new SparkMaxConfig();
         followConfig = new SparkMaxConfig();
@@ -120,7 +122,8 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
      * @param pivotPosition
      * enum that has height value for target position.
      */
-    public Command setPosition(PivotPosition pivotPosition) {
+    @Deprecated
+    public Command setOldPosition(PivotPosition pivotPosition) {
         return runOnce(() -> {
             Servo.getInstance().disableServo();
             currentTargetPosition = pivotPosition;
@@ -128,20 +131,21 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         });
     }
 
-    public Command setTrapezoidPosition(PivotPosition position) {
-        return startRun(
+    public Command setPosition(PivotPosition position) {
+        return runOnce(
             () -> {
+                currentTargetPosition = position;
                 timer.reset();
                 timer.start();
                 startingPosition = absoluteEncoder.getPosition();
                 startingVelocity = absoluteEncoder.getVelocity();
-            },
-            () -> {
-                TrapezoidProfile.State setpoint = trapezoid.calculate(timer.get() + 0.02, new TrapezoidProfile.State(startingPosition, startingVelocity), new TrapezoidProfile.State(position.rotations, 0));
-                System.out.println(setpoint.position);
-                feedbackController.setReference(setpoint.position, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, feedforward.calculate(Rotation2d.fromDegrees(setpoint.position).getRadians(), Rotation2d.fromDegrees(setpoint.velocity).getRadians()));
             }
         );
+    }
+
+    private void runPID() {
+        TrapezoidProfile.State setpoint = trapezoid.calculate(timer.get() + 0.02, new TrapezoidProfile.State(startingPosition, startingVelocity), new TrapezoidProfile.State(currentTargetPosition.rotations, 0));
+        feedbackController.setReference(setpoint.position, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, feedforward.calculate(Rotation2d.fromDegrees(setpoint.position).getRadians(), Rotation2d.fromDegrees(setpoint.velocity).getRadians()));
     }
 
     public double getPositionRadians() {
@@ -152,13 +156,10 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         return startRun(() -> {
             timer.reset();
             timer.start();
-            System.out.println("running test");
         },
         () -> {
             TrapezoidProfile.State setpoint = trapezoid.calculate(timer.get() + .02, new TrapezoidProfile.State(-102, 0), new TrapezoidProfile.State(-90, 0));
             leadMotor.setVoltage(feedforward.calculate(Rotation2d.fromDegrees(setpoint.position).getRadians(), Rotation2d.fromDegrees(5).getRadians()));
-            System.out.println("testing");
-            System.out.println(feedforward.calculate(getPositionRadians(), Rotation2d.fromDegrees(5).getRadians()));
         });
     }
 
@@ -203,20 +204,20 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     }
 
     /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
-    public Command stopMotorCommand() {
-        return runOnce(() -> {
-            leadMotor.set(0);
-        });
-    }
+    // public Command stopMotorCommand() {
+    //     return runOnce(() -> {
+    //         leadMotor.set(0);
+    //     });
+    // }
 
-    public Command setRaw(double percentage) {
-        return runOnce(() -> {
-            if(percentage > 0) {
-                Servo.getInstance().disableServo();
-            }
-            leadMotor.set(percentage);
-        });
-    }
+    // public Command setRaw(double percentage) {
+    //     return runOnce(() -> {
+    //         if(percentage > 0) {
+    //             Servo.getInstance().disableServo();
+    //         }
+    //         leadMotor.set(percentage);
+    //     });
+    // }
 
     public double getPosition() {
         return absoluteEncoder.getPosition();
@@ -251,6 +252,8 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         // pivotTab.("Setpoint", currentTargetPosition.getRotations());
         // pivotTab.add("Current Position", absoluteEncoder.getPosition());
         // pivotTab.add("At Setpoint", isAtSetpoint());
+
+        runPID();
     }
     
     /**Enum, holds position of pivot.

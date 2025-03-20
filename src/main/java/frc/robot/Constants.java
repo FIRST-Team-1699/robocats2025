@@ -83,7 +83,7 @@ public class Constants {
         public static final int kLeaderID = 44;
         public static final int kFollowerID = 43;
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = .055;
+        public static final double kP = .05;
         public static final double kI = 0;
         public static final double kD = 0.001;
         public static final double kFF = 0;

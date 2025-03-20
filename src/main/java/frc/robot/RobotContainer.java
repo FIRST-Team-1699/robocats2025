@@ -162,12 +162,7 @@ public class RobotContainer {
             .alongWith(tiltWrist.setPosition(TiltPosition.CORAL_STATION_INTAKE))))
         );
 
-        driverController.a().onTrue(pivot.setTrapezoidPosition(PivotPosition.CORAL_STATION_INTAKE));
-        driverController.b().onTrue(pivot.setTrapezoidPosition(PivotPosition.CLIMB_RAISE));
-        driverController.y().onTrue(pivot.setTrapezoidPosition(PivotPosition.STORED));
-        driverController.x().onTrue(pivot.setTrapezoidPosition(PivotPosition.L_FOUR));
-
-        // configureBindings();
+        configureBindings();
     }
 
     private void configureBindings() {
@@ -197,26 +192,26 @@ public class RobotContainer {
         // driverController.start().and(driverController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        driverController.a()
-            .onTrue(
-                elevator.setPosition(ElevatorPosition.STORED)
-                .andThen(elevator.waitUntilAtSetpoint())
-                .andThen(pivot.setPosition(PivotPosition.CLIMB_RAISE))
-                .alongWith(tiltWrist.setPosition(TiltPosition.CLIMB))
-                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)));
+        // driverController.a()
+        //     .onTrue(
+        //         elevator.setPosition(ElevatorPosition.STORED)
+        //         .andThen(elevator.waitUntilAtSetpoint())
+        //         .andThen(pivot.setPosition(PivotPosition.CLIMB_RAISE))
+        //         .alongWith(tiltWrist.setPosition(TiltPosition.CLIMB))
+        //         .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)));
         
-        driverController.b()
-            .onTrue(
-                pivot.setClimbPosition()
-                .andThen(servo.activateServo())
-                .andThen(pivot.waitUntilAtSetpoint())
-                .andThen(pivot.stopMotorCommand()));
+        // driverController.b()
+        //     .onTrue(
+        //         pivot.setClimbPosition()
+        //         .andThen(servo.activateServo())
+        //         .andThen(pivot.waitUntilAtSetpoint())
+        //         .andThen(pivot.stopMotorCommand()));
 
-        driverController.x()
-            .onTrue(
-                pivot.stopMotorCommand()
-                .alongWith(servo.activateServo())
-            );
+        // driverController.x()
+        //     .onTrue(
+        //         pivot.stopMotorCommand()
+        //         .alongWith(servo.activateServo())
+        //     );
 
         // reset the field-centric heading
         driverController.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
