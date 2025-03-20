@@ -192,26 +192,26 @@ public class RobotContainer {
         // driverController.start().and(driverController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        // driverController.a()
-        //     .onTrue(
-        //         elevator.setPosition(ElevatorPosition.STORED)
-        //         .andThen(elevator.waitUntilAtSetpoint())
-        //         .andThen(pivot.setPosition(PivotPosition.CLIMB_RAISE))
-        //         .alongWith(tiltWrist.setPosition(TiltPosition.CLIMB))
-        //         .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)));
+        driverController.a()
+            .onTrue(
+                elevator.setPosition(ElevatorPosition.STORED)
+                .andThen(elevator.waitUntilAtSetpoint())
+                .andThen(pivot.setPosition(PivotPosition.CLIMB_RAISE))
+                .alongWith(tiltWrist.setPosition(TiltPosition.CLIMB))
+                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)));
         
-        // driverController.b()
-        //     .onTrue(
-        //         pivot.setClimbPosition()
-        //         .andThen(servo.activateServo())
-        //         .andThen(pivot.waitUntilAtSetpoint())
-        //         .andThen(pivot.stopMotorCommand()));
+        driverController.b()
+            .onTrue(
+                pivot.setPosition(PivotPosition.CLIMB_LOWER)
+                .andThen(servo.activateServo())
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(pivot.runOnce(() -> pivot.disableMovement())));
 
-        // driverController.x()
-        //     .onTrue(
-        //         pivot.stopMotorCommand()
-        //         .alongWith(servo.activateServo())
-        //     );
+        driverController.x()
+            .onTrue(
+                pivot.runOnce(() -> pivot.disableMovement())
+                .alongWith(servo.activateServo())
+            );
 
         // reset the field-centric heading
         driverController.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -223,15 +223,14 @@ public class RobotContainer {
                 elevator.setPosition(ElevatorPosition.STORED)
                 .alongWith(setElevatedSpeed())
                 .andThen(elevator.waitUntilAtSetpoint())
-                .andThen(pivot.setPosition(PivotPosition.SAFE_POSITION)
+                .andThen(pivot.setPosition(PivotPosition.STORED)
                 .alongWith(tiltWrist.setPosition(TiltPosition.STORED).alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL))))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.GROUND_INTAKE))
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen((pivot.setPosition(PivotPosition.GROUND_INTAKE))
-                .andThen(pivot.waitUntilAtSetpoint())
-                .andThen(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE_HORIZONTAL)))
-                .alongWith(intake.runIntake(.4))   
+                .alongWith(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE_HORIZONTAL)))
+                .alongWith(intake.runIntake(.4))
             )
             .onFalse(
                 new SelectCommand<>( 
@@ -435,6 +434,13 @@ public class RobotContainer {
             .onFalse(tiltWrist.setPosition(TiltPosition.L_FOUR).onlyIf(tiltWrist.isInL4PeckPosition())
                 .andThen(tiltWrist.setPosition(TiltPosition.L_THREE).onlyIf(tiltWrist.isInL3PeckPosition()))
                 .andThen(tiltWrist.setPosition(TiltPosition.L_TWO).onlyIf(tiltWrist.isInL2PeckPosition()))
+            );
+
+        operatorController.leftBumper()
+            .onTrue(
+                new SelectCommand<>(
+                    Map.of(true, rotateWrist.setPosition(RotatePosition.VERTICAL), false, rotateWrist.setPosition(RotatePosition.VERTICAL_FLIPPED)), rotateWrist::isVerticalFlipped)
+                    .onlyIf(tiltWrist.isInL3L4())
             );
 
         // operatorController.leftBumper()

@@ -161,6 +161,10 @@ public class TiltWristSubsystem extends SubsystemBase {
         return () -> currentTargetPosition == TiltPosition.L_FOUR || currentTargetPosition == TiltPosition.L_THREE || currentTargetPosition == TiltPosition.L_TWO;
     }
 
+    public BooleanSupplier isInL3L4() {
+        return () -> currentTargetPosition == TiltPosition.L_FOUR || currentTargetPosition == TiltPosition.L_THREE;
+    }
+
     public Command printPosition() {
         return run(() -> System.out.println(getPosition()));
     }

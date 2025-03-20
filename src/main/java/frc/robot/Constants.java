@@ -11,8 +11,8 @@ import frc.robot.generated.TunerConstants;
 
 public class Constants {
     public static class SwerveConstants {
-        public static final double kSpeedCoefficient = .75;
-        public static final double kSlowCoefficient = .5;
+        public static final double kSpeedCoefficient = .85;
+        public static final double kSlowCoefficient = .4;
         public static final double kMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
         public static final double kMaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -83,7 +83,7 @@ public class Constants {
         public static final int kLeaderID = 44;
         public static final int kFollowerID = 43;
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = .05;
+        public static final double kP = .055;
         public static final double kI = 0;
         public static final double kD = 0.001;
         public static final double kFF = 0;
@@ -125,7 +125,7 @@ public class Constants {
         // MOTOR CAN BUS IDS TODO: CONFIRM
         public static final int kMotorID = 41; // CONFIRM
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = 0.02;
+        public static final double kP = 0.012;
         public static final double kI = 0;
         public static final double kD = 0.01;
         public static final double kFF = 0;
@@ -162,9 +162,9 @@ public class Constants {
         // MOTOR CAN BUS IDS TODO: CONFIRM
         public static final int kMotorID = 42;
         // RAW PID CONSTANTS TODO: TUNE
-        public static final double kP = 0.01;
+        public static final double kP = 0.008;
         public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kD = 0.001;
         public static final double kFF = 0;
         // MAXMOTION CONSTANTS TODO: TUNE
         public static final double kMAXMotionP = 0;

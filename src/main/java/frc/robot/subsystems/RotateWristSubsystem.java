@@ -137,12 +137,13 @@ public class RotateWristSubsystem extends SubsystemBase {
         motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
-    public BooleanSupplier isVertical() {
-        return () -> currentTargetPosition == RotatePosition.VERTICAL;
+    public boolean isVertical() {
+        return currentTargetPosition == RotatePosition.VERTICAL;
     }
 
-    public BooleanSupplier isVerticalFlipped() {
-        return () -> currentTargetPosition == RotatePosition.VERTICAL_FLIPPED;
+    public boolean 
+    isVerticalFlipped() {
+        return currentTargetPosition == RotatePosition.VERTICAL_FLIPPED;
     }
 
     public RotatePosition getRotatePosition() {
@@ -154,8 +155,8 @@ public class RotateWristSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Actual Rotate Wrist Angle", absoluteEncoder.getPosition());
         SmartDashboard.putNumber("Wanted Rotate Wrist Angle", currentTargetPosition.degrees);
         SmartDashboard.putBoolean("At Rotate Setpoint", isAtSetpoint());
-        SmartDashboard.putBoolean("IsVertical", isVertical().getAsBoolean());
-        SmartDashboard.putBoolean("IsFlipped", isVerticalFlipped().getAsBoolean());
+        SmartDashboard.putBoolean("IsVertical", isVertical());
+        SmartDashboard.putBoolean("IsFlipped", isVerticalFlipped());
     }
 
     /**Contains desired position for rotational positions */

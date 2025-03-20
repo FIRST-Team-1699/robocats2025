@@ -55,6 +55,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
 
     private double startingVelocity = 0;
     private double startingPosition;
+    private boolean shouldMove;
 
     /** Constructs a pivot. */
     public PivotSubsystem() {
@@ -77,8 +78,9 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         configureShuffleboard();
 
         timer = new Timer();
-        trapezoid = new TrapezoidProfile(new TrapezoidProfile.Constraints(200, 800));
+        trapezoid = new TrapezoidProfile(new TrapezoidProfile.Constraints(200, 700));
         feedforward = new ArmFeedforward(0, 0.523, 2.6);
+        shouldMove = false;
     }
 
     /** Sets the configurations for each motor. */
@@ -134,6 +136,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     public Command setPosition(PivotPosition position) {
         return runOnce(
             () -> {
+                shouldMove = true;
                 currentTargetPosition = position;
                 timer.reset();
                 timer.start();
@@ -203,6 +206,10 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         return () -> currentTargetPosition == PivotPosition.GROUND_INTAKE;
     }
 
+    public void disableMovement() {
+        shouldMove = false;
+    }
+
     /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
     // public Command stopMotorCommand() {
     //     return runOnce(() -> {
@@ -252,8 +259,11 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         // pivotTab.("Setpoint", currentTargetPosition.getRotations());
         // pivotTab.add("Current Position", absoluteEncoder.getPosition());
         // pivotTab.add("At Setpoint", isAtSetpoint());
-
-        runPID();
+        if(shouldMove) {
+            runPID();
+        } else {
+            leadMotor.set(0);
+        }
     }
     
     /**Enum, holds position of pivot.
@@ -261,8 +271,8 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
      * Height Pivot must reach to get to state.
      */
     public enum PivotPosition {
-        STORED(-102), PRIME(-60), SAFE_POSITION(-75), COBRA_STANCE(-1),
-        CLIMB_RAISE(-25), CLIMB_LOWER(-98),
+        STORED(-70), PRIME(-60), SAFE_POSITION(-75), COBRA_STANCE(-1),
+        CLIMB_RAISE(-25), CLIMB_LOWER(-95),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-67), ALGAE_DESCORE_L_THREE(-47),
         GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-50),
