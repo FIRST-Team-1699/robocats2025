@@ -38,13 +38,13 @@ public class Robot extends TimedRobot {
   public Robot() {
     m_robotContainer = new RobotContainer();
     autoChooser = new SendableChooser<>();
-    // autoChooser.addOption("Processor 3 L1 Descore 2", processor3L1Descore2);
-    // autoChooser.addOption("PROCESSOR FOR 1153 NO DESCORE 3 L1", processor3L1NoDescore);
-    // autoChooser.addOption("Barge 3 L1 Descore 2", barge3L1Descore2);
+    autoChooser.addOption("Processor 3 L1 Descore 2", processor3L1Descore2);
+    autoChooser.addOption("PROCESSOR FOR 1153 NO DESCORE 3 L1", processor3L1NoDescore);
+    autoChooser.addOption("Barge 3 L1 Descore 2", barge3L1Descore2);
     autoChooser.setDefaultOption("BARGE FOR 1153 NO DESCORE 3 L1", barge3L1NoDescore);
-    // autoChooser.addOption("Center 1 L4 Descore 1", center1L4);
-    // autoChooser.addOption("Do Nothing", doNothing);
-    // autoChooser.setDefaultOption("Center 1 L1 Descore 1", center1L1Descore1);
+    autoChooser.addOption("Center 1 L4 Descore 1", center1L4);
+    autoChooser.addOption("Do Nothing", doNothing);
+    autoChooser.setDefaultOption("Center 1 L1 Descore 1", center1L1Descore1);
     SmartDashboard.putData(autoChooser);
 
     lastAlliance = DriverStation.getAlliance();

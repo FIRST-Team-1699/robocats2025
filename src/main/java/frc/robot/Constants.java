@@ -11,8 +11,8 @@ import frc.robot.generated.TunerConstants;
 
 public class Constants {
     public static class SwerveConstants {
-        public static final double kSpeedCoefficient = .85;
-        public static final double kSlowCoefficient = .4;
+        public static final double kSpeedCoefficient = 0.85;
+        public static final double kSlowCoefficient = 0.35;
         public static final double kMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
         public static final double kMaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 

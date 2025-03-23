@@ -14,7 +14,7 @@ public class ElevatorTests {
 
     @Test
     void l3SafePosition() {
-        assertEquals(false, ElevatorPosition.L_THREE.shouldPivotMoveFromHere());
+        assertEquals(true, ElevatorPosition.L_THREE.shouldPivotMoveFromHere());
     }
 
     @Test

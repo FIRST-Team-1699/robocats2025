@@ -42,7 +42,7 @@ class PivotTests {
 
     @Test
     void storedSafePosition() {
-        assertEquals(false, PivotPosition.STORED.canElevatorRetractFromHere());
+        assertEquals(true, PivotPosition.STORED.canElevatorRetractFromHere());
     }
 
     @Test

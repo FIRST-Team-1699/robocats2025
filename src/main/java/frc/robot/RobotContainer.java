@@ -442,10 +442,6 @@ public class RobotContainer {
                     Map.of(true, rotateWrist.setPosition(RotatePosition.VERTICAL), false, rotateWrist.setPosition(RotatePosition.VERTICAL_FLIPPED)), rotateWrist::isVerticalFlipped)
                     .onlyIf(tiltWrist.isInL3L4())
             );
-
-        // operatorController.leftBumper()
-        //     .onTrue((rotateWrist.setPosition(RotatePosition.VERTICAL_FLIPPED).onlyIf(rotateWrist.isVertical()).onlyIf(tiltWrist.isInL2L3L4()))
-        //         .andThen(rotateWrist.setPosition(RotatePosition.VERTICAL).onlyIf((rotateWrist.isVerticalFlipped())).onlyIf(tiltWrist.isInL2L3L4())));
     }
 
     private Command setDefaultSpeed() {
@@ -464,8 +460,7 @@ public class RobotContainer {
                 drive.withVelocityX(-driverController.getLeftY() * SwerveConstants.kMaxSpeed * SwerveConstants.kSlowCoefficient) // Drive forward with negative Y (forward)
                     .withVelocityY(-driverController.getLeftX() * SwerveConstants.kMaxSpeed * SwerveConstants.kSlowCoefficient) // Drive left with negative X (left)
                     .withRotationalRate(-driverController.getRightX() * SwerveConstants.kMaxAngularRate * SwerveConstants.kSlowCoefficient) // Drive counterclockwise with negative X (left)
-            ))
-        );
+            )));
     }
 
     // private BooleanSupplier shouldFlip() {
