@@ -149,6 +149,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         });
     }
 
+    public boolean isGroundIntakePosition() {
+        return currentTargetPosition == ElevatorPosition.GROUND_INTAKE;
+    }
+
     /** Stops the motor manually, ignoring all commands. */
     public void stopMotorManual() {
         leadMotor.set(0);

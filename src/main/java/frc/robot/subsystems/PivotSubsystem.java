@@ -206,6 +206,10 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         return () -> currentTargetPosition == PivotPosition.GROUND_INTAKE;
     }
 
+    public boolean boolIsGroundIntakePosition() {
+        return currentTargetPosition == PivotPosition.GROUND_INTAKE;
+    }
+
     public void disableMovement() {
         shouldMove = false;
     }
