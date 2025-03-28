@@ -145,6 +145,10 @@ public class TiltWristSubsystem extends SubsystemBase {
         return () -> currentTargetPosition == TiltPosition.L_TWO;
     }
 
+    public BooleanSupplier isInL4FrontPosition() {
+        return () -> currentTargetPosition == TiltPosition.L_FOUR_FRONT;
+    }
+
     public BooleanSupplier isInL4PeckPosition() {
         return () -> currentTargetPosition == TiltPosition.L_FOUR_PECK;
     }
@@ -157,12 +161,16 @@ public class TiltWristSubsystem extends SubsystemBase {
         return () -> currentTargetPosition == TiltPosition.L_TWO_PECK;
     }
 
+    public BooleanSupplier isInL4FrontPeckPosition() {
+        return () -> currentTargetPosition == TiltPosition.L_FOUR_FRONT_PECK;
+    }
+
     public BooleanSupplier isInL2L3L4() {
         return () -> currentTargetPosition == TiltPosition.L_FOUR || currentTargetPosition == TiltPosition.L_THREE || currentTargetPosition == TiltPosition.L_TWO;
     }
 
     public BooleanSupplier isInL3L4() {
-        return () -> currentTargetPosition == TiltPosition.L_FOUR || currentTargetPosition == TiltPosition.L_THREE;
+        return () -> currentTargetPosition == TiltPosition.L_FOUR || currentTargetPosition == TiltPosition.L_THREE || currentTargetPosition == TiltPosition.L_FOUR_FRONT;
     }
 
     public Command printPosition() {
@@ -192,8 +200,8 @@ public class TiltWristSubsystem extends SubsystemBase {
 
         GROUND_INTAKE_HORIZONTAL(55), GROUND_INTAKE_VERTICAL(15), CORAL_STATION_INTAKE(-1),
 
-        L_ONE(25), L_TWO(-30), L_THREE(-15), L_FOUR(-30),
-        L_TWO_PECK(20), L_THREE_PECK(-70), L_FOUR_PECK(-75);
+        L_ONE(25), L_TWO(-30), L_THREE(-15), L_FOUR(-30), L_FOUR_FRONT(5),
+        L_TWO_PECK(20), L_THREE_PECK(-70), L_FOUR_PECK(-75), L_FOUR_FRONT_PECK(40);
 
         double degreePosition;
         private TiltPosition(double degreePosition) {

@@ -202,15 +202,28 @@ public class RobotContainer {
         
         driverController.b()
             .onTrue(
-                pivot.setPosition(PivotPosition.CLIMB_LOWER)
+                (pivot.setPosition(PivotPosition.CLIMB_LOWER)
                 .andThen(servo.activateServo())
                 .andThen(pivot.waitUntilAtSetpoint())
-                .andThen(pivot.runOnce(() -> pivot.disableMovement())));
+                .andThen(pivot.runOnce(() -> pivot.disableMovement())))
+                .onlyIf(pivot.isClimbReady()));
 
         driverController.x()
             .onTrue(
                 pivot.runOnce(() -> pivot.disableMovement())
                 .alongWith(servo.activateServo())
+            );
+
+        driverController.povUp()
+            .onTrue(
+                (elevator.setPosition(ElevatorPosition.STORED)
+                .alongWith(setElevatedSpeed())
+                .andThen(pivot.setPosition(PivotPosition.L_FOUR_FRONT))
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.L_FOUR_FRONT)
+                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT)))))
+                .unless(pivot.isInGroundIntakePosition())
             );
 
         // reset the field-centric heading
@@ -369,10 +382,12 @@ public class RobotContainer {
                 tiltWrist.setPosition(TiltPosition.L_THREE_PECK).onlyIf(tiltWrist.isInL3Position())
                 .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_PECK).onlyIf(tiltWrist.isInL4Position()))
                 .andThen(tiltWrist.setPosition(TiltPosition.L_TWO_PECK).onlyIf(tiltWrist.isInL2Position()))
+                .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT_PECK).onlyIf(tiltWrist.isInL4FrontPosition()))
             )
             .onFalse(tiltWrist.setPosition(TiltPosition.L_FOUR).onlyIf(tiltWrist.isInL4PeckPosition())
                 .andThen(tiltWrist.setPosition(TiltPosition.L_THREE).onlyIf(tiltWrist.isInL3PeckPosition()))
                 .andThen(tiltWrist.setPosition(TiltPosition.L_TWO).onlyIf(tiltWrist.isInL2PeckPosition()))
+                .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT).onlyIf(tiltWrist.isInL4FrontPeckPosition()))
             );
 
         operatorController.leftBumper()

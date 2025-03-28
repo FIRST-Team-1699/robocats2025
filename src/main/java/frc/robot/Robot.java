@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -50,6 +51,8 @@ public class Robot extends TimedRobot {
     lastAlliance = DriverStation.getAlliance();
     selectedAutoString = autoChooser.getSelected();
     autoCommand = AutoBuilder.buildAuto(autoChooser.getSelected());
+
+    CameraServer.startAutomaticCapture();
   }
 
   @Override

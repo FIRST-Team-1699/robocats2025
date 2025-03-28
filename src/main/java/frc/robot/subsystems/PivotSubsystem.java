@@ -238,6 +238,10 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         return run(() -> System.out.println(getPosition()));
     }
 
+    public BooleanSupplier isClimbReady() {
+        return () -> { return isAtSetpoint() && currentTargetPosition == PivotPosition.CLIMB_RAISE; };
+    }
+
     public void setIdleMode(IdleMode idleMode) {
         leadConfig.idleMode(idleMode);
         leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
@@ -281,7 +285,8 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-67), ALGAE_DESCORE_L_THREE(-47),
         GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-50),
 
-        L_ONE(-65), L_TWO(-60), L_THREE(0), L_FOUR(0);
+        L_ONE(-65), L_TWO(-60), L_THREE(0), L_FOUR(0),
+        L_FOUR_FRONT(-24);
         private double rotations;
         PivotPosition(double rotations) {
             this.rotations = rotations;
