@@ -32,6 +32,7 @@ public class Robot extends TimedRobot {
   private final String center1L4 = "Center1L4";
   private final String center1L1Descore1 = "Center1L1Descore1";
   private final String doNothing = "DoNothing";
+  private final String autoAlignL4Processor = "Processor L4";
 
   private Optional<Alliance> lastAlliance;
   private String selectedAutoString;
@@ -45,14 +46,13 @@ public class Robot extends TimedRobot {
     autoChooser.setDefaultOption("BARGE FOR 1153 NO DESCORE 3 L1", barge3L1NoDescore);
     autoChooser.addOption("Center 1 L4 Descore 1", center1L4);
     autoChooser.addOption("Do Nothing", doNothing);
+    autoChooser.addOption("Auto Align L4 Processor", autoAlignL4Processor);
     autoChooser.setDefaultOption("Center 1 L1 Descore 1", center1L1Descore1);
     SmartDashboard.putData(autoChooser);
 
     lastAlliance = DriverStation.getAlliance();
     selectedAutoString = autoChooser.getSelected();
     autoCommand = AutoBuilder.buildAuto(autoChooser.getSelected());
-
-    CameraServer.startAutomaticCapture();
   }
 
   @Override

@@ -286,7 +286,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-50),
 
         L_ONE(-65), L_TWO(-60), L_THREE(0), L_FOUR(0),
-        L_FOUR_FRONT(-24);
+        L_FOUR_FRONT(-24), L_THREE_FRONT(-36);
         private double rotations;
         PivotPosition(double rotations) {
             this.rotations = rotations;

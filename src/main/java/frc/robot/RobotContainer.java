@@ -16,6 +16,9 @@ import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -113,6 +116,7 @@ public class RobotContainer {
             tiltWrist.setPosition(TiltPosition.L_THREE_PECK).onlyIf(tiltWrist.isInL3Position())
             .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_PECK).onlyIf(tiltWrist.isInL4Position()))
             .andThen(tiltWrist.setPosition(TiltPosition.L_TWO_PECK).onlyIf(tiltWrist.isInL2Position()))
+            .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT_PECK).onlyIf(tiltWrist.isInL4FrontPosition()))
         );
 
         NamedCommands.registerCommand("Move L4", 
@@ -164,6 +168,32 @@ public class RobotContainer {
             .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
             .alongWith(tiltWrist.setPosition(TiltPosition.CORAL_STATION_INTAKE))))
         );
+
+        NamedCommands.registerCommand("Align Right", new AlignToReef(drivetrain, false));
+        NamedCommands.registerCommand("Align Left", new AlignToReef(drivetrain, true));
+
+        NamedCommands.registerCommand("L4 Front", elevator.setPosition(ElevatorPosition.STORED)
+            .andThen(pivot.setPosition(PivotPosition.L_FOUR_FRONT))
+            .andThen(pivot.waitUntilAtSetpoint())
+            .andThen(elevator.setPosition(ElevatorPosition.L_FOUR_FRONT)
+            .alongWith(getAutoFlipCommand(true)
+            .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT)))));
+
+        NamedCommands.registerCommand("Set Flipped 180", 
+            new SelectCommand<>(Map.of(
+                true,
+                drivetrain.runOnce(() -> drivetrain.resetRotation(Rotation2d.fromDegrees(180))),
+                false,
+                drivetrain.runOnce(() -> drivetrain.resetRotation(Rotation2d.fromDegrees(0)))), 
+                this::isBlue));
+        
+        NamedCommands.registerCommand("Set Flipped 135", 
+            new SelectCommand<>(Map.of(
+                true,
+                drivetrain.runOnce(() -> drivetrain.resetRotation(Rotation2d.fromDegrees(135))),
+                false,
+                drivetrain.runOnce(() -> drivetrain.resetRotation(Rotation2d.fromDegrees(-45)))), 
+                this::isBlue));
 
         configureBindings();
 
@@ -225,7 +255,7 @@ public class RobotContainer {
                 .alongWith(servo.activateServo())
             );
 
-        driverController.povUp()
+        operatorController.povUp()
             .onTrue(
                 (elevator.setPosition(ElevatorPosition.STORED)
                 // .alongWith(setElevatedSpeed())
@@ -235,6 +265,19 @@ public class RobotContainer {
                 .alongWith(getAutoFlipCommand(true)
                 .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT)))))
                 .unless(pivot.isInGroundIntakePosition())
+            );
+
+        operatorController.povRight()
+            .onTrue(
+                elevator.moveToSafePosition()
+                // .alongWith(setDefaultSpeed())
+                .andThen(elevator.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.STORED))
+                .andThen(pivot.setPosition(PivotPosition.L_THREE_FRONT))
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.L_THREE_FRONT)
+                .alongWith(getAutoFlipCommand(true)
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_THREE_FRONT))))
             );
 
         // reset the field-centric heading
@@ -282,17 +325,17 @@ public class RobotContainer {
                 ))// ).alongWith(setDefaultSpeed())).andThen(setDefaultSpeed())
             );    
         
-        operatorController.povUp()
-            .onTrue(
-                (elevator.setPosition(ElevatorPosition.STORED)
-                // .alongWith(setElevatedSpeed())
-                .andThen(pivot.setPosition(PivotPosition.L_FOUR))
-                .andThen(pivot.waitUntilAtSetpoint())
-                .andThen(elevator.setPosition(ElevatorPosition.L_FOUR)
-                .alongWith(getAutoFlipCommand(true)
-                .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR)))))
-                .unless(pivot.isInGroundIntakePosition())
-            );
+        // operatorController.povUp()
+        //     .onTrue(
+        //         (elevator.setPosition(ElevatorPosition.STORED)
+        //         // .alongWith(setElevatedSpeed())
+        //         .andThen(pivot.setPosition(PivotPosition.L_FOUR))
+        //         .andThen(pivot.waitUntilAtSetpoint())
+        //         .andThen(elevator.setPosition(ElevatorPosition.L_FOUR)
+        //         .alongWith(getAutoFlipCommand(true)
+        //         .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR)))))
+        //         .unless(pivot.isInGroundIntakePosition())
+        //     );
         
         operatorController.b()
             .onTrue(
@@ -308,19 +351,19 @@ public class RobotContainer {
                 .unless(pivot.isInGroundIntakePosition())
             );
 
-        operatorController.povRight()
-            .onTrue(
-                (elevator.moveToSafePosition()
-                // .alongWith(setDefaultSpeed())
-                .andThen(elevator.waitUntilAtSetpoint())
-                .andThen(elevator.setPosition(ElevatorPosition.STORED))
-                .andThen(pivot.setPosition(PivotPosition.L_THREE))
-                .andThen(pivot.waitUntilAtSetpoint())
-                .andThen(elevator.setPosition(ElevatorPosition.L_THREE)
-                .alongWith(getAutoFlipCommand(true)
-                .alongWith(tiltWrist.setPosition(TiltPosition.L_THREE)))))
-                .unless(pivot.isInGroundIntakePosition())
-            );
+        // operatorController.povRight()
+        //     .onTrue(
+        //         (elevator.moveToSafePosition()
+        //         // .alongWith(setDefaultSpeed())
+        //         .andThen(elevator.waitUntilAtSetpoint())
+        //         .andThen(elevator.setPosition(ElevatorPosition.STORED))
+        //         .andThen(pivot.setPosition(PivotPosition.L_THREE))
+        //         .andThen(pivot.waitUntilAtSetpoint())
+        //         .andThen(elevator.setPosition(ElevatorPosition.L_THREE)
+        //         .alongWith(getAutoFlipCommand(true)
+        //         .alongWith(tiltWrist.setPosition(TiltPosition.L_THREE)))))
+        //         .unless(pivot.isInGroundIntakePosition())
+        //     );
 
         operatorController.povLeft()
             .onTrue(
@@ -380,11 +423,13 @@ public class RobotContainer {
                 .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_PECK).onlyIf(tiltWrist.isInL4Position()))
                 .andThen(tiltWrist.setPosition(TiltPosition.L_TWO_PECK).onlyIf(tiltWrist.isInL2Position()))
                 .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT_PECK).onlyIf(tiltWrist.isInL4FrontPosition()))
+                .andThen(tiltWrist.setPosition(TiltPosition.L_THREE_FRONT_PECK).onlyIf(tiltWrist.isInL3FrontPosition()))
             )
             .onFalse(tiltWrist.setPosition(TiltPosition.L_FOUR).onlyIf(tiltWrist.isInL4PeckPosition())
                 .andThen(tiltWrist.setPosition(TiltPosition.L_THREE).onlyIf(tiltWrist.isInL3PeckPosition()))
                 .andThen(tiltWrist.setPosition(TiltPosition.L_TWO).onlyIf(tiltWrist.isInL2PeckPosition()))
                 .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT).onlyIf(tiltWrist.isInL4FrontPeckPosition()))
+                .andThen(tiltWrist.setPosition(TiltPosition.L_THREE_FRONT).onlyIf(tiltWrist.isInL3FrontPeckPosition()))
             );
 
         operatorController.leftBumper()
@@ -494,4 +539,8 @@ public class RobotContainer {
     // {
     //     return AutoBuilder.buildAuto("Move then L1");
     // }
+
+    public boolean isBlue() {
+        return DriverStation.getAlliance().get() == Alliance.Blue;
+    }
 }
