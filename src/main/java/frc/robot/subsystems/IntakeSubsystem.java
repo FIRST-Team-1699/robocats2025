@@ -84,6 +84,10 @@ public class IntakeSubsystem extends SubsystemBase {
         return motor.getReverseLimitSwitch().isPressed();
     }
 
+    public boolean flipSensorActive() {
+        return motor.getForwardLimitSwitch().isPressed();
+    }
+
     // public Command setRaw(double speed) {
     //     return runOnce(()-> {
     //         motor.set(speed);
@@ -95,6 +99,7 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Intake is at hard limit", hasPiece());
         SmartDashboard.putNumber("Wanted intake speed", currentIntakeSpeed.speed);
         SmartDashboard.putNumber("Current intake speed", motor.get());
+        SmartDashboard.putBoolean("Flip Sensor Triggered", flipSensorActive());
 
     // intakeTab.add("Speed", motor.get());
     // intakeTab.add("Is Running", isRunning());

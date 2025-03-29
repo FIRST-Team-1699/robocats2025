@@ -1,9 +1,9 @@
 
 package frc.robot.subsystems;
 
-import frc.robot.Servo;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
+import frc.robot.utils.Servo;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;

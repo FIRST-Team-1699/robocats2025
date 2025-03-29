@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.commands.AlignToReef;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -31,8 +32,10 @@ import frc.robot.subsystems.RotateWristSubsystem;
 import frc.robot.subsystems.TiltWristSubsystem;
 import frc.robot.subsystems.RotateWristSubsystem.RotatePosition;
 import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
+import frc.robot.utils.LimelightHelpers;
+import frc.robot.utils.Servo;
+import frc.robot.utils.Telemetry;
 import frc.robot.subsystems.PivotSubsystem;
-import frc.robot.Servo;
 // import frc.robot.subsystems.ReefSensorSubsystem;
 import frc.robot.subsystems.PivotSubsystem.PivotPosition;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -163,6 +166,8 @@ public class RobotContainer {
         );
 
         configureBindings();
+
+        LimelightHelpers.setLEDMode_ForceOff("limelight");
     }
 
     private void configureBindings() {
@@ -176,6 +181,12 @@ public class RobotContainer {
                     .withRotationalRate(-driverController.getRightX() * SwerveConstants.kMaxAngularRate * SwerveConstants.kSpeedCoefficient) // Drive counterclockwise with negative X (left)
             )
         );
+
+        driverController.rightBumper()
+            .whileTrue(new AlignToReef(drivetrain, false));
+
+        driverController.leftBumper()
+            .whileTrue(new AlignToReef(drivetrain, true));
 
         // pivot.setDefaultCommand(pivot.printPosition());
         // elevator.setDefaultCommand(elevator.printPosition());
@@ -217,11 +228,11 @@ public class RobotContainer {
         driverController.povUp()
             .onTrue(
                 (elevator.setPosition(ElevatorPosition.STORED)
-                .alongWith(setElevatedSpeed())
+                // .alongWith(setElevatedSpeed())
                 .andThen(pivot.setPosition(PivotPosition.L_FOUR_FRONT))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.L_FOUR_FRONT)
-                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
+                .alongWith(getAutoFlipCommand(true)
                 .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT)))))
                 .unless(pivot.isInGroundIntakePosition())
             );
@@ -231,27 +242,13 @@ public class RobotContainer {
         // setup logger
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        driverController.rightBumper()
-            .onTrue(
-                new SelectCommand<>(
-                    Map.of(
-                        true,
-                        getStowSequence(),
-                        false,
-                        getGroundIntakeSequence()
-                    ), elevator::isGroundIntakePosition)
-            );
-                
+        driverController.rightTrigger()
+            .onTrue(getGroundIntakeSequence())
+            .onFalse(getStowSequence());
 
-        driverController.leftBumper ()
-        .onTrue(
-            new SelectCommand<>(Map.of(
-                true,
-                getStowSequence(),
-                false,
-                getLollipopIntakeSequence()
-            ), elevator::isGroundIntakePosition)
-        );
+        driverController.leftTrigger()
+            .onTrue(getLollipopIntakeSequence())
+            .onFalse(getStowSequence());
 
         // Operator Controller
         operatorController.rightTrigger().whileTrue(intake.runIntake(.4)).onFalse(intake.stopMotorCommand());
@@ -282,17 +279,17 @@ public class RobotContainer {
                     .andThen(pivot.setPosition(PivotPosition.STORED))
                     )), 
                     intake::hasPiece
-                ).alongWith(setDefaultSpeed())).andThen(setDefaultSpeed())
+                ))// ).alongWith(setDefaultSpeed())).andThen(setDefaultSpeed())
             );    
         
         operatorController.povUp()
             .onTrue(
                 (elevator.setPosition(ElevatorPosition.STORED)
-                .alongWith(setElevatedSpeed())
+                // .alongWith(setElevatedSpeed())
                 .andThen(pivot.setPosition(PivotPosition.L_FOUR))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.L_FOUR)
-                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
+                .alongWith(getAutoFlipCommand(true)
                 .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR)))))
                 .unless(pivot.isInGroundIntakePosition())
             );
@@ -300,7 +297,7 @@ public class RobotContainer {
         operatorController.b()
             .onTrue(
                 (elevator.moveToSafePosition()
-                .alongWith(setDefaultSpeed())
+                // .alongWith(setDefaultSpeed())
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.CORAL_STATION_INTAKE))
@@ -314,13 +311,13 @@ public class RobotContainer {
         operatorController.povRight()
             .onTrue(
                 (elevator.moveToSafePosition()
-                .alongWith(setDefaultSpeed())
+                // .alongWith(setDefaultSpeed())
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.L_THREE))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.L_THREE)
-                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
+                .alongWith(getAutoFlipCommand(true)
                 .alongWith(tiltWrist.setPosition(TiltPosition.L_THREE)))))
                 .unless(pivot.isInGroundIntakePosition())
             );
@@ -328,7 +325,7 @@ public class RobotContainer {
         operatorController.povLeft()
             .onTrue(
                 (elevator.moveToSafePosition()
-                .alongWith(setDefaultSpeed())
+                // .alongWith(setDefaultSpeed())
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.L_TWO))
@@ -342,7 +339,7 @@ public class RobotContainer {
         operatorController.povDown()
             .onTrue(
                 (elevator.moveToSafePosition()
-                .alongWith(setDefaultSpeed())
+                // .alongWith(setDefaultSpeed())
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.L_ONE))
@@ -356,7 +353,7 @@ public class RobotContainer {
         operatorController.y()
             .onTrue(
                 elevator.setPosition(ElevatorPosition.STORED)
-                .alongWith(setDefaultSpeed())
+                // .alongWith(setDefaultSpeed())
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(pivot.setPosition(PivotPosition.ALGAE_DESCORE_L_THREE))
                 .andThen(pivot.waitUntilAtSetpoint())
@@ -368,7 +365,7 @@ public class RobotContainer {
         operatorController.x()
             .onTrue(
                 elevator.setPosition(ElevatorPosition.STORED)
-                .alongWith(setDefaultSpeed())
+                // .alongWith(setDefaultSpeed())
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(pivot.setPosition(PivotPosition.ALGAE_DESCORE_L_TWO))
                 .andThen(pivot.waitUntilAtSetpoint())
@@ -398,28 +395,28 @@ public class RobotContainer {
             );
     }
 
-    private Command setDefaultSpeed() {
-        return Commands.runOnce(() -> drivetrain.setDefaultCommand(
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-driverController.getLeftY() * SwerveConstants.kMaxSpeed * SwerveConstants.kSpeedCoefficient) // Drive forward with negative Y (forward)
-                    .withVelocityY(-driverController.getLeftX() * SwerveConstants.kMaxSpeed * SwerveConstants.kSpeedCoefficient) // Drive left with negative X (left)
-                    .withRotationalRate(-driverController.getRightX() * SwerveConstants.kMaxAngularRate * SwerveConstants.kSpeedCoefficient) // Drive counterclockwise with negative X (left)
-            ))
-        );
-    }
+    // private Command setDefaultSpeed() {
+    //     return Commands.runOnce(() -> drivetrain.setDefaultCommand(
+    //         drivetrain.applyRequest(() ->
+    //             drive.withVelocityX(-driverController.getLeftY() * SwerveConstants.kMaxSpeed * SwerveConstants.kSpeedCoefficient) // Drive forward with negative Y (forward)
+    //                 .withVelocityY(-driverController.getLeftX() * SwerveConstants.kMaxSpeed * SwerveConstants.kSpeedCoefficient) // Drive left with negative X (left)
+    //                 .withRotationalRate(-driverController.getRightX() * SwerveConstants.kMaxAngularRate * SwerveConstants.kSpeedCoefficient) // Drive counterclockwise with negative X (left)
+    //         ))
+    //     );
+    // }
 
-    private Command setElevatedSpeed() {
-        return Commands.runOnce(() -> drivetrain.setDefaultCommand(
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-driverController.getLeftY() * SwerveConstants.kMaxSpeed * SwerveConstants.kSlowCoefficient) // Drive forward with negative Y (forward)
-                    .withVelocityY(-driverController.getLeftX() * SwerveConstants.kMaxSpeed * SwerveConstants.kSlowCoefficient) // Drive left with negative X (left)
-                    .withRotationalRate(-driverController.getRightX() * SwerveConstants.kMaxAngularRate * SwerveConstants.kSlowCoefficient) // Drive counterclockwise with negative X (left)
-            )));
-    }
+    // private Command setElevatedSpeed() {
+    //     return Commands.runOnce(() -> drivetrain.setDefaultCommand(
+    //         drivetrain.applyRequest(() ->
+    //             drive.withVelocityX(-driverController.getLeftY() * SwerveConstants.kMaxSpeed * SwerveConstants.kSlowCoefficient) // Drive forward with negative Y (forward)
+    //                 .withVelocityY(-driverController.getLeftX() * SwerveConstants.kMaxSpeed * SwerveConstants.kSlowCoefficient) // Drive left with negative X (left)
+    //                 .withRotationalRate(-driverController.getRightX() * SwerveConstants.kMaxAngularRate * SwerveConstants.kSlowCoefficient) // Drive counterclockwise with negative X (left)
+    //         )));
+    // }
 
     private Command getGroundIntakeSequence() {
         return elevator.setPosition(ElevatorPosition.STORED)
-        .alongWith(setElevatedSpeed())
+        // .alongWith(setElevatedSpeed())
         .andThen(elevator.waitUntilAtSetpoint())
         .andThen(pivot.setPosition(PivotPosition.STORED)
         .alongWith(tiltWrist.setPosition(TiltPosition.STORED).alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL))))
@@ -433,7 +430,7 @@ public class RobotContainer {
 
     private Command getLollipopIntakeSequence() {
         return elevator.setPosition(ElevatorPosition.STORED)
-        .alongWith(setElevatedSpeed())
+        // .alongWith(setElevatedSpeed())
         .andThen(elevator.waitUntilAtSetpoint())
         .andThen(pivot.setPosition(PivotPosition.SAFE_POSITION)
         .alongWith(tiltWrist.setPosition(TiltPosition.STORED)
@@ -471,7 +468,18 @@ public class RobotContainer {
                         .andThen(pivot.setPosition(PivotPosition.STORED))
                         )), 
                     intake::hasPiece
-                ).alongWith(intake.stopMotorCommand().alongWith(setDefaultSpeed()));
+                ).alongWith(intake.stopMotorCommand()
+                // .alongWith(setDefaultSpeed()));
+                );
+    }
+
+    private Command getAutoFlipCommand(boolean flipIfActive) {
+        return new SelectCommand<>(
+            Map.of(true,
+            flipIfActive ? rotateWrist.setPosition(RotatePosition.VERTICAL_FLIPPED) : rotateWrist.setPosition(RotatePosition.VERTICAL),
+            false,
+            !flipIfActive ? rotateWrist.setPosition(RotatePosition.VERTICAL_FLIPPED) : rotateWrist.setPosition(RotatePosition.VERTICAL)),
+            intake::flipSensorActive);
     }
 
     // private BooleanSupplier shouldFlip() {
