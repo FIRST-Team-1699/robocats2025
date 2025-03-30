@@ -3,12 +3,13 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
+    "AutoAlign L4 Processor",
     "Basic auto",
     "Coral station lower",
     "Coral station upper",
     "Lollipop lower",
     "Lollipop upper",
-    "AutoAlign L4 Processor",
+    "New Folder",
     "Sweeping support"
   ],
   "autoFolders": [

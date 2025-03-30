@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -72,7 +73,9 @@ public class RobotContainer {
 
     private final Servo servo = Servo.getInstance();
 
-    LEDSubsystem ledcontroller = new LEDSubsystem(elevator, pivot, tiltWrist, rotateWrist, intake);
+    private final LEDSubsystem ledcontroller = new LEDSubsystem(intake, drivetrain);
+
+    public static boolean isAligned = false;
 
     public RobotContainer() {
         // Adding commands so that they can be seen by pathplanner
@@ -195,6 +198,14 @@ public class RobotContainer {
                 drivetrain.runOnce(() -> drivetrain.resetRotation(Rotation2d.fromDegrees(-45)))), 
                 this::isBlue));
 
+        NamedCommands.registerCommand("Set Flipped -135", 
+            new SelectCommand<>(Map.of(
+                true,
+                drivetrain.runOnce(() -> drivetrain.resetRotation(Rotation2d.fromDegrees(-135))),
+                false,
+                drivetrain.runOnce(() -> drivetrain.resetRotation(Rotation2d.fromDegrees(45)))), 
+                this::isBlue));
+
         configureBindings();
 
         LimelightHelpers.setLEDMode_ForceOff("limelight");
@@ -213,10 +224,10 @@ public class RobotContainer {
         );
 
         driverController.rightBumper()
-            .whileTrue(new AlignToReef(drivetrain, false));
+            .whileTrue(new AlignToReef(drivetrain, false).andThen(Commands.runOnce(() -> isAligned = true)));
 
         driverController.leftBumper()
-            .whileTrue(new AlignToReef(drivetrain, true));
+            .whileTrue(new AlignToReef(drivetrain, true).andThen(Commands.runOnce(() -> isAligned = true)));
 
         // pivot.setDefaultCommand(pivot.printPosition());
         // elevator.setDefaultCommand(elevator.printPosition());
@@ -245,15 +256,10 @@ public class RobotContainer {
             .onTrue(
                 (pivot.setPosition(PivotPosition.CLIMB_LOWER)
                 .andThen(servo.activateServo())
-                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(pivot.waitUntilAtClimbSetpoint())
+                .andThen(new WaitCommand(.5))
                 .andThen(pivot.runOnce(() -> pivot.disableMovement())))
                 .onlyIf(pivot.isClimbReady()));
-
-        driverController.x()
-            .onTrue(
-                pivot.runOnce(() -> pivot.disableMovement())
-                .alongWith(servo.activateServo())
-            );
 
         operatorController.povUp()
             .onTrue(

@@ -51,6 +51,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
 
     private Timer timer;
     private TrapezoidProfile trapezoid;
+    private TrapezoidProfile climbTrapezoid;
     private ArmFeedforward feedforward;
 
     private double startingVelocity = 0;
@@ -79,6 +80,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
 
         timer = new Timer();
         trapezoid = new TrapezoidProfile(new TrapezoidProfile.Constraints(200, 700));
+        climbTrapezoid = new TrapezoidProfile(new TrapezoidProfile.Constraints(250, 450));
         feedforward = new ArmFeedforward(0, 0.523, 2.6);
         shouldMove = false;
     }
@@ -148,6 +150,9 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
 
     private void runPID() {
         TrapezoidProfile.State setpoint = trapezoid.calculate(timer.get() + 0.02, new TrapezoidProfile.State(startingPosition, startingVelocity), new TrapezoidProfile.State(currentTargetPosition.rotations, 0));
+        if(currentTargetPosition == PivotPosition.CLIMB_LOWER) {
+            setpoint = climbTrapezoid.calculate(timer.get() + 0.02, new TrapezoidProfile.State(startingPosition, startingVelocity), new TrapezoidProfile.State(currentTargetPosition.rotations, 0));
+        }
         feedbackController.setReference(setpoint.position, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, feedforward.calculate(Rotation2d.fromDegrees(setpoint.position).getRadians(), Rotation2d.fromDegrees(setpoint.velocity).getRadians()));
     }
 
@@ -182,16 +187,25 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
             return isAtSetpoint();
         });
     }
+
+    public Command waitUntilAtClimbSetpoint() {
+        return new WaitUntilCommand(() -> {
+            return isAtClimbSetpoint();
+        });
+    }
+
     /**Returns if currentTargetPosition is not at ground intake
      */
-    
-
     public Command moveToSafePosition() {
         return setPosition(PivotPosition.SAFE_POSITION).onlyIf(() -> !currentTargetPosition.canElevatorRetractFromHere());
     }
 
     public boolean isAtSetpoint() {
         return getError() < PivotConstants.kTolerance;
+    }
+
+    public boolean isAtClimbSetpoint() {
+        return getError() < 1.5;
     }
 
     public boolean isAtLEDTolerance() {
@@ -213,22 +227,6 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     public void disableMovement() {
         shouldMove = false;
     }
-
-    /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
-    // public Command stopMotorCommand() {
-    //     return runOnce(() -> {
-    //         leadMotor.set(0);
-    //     });
-    // }
-
-    // public Command setRaw(double percentage) {
-    //     return runOnce(() -> {
-    //         if(percentage > 0) {
-    //             Servo.getInstance().disableServo();
-    //         }
-    //         leadMotor.set(percentage);
-    //     });
-    // }
 
     public double getPosition() {
         return absoluteEncoder.getPosition();
@@ -280,13 +278,13 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
      */
     public enum PivotPosition {
         STORED(-70), PRIME(-60), SAFE_POSITION(-75), COBRA_STANCE(-1),
-        CLIMB_RAISE(-25), CLIMB_LOWER(-95),
+        CLIMB_RAISE(-25), CLIMB_LOWER(-105),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-67), ALGAE_DESCORE_L_THREE(-47),
-        GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-50),
+        GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-8), // -50
 
         L_ONE(-65), L_TWO(-60), L_THREE(0), L_FOUR(0),
-        L_FOUR_FRONT(-24), L_THREE_FRONT(-36);
+        L_FOUR_FRONT(-22), L_THREE_FRONT(-36);
         private double rotations;
         PivotPosition(double rotations) {
             this.rotations = rotations;

@@ -4,8 +4,9 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.LEDConstants;
-import frc.robot.subsystems.PivotSubsystem.PivotPosition;
+import frc.robot.utils.LimelightHelpers;
 
 
 // NOTE: THIS CLASS MAY NOT WORK INDEPENDENTLY BECAUSE THE REQUIRED SUBSYSTEMS ARE INVISIBLE TO IT 
@@ -18,13 +19,10 @@ public class LEDSubsystem extends SubsystemBase {
     private TargetRGB currentRGB;
     private boolean blink;
 
-    private ElevatorSubsystem elevator;
-    private PivotSubsystem pivot;
-    private RotateWristSubsystem rotateWrist;
-    private TiltWristSubsystem tiltWrist;
     private IntakeSubsystem intake;
+    private CommandSwerveDrivetrain drivetrain;
 
-    public LEDSubsystem(ElevatorSubsystem elevator, PivotSubsystem pivot, TiltWristSubsystem tiltWrist, RotateWristSubsystem rotateWrist, IntakeSubsystem intake) {
+    public LEDSubsystem(IntakeSubsystem intake, CommandSwerveDrivetrain drivetrain) {
         // Constructor for LED objects
         leds = new AddressableLED(LEDConstants.kPort);
         ledBuffer = new AddressableLEDBuffer(LEDConstants.kLEDLength);
@@ -35,15 +33,12 @@ public class LEDSubsystem extends SubsystemBase {
         cycleTicks = 0;
 
         // SUBSYSTEMS TO USE FOR CONDITIONALS
-        this.elevator = elevator;
-        this.pivot = pivot;
-        this.rotateWrist = rotateWrist;
-        this.tiltWrist = tiltWrist;
         this.intake = intake;
+        this.drivetrain = drivetrain;
 
         blink = false;
 
-        currentRGB = TargetRGB.BASE;
+        currentRGB = TargetRGB.BLUE;
         start();
         changeColor(currentRGB);
     }
@@ -83,39 +78,23 @@ public class LEDSubsystem extends SubsystemBase {
     /**Runs periodically, uses conditionals to change LED color */
     @Override
     public void periodic() {
+        if(drivetrain.getState().Speeds.vxMetersPerSecond > 0.2 || drivetrain.getState().Speeds.vyMetersPerSecond > 0.2 || drivetrain.getState().Speeds.omegaRadiansPerSecond > 0.2) {
+            RobotContainer.isAligned = false;
+        }
         cycleTicks++;
         blinkTicks++;
         if(blinkTicks > 20) {
             blinkTicks = 0;
         }
-        // if(cycleTicks >= 10) {
-        //     if(!elevator.isAtSetpoint() 
-        //     || !pivot.isAtLEDTolerance() 
-        //     || !rotateWrist.isAtLEDTolerance()
-        //     || !tiltWrist.isAtLEDTolerance()) {
-        //         changeColor(TargetRGB.IN_TRANSITION);
-        //     } else {
-        //         if(intake.hasPiece()) {
-        //             changeColor(TargetRGB.OBTAINED_CORAL);
-        //         } else {
-        //             if(pivot.currentTargetPosition == PivotPosition.STORED) {
-        //                 changeColor(TargetRGB.BASE);
-        //             } else {
-        //                 changeColor(TargetRGB.REACHED_POSITION);
-        //             }
-        //         }
-        //     } 
-        //     cycleTicks = 0;
-        // }
         if(cycleTicks >= 10) {
-            if(intake.hasPiece()) {
-                changeColor(TargetRGB.OBTAINED_CORAL);
+            if(RobotContainer.isAligned) { // magic condition which determines that we are aligned
+                changeColor(TargetRGB.GREEN);
+            } else if(LimelightHelpers.getTV("limelight")) {
+                changeColor(TargetRGB.RED);
+            } else if(intake.hasPiece()) {
+                changeColor(TargetRGB.GOLD);
             } else {
-                if(pivot.currentTargetPosition == PivotPosition.STORED) {
-                    changeColor(TargetRGB.BASE);
-                } else {
-                    changeColor(TargetRGB.REACHED_POSITION);
-                }
+                changeColor(TargetRGB.BLUE);
             }
         }
         if(intake.isRunning()) {
@@ -131,17 +110,15 @@ public class LEDSubsystem extends SubsystemBase {
 
     /**enums for determining RGBs of LEDs*/
     public enum TargetRGB {
-        NONE(0, 0, 0),
+        NONE(0, 0, 0), // NONE
 
-        BASE(18, 255, 148), // Blue
+        BLUE(18, 255, 148), // Blue
 
-        IN_TRANSITION(255, 13, 13),// Red
+        RED(255, 13, 13),// Red
 
-        OBTAINED_CORAL(255, 180, 0),// Gold
+        GOLD(255, 180, 0),// Gold
 
-        IS_PECKING(255, 255, 255),// White
-
-        REACHED_POSITION(5, 255, 10);//Green
+        GREEN(5, 255, 10);//Green
 
         // VARIABLES TO SET INTS for LEDs' enums
         int red;

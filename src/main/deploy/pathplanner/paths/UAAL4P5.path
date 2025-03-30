@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6927631578947369,
-        "y": 0.4938322368421052
+        "x": 0.55,
+        "y": 7.1
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.412154586235141,
-        "y": 2.03519045232422
+        "x": 0.6225135835907045,
+        "y": 7.339252544803255
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "U CS L4"
     },
     {
       "anchor": {
-        "x": 3.386842105263158,
-        "y": 2.2161184210526312
+        "x": 3.2136513157894733,
+        "y": 5.62
       },
       "prevControl": {
-        "x": 1.589326615318747,
-        "y": 1.674883470279041
+        "x": 2.974446977144047,
+        "y": 5.547327554236807
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": 59.99999999999999
+    "rotation": -59.99999999999999
   },
   "reversed": false,
   "folder": "AutoAlign L4 Processor",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -125.00000000000001
+    "rotation": -55.0
   },
   "useDefaultConstraints": true
 }

@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6649840830304137,
-        "y": 2.6987410348492995
+        "x": 2.169041859292155,
+        "y": 1.4570703218476535
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.6350328947368421,
-        "y": 0.5515625
+        "x": 0.683141447368421,
+        "y": 0.4361019736842104
       },
       "prevControl": {
-        "x": 2.1413476969560277,
-        "y": 1.7526108723088356
+        "x": 1.996631927838274,
+        "y": 1.3286490939564592
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "B CS L4"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -125.00000000000001
+    "rotation": 55.0
   },
   "reversed": false,
   "folder": "AutoAlign L4 Processor",

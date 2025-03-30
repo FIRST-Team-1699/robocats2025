@@ -186,7 +186,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(4), ALGAE_DESCORE_L_THREE(18),
       
-        GROUND_INTAKE(7), CORAL_STATION_INTAKE(0),
+        GROUND_INTAKE(7), CORAL_STATION_INTAKE(0), // 0
 
         L_ONE(0), L_TWO(6), L_THREE(7), L_FOUR(45),
         L_FOUR_FRONT(50), L_THREE_FRONT(20);
