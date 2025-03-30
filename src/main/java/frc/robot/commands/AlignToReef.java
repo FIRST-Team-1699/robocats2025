@@ -12,12 +12,12 @@ public class AlignToReef extends Command {
     public static final double targetTZ = -.48;
     public static final double leftTargetTX = -.17;
     public static final double rightTargetTX = .17;
-    public static final double tolerance = .03;
+    public static final double tolerance = .04;
     private CommandSwerveDrivetrain swerve;
     private boolean left;
 
     private final PIDController forwardController = new PIDController(4, 0, 0);
-    private final PIDController horizontalController = new PIDController(5, 0, 0);
+    private final PIDController horizontalController = new PIDController(7, 0, 0.1);
     private final PIDController rotationalController = new PIDController(.1, 0, 0.01);
     private boolean thetaInTolerance;
     private boolean forwardInTolerance;
@@ -33,9 +33,7 @@ public class AlignToReef extends Command {
     }
 
     @Override
-    public void initialize() {
-        LimelightHelpers.setLEDMode_ForceBlink("limelight");
-    }
+    public void initialize() {}
 
     @Override
     public void execute() {
@@ -43,7 +41,7 @@ public class AlignToReef extends Command {
             double[] cameraPoseInTagSpace = LimelightHelpers.getBotPose_TargetSpace("limelight");
             double forwardOutput = MathUtil.clamp(forwardController.calculate(cameraPoseInTagSpace[2], targetTZ), -1.5, 1.5);
             double horizontalOutput = MathUtil.clamp(-horizontalController.calculate(cameraPoseInTagSpace[0], left ? leftTargetTX : rightTargetTX), -1.5, 1.5);
-            double rotationalOutput = MathUtil.clamp(-rotationalController.calculate(cameraPoseInTagSpace[4], 0), -1.5, 1.5);
+            double rotationalOutput = MathUtil.clamp(-rotationalController.calculate(cameraPoseInTagSpace[4], 0), -2.5, 2.5);
             if(inTolerance(cameraPoseInTagSpace[2], targetTZ, tolerance)) {
                 forwardOutput = 0;
                 forwardInTolerance = true;
@@ -55,10 +53,10 @@ public class AlignToReef extends Command {
                 horizontalOutput = 0;
                 horizontalInTolerance = true;
             } else {
-                if(Math.abs(Math.abs(targetTZ) - Math.abs(cameraPoseInTagSpace[2])) < .05) {
-                    forwardOutput = 0;
-                    System.out.println("WAITING FOR HORIZONTAL ALIGNMENT");
-                }
+                // if(Math.abs(Math.abs(targetTZ) - Math.abs(cameraPoseInTagSpace[2])) < .6) {
+                //     forwardOutput = 0;
+                //     System.out.println("WAITING FOR HORIZONTAL ALIGNMENT");
+                // }
                 horizontalInTolerance = false;
             }
 
@@ -91,7 +89,6 @@ public class AlignToReef extends Command {
     @Override
     public void end(boolean interrupted) {
         swerve.setControl(new SwerveRequest.RobotCentric());
-        LimelightHelpers.setLEDMode_ForceOff("limelight");
     }
 
     private static boolean inTolerance(double valueOne, double valueTwo, double tolerance) {

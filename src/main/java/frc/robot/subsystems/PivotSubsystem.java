@@ -205,7 +205,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     }
 
     public boolean isAtClimbSetpoint() {
-        return getError() < 1.5;
+        return getError() < 3.1;
     }
 
     public boolean isAtLEDTolerance() {
@@ -278,7 +278,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
      */
     public enum PivotPosition {
         STORED(-70), PRIME(-60), SAFE_POSITION(-75), COBRA_STANCE(-1),
-        CLIMB_RAISE(-25), CLIMB_LOWER(-105),
+        CLIMB_RAISE(-25), CLIMB_LOWER(-106.5),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-67), ALGAE_DESCORE_L_THREE(-47),
         GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-8), // -50

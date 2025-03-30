@@ -49,7 +49,6 @@ public class LEDSubsystem extends SubsystemBase {
         // ALLOWS LEDS TO TURN ON/OFF, BLINK FOR INTAKE
         if(blink && blinkTicks < 10) {
             setColorDirectly(TargetRGB.NONE);
-            System.out.println("BLINKING OFF");
         } else {
             setColorDirectly(targetRGB);
         }
@@ -78,7 +77,7 @@ public class LEDSubsystem extends SubsystemBase {
     /**Runs periodically, uses conditionals to change LED color */
     @Override
     public void periodic() {
-        if(drivetrain.getState().Speeds.vxMetersPerSecond > 0.2 || drivetrain.getState().Speeds.vyMetersPerSecond > 0.2 || drivetrain.getState().Speeds.omegaRadiansPerSecond > 0.2) {
+        if(drivetrain.getState().Speeds.vxMetersPerSecond > 0.1 || drivetrain.getState().Speeds.vyMetersPerSecond > 0.1 || drivetrain.getState().Speeds.omegaRadiansPerSecond > 0.1) {
             RobotContainer.isAligned = false;
         }
         cycleTicks++;

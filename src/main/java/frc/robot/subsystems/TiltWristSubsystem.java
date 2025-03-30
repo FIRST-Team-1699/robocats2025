@@ -202,7 +202,7 @@ public class TiltWristSubsystem extends SubsystemBase {
     public enum TiltPosition {
         STORED(-110), PRIME(-30), COBRA_STANCE(-1),
 
-        CLIMB(-40),
+        CLIMB_UPPER(0), CLIMB_LOWER(-60),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(20), ALGAE_DESCORE_L_THREE(20),
 

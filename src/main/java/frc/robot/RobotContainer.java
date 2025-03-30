@@ -249,17 +249,24 @@ public class RobotContainer {
                 elevator.setPosition(ElevatorPosition.STORED)
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(pivot.setPosition(PivotPosition.CLIMB_RAISE))
-                .alongWith(tiltWrist.setPosition(TiltPosition.CLIMB))
+                .alongWith(tiltWrist.setPosition(TiltPosition.CLIMB_UPPER))
                 .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)));
         
         driverController.b()
             .onTrue(
                 (pivot.setPosition(PivotPosition.CLIMB_LOWER)
-                .andThen(servo.activateServo())
+                .alongWith(tiltWrist.setPosition(TiltPosition.CLIMB_LOWER))
                 .andThen(pivot.waitUntilAtClimbSetpoint())
+                .andThen(servo.activateServo())
                 .andThen(new WaitCommand(.5))
                 .andThen(pivot.runOnce(() -> pivot.disableMovement())))
                 .onlyIf(pivot.isClimbReady()));
+
+        driverController.povUp()
+            .onTrue(servo.activateServo());
+
+        driverController.povDown()
+            .onTrue(servo.deactivateServo());
 
         operatorController.povUp()
             .onTrue(
