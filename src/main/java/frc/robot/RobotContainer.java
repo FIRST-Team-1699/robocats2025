@@ -262,12 +262,6 @@ public class RobotContainer {
                 .andThen(pivot.runOnce(() -> pivot.disableMovement())))
                 .onlyIf(pivot.isClimbReady()));
 
-        driverController.povUp()
-            .onTrue(servo.activateServo());
-
-        driverController.povDown()
-            .onTrue(servo.deactivateServo());
-
         operatorController.povUp()
             .onTrue(
                 (elevator.setPosition(ElevatorPosition.STORED)

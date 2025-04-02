@@ -4,9 +4,15 @@
 
 package frc.robot;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Optional;
 
+import org.json.simple.parser.ParseException;
+
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.FileVersionException;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
