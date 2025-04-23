@@ -21,7 +21,7 @@ public class AlignToReef extends Command {
     public static boolean reachedDeadline = false;
     public static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
 
-    private static Translation2d lastStartPosition;
+    private Translation2d lastStartPosition;
 
     private CommandSwerveDrivetrain swerve;
     private boolean left;
@@ -149,8 +149,13 @@ public class AlignToReef extends Command {
                     .withRotationalRate(rotationalOutput)
             );
             
-            // SAVES LAST POSITION TO GO BACK ON IF ALIGNMENT FAILED ALIGNMENT
-            lastStartPosition = new Translation2d(forwardOutput, horizontalOutput);
+            // SAVES LAST POSITION TO GO BACK ON IF ALIGNMENT FAILED ALIGNMENT (ONLY ONCE THOUGH)
+            try {
+                lastStartPosition = lastStartPosition == null ? new Translation2d(forwardOutput, horizontalOutput) : lastStartPosition;
+            } catch(Exception uhOh) {
+                // 50 bux that if this error is caught, its gonna be the gosh darn null pointer error :b
+                System.out.println("Null pointer error: "+ uhOh.getStackTrace());
+            }
 
             // System.out.println(cameraPoseInTagSpace[4]);
             // System.out.println("FORWARD OUTPUT: " + forwardOutput);
