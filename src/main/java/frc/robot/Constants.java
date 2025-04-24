@@ -221,8 +221,12 @@ public class Constants {
         public static final Translation2d leftOffsetTranslation = new Translation2d(-.5, -.17);
         public static final Translation2d rightOffsetTranslation = new Translation2d(-.5, .17);
 
+        // TODO: TUNE
         public static final double secTimerLimit = 5;
         public static final double secTimerMin = .3;
-        public static final double reAlignMax = .8;
+        public static final double secReAlignMax = .8;
+
+        public static final double forwardReAlignSpeed = .2;
+        public static final double horizontalReAlignSpeed = .2;
     }
 }

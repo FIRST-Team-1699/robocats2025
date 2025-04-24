@@ -21,7 +21,7 @@ public class AlignToReef extends Command {
     public static boolean reachedDeadline = false;
     public static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
 
-    private Translation2d lastStartPosition;
+    // private Translation2d lastStartPosition;
 
     private CommandSwerveDrivetrain swerve;
     private boolean left;
@@ -70,22 +70,25 @@ public class AlignToReef extends Command {
             deadlineTimer.restart();
         }
 
-        if(reachedDeadline && LimelightHelpers.getTV("limelight")) {
-            try {
+        if(reachedDeadline) {
+            if(left){
                 swerve.setControl(
-                        new SwerveRequest.RobotCentric()
-                            .withVelocityX(-lastStartPosition.getX())
-                            .withVelocityY(-lastStartPosition.getY())
+                    new SwerveRequest.RobotCentric()
+                        .withVelocityX(-AlignToReefConstants.forwardReAlignSpeed)
+                        .withVelocityY(AlignToReefConstants.horizontalReAlignSpeed)
                 );
-            } catch(Exception uhOh) {
-                // TODO: BE CONCERNED... :p
-                System.out.println(uhOh.getStackTrace());
+            } else {
+                swerve.setControl(
+                    new SwerveRequest.RobotCentric()
+                        .withVelocityX(-AlignToReefConstants.forwardReAlignSpeed)
+                        .withVelocityY(-AlignToReefConstants.horizontalReAlignSpeed)
+                );                
             }
 
             // ALLOWS THE COMMAND TO BE CONTINUED IF LIMELIGHT IS VISIBLE AND ROBOT HAS BEEN MOVED (VIA MIN TIME)
             // TODO: IF THE LIMELIGHT IS NOT CONNECTED, CODE LIKE THIS SHOULD BE RAN BY DEFAULT!!!
             if((LimelightHelpers.getTV("limelight") && deadlineTimer.get() >= AlignToReefConstants.secTimerMin) 
-                || deadlineTimer.get() <= AlignToReefConstants.reAlignMax) {
+                || deadlineTimer.get() <= AlignToReefConstants.secReAlignMax) {
                 swerve.setControl(new SwerveRequest.RobotCentric());
                 deadlineTimer.restart();
                 reachedDeadline = false;
@@ -148,14 +151,6 @@ public class AlignToReef extends Command {
                     .withVelocityY(horizontalOutput)
                     .withRotationalRate(rotationalOutput)
             );
-            
-            // SAVES LAST POSITION TO GO BACK ON IF ALIGNMENT FAILED ALIGNMENT (ONLY ONCE THOUGH)
-            try {
-                lastStartPosition = lastStartPosition == null ? new Translation2d(forwardOutput, horizontalOutput) : lastStartPosition;
-            } catch(Exception uhOh) {
-                // 50 bux that if this error is caught, its gonna be the gosh darn null pointer error :b
-                System.out.println("Null pointer error: "+ uhOh.getStackTrace());
-            }
 
             // System.out.println(cameraPoseInTagSpace[4]);
             // System.out.println("FORWARD OUTPUT: " + forwardOutput);
