@@ -56,11 +56,9 @@ public class AlignToReef extends Command {
     public void initialize() {
         translationController.setSetpoint(0);
 
-        // STARTS TIMER. USED TO PREVENT BEING STUCK AT END POSITION AT AN INTERVAL DEFINED IN COSTANTS (secTimerLimit).
-        if(RobotContainer.inAuto) {
-            deadlineTimer.start();
-        }
-
+        // STARTS TIMER. USED TO PREVENT BEING STUCK AT END POSITION AT AN INTERVAL DEFINED IN COSTANTS (secTimerLimit). 
+        // If IN TELE-OP, USED FOR DISPLAYING AUTO ALIGN TIME.
+        deadlineTimer.start();
     }
 
     @Override
@@ -87,7 +85,7 @@ public class AlignToReef extends Command {
 
             // ALLOWS THE COMMAND TO BE CONTINUED IF LIMELIGHT IS VISIBLE AND ROBOT HAS BEEN MOVED (VIA MIN TIME)
             // TODO: IF THE LIMELIGHT IS NOT CONNECTED, CODE LIKE THIS SHOULD BE RAN BY DEFAULT!!!
-            if((LimelightHelpers.getTV("limelight") && deadlineTimer.get() >= AlignToReefConstants.secTimerMin) 
+            if((LimelightHelpers.getTV("limelight") && deadlineTimer.get() >= AlignToReefConstants.secReAlignMin) 
                 || deadlineTimer.get() <= AlignToReefConstants.secReAlignMax) {
                 swerve.setControl(new SwerveRequest.RobotCentric());
                 deadlineTimer.restart();
@@ -176,14 +174,12 @@ public class AlignToReef extends Command {
         swerve.setControl(new SwerveRequest.RobotCentric());
 
         // REPORTS ALIGNMENT DATA TO DASHBOARD
-        if(RobotContainer.inAuto){
-            reachedDeadline = timerEnd();
-            deadlineTimer.stop();
+        reachedDeadline = timerEnd();
+        deadlineTimer.stop();
 
-            // FOR TUNING
-            SmartDashboard.putNumber("Time to Align: ", deadlineTimer.get());
-            deadlineTimer.reset(); 
-        }
+        // FOR TUNING
+        SmartDashboard.putNumber("Time to Align: ", deadlineTimer.get());
+        deadlineTimer.reset(); 
     }
 
     private static boolean inTolerance(double valueOne, double valueTwo, double tolerance) {

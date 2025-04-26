@@ -223,7 +223,7 @@ public class Constants {
 
         // TODO: TUNE
         public static final double secTimerLimit = 5;
-        public static final double secTimerMin = .3;
+        public static final double secReAlignMin = .3;
         public static final double secReAlignMax = .8;
 
         public static final double forwardReAlignSpeed = .2;
