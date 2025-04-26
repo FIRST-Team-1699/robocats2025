@@ -484,7 +484,7 @@ public class RobotContainer {
         .andThen(elevator.waitUntilAtSetpoint())
         .andThen((pivot.setPosition(PivotPosition.GROUND_INTAKE))
         .alongWith(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE_HORIZONTAL)))
-        .alongWith(intake.runIntake(.4));
+        .alongWith(intake.runIntake(.6));
     }
 
     private Command getLollipopIntakeSequence() {

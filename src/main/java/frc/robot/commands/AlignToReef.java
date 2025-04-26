@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
@@ -18,12 +19,13 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.utils.LimelightHelpers;
 
 public class AlignToReef extends Command {
-    public static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
-
     // private Translation2d lastStartPosition;
 
     private CommandSwerveDrivetrain swerve;
+
     private boolean left;
+
+    private double lastHorizontalOutput;
 
     private final PIDController translationController = new PIDController(3.5, 0, 0);
     private final PIDController rotationalController = new PIDController(.1, 0, 0.01);
@@ -35,9 +37,6 @@ public class AlignToReef extends Command {
     private final Translation2d targetOffsetTranslation;
 
     private Timer deadlineTimer = new Timer();
-
-    // FOR DETERMINING WHEN TO TRY TO RE-ALIGN
-    private boolean reachedDeadline = false;
 
     public AlignToReef(CommandSwerveDrivetrain swerve, boolean left) {
         this.swerve = swerve;
@@ -61,38 +60,24 @@ public class AlignToReef extends Command {
 
     @Override
     public void execute() {
-        if(DriverStation.isAutonomous() && (timerEnd() || !LimelightHelpers.getTV("limelight"))) {
-            reachedDeadline = true;
-            deadlineTimer.restart();
-        }
+        // DEADLINE LOGIC :o
 
-        if(reachedDeadline) {
-            if(left){
+        // NOT VISIBLE LIMELIGHT LOGIC
+        if(!LimelightHelpers.getTV("limelight")) {
+            if(left) {
                 swerve.setControl(
                     new SwerveRequest.RobotCentric()
-                        .withVelocityX(-AlignToReefConstants.forwardReAlignSpeed)
                         .withVelocityY(AlignToReefConstants.horizontalReAlignSpeed)
                 );
             } else {
                 swerve.setControl(
                     new SwerveRequest.RobotCentric()
-                        .withVelocityX(-AlignToReefConstants.forwardReAlignSpeed)
                         .withVelocityY(-AlignToReefConstants.horizontalReAlignSpeed)
-                );                
-            }
-
-            // ALLOWS THE COMMAND TO BE CONTINUED IF LIMELIGHT IS VISIBLE AND ROBOT HAS BEEN MOVED (VIA MIN TIME)
-            // TODO: IF THE LIMELIGHT IS NOT CONNECTED, CODE LIKE THIS SHOULD BE RAN BY DEFAULT!!!
-            if((LimelightHelpers.getTV("limelight") && deadlineTimer.get() >= AlignToReefConstants.secReAlignMin) 
-                || deadlineTimer.get() <= AlignToReefConstants.secReAlignMax) {
-                swerve.setControl(new SwerveRequest.RobotCentric());
-                deadlineTimer.restart();
-                reachedDeadline = false;
+                );
             }
         }
 
-        if(LimelightHelpers.getTV("limelight") 
-            && (!reachedDeadline || !DriverStation.isAutonomous())) {
+        if(LimelightHelpers.getTV("limelight")) {
 
             double[] cameraPoseInTagSpace = LimelightHelpers.getBotPose_TargetSpace("limelight");
             Translation2d cameraTranslation = new Translation2d(cameraPoseInTagSpace[2], cameraPoseInTagSpace[0]);
@@ -109,17 +94,22 @@ public class AlignToReef extends Command {
 
             System.out.println(translationOutput);
 
-            double forwardOutput = -translationOutput.getX();
-            double horizontalOutput = translationOutput.getY();
+            double forwardOutput = MathUtil.clamp(-translationOutput.getX(), -1.5, 1.5);
+            double horizontalOutput = MathUtil.clamp(translationOutput.getY(), -1.5, 1.5);
 
             double rotationalOutput = MathUtil.clamp(-rotationalController.calculate(cameraPoseInTagSpace[4], 0), -2.5, 2.5);
 
             if(inTolerance(cameraPoseInTagSpace[2], AlignToReefConstants.targetTZ, AlignToReefConstants.tolerance)) {
+                System.out.println("forward in tolerance");
                 forwardOutput = 0;
                 forwardInTolerance = true;
             } else {
+                System.out.println("forward not in tolerance");
                 forwardInTolerance = false;
             }
+
+            System.out.println(cameraPoseInTagSpace[2]);
+            System.out.println(AlignToReefConstants.targetTZ);
 
             if(inTolerance(cameraPoseInTagSpace[0], 
                 left ? AlignToReefConstants.leftTargetTX : AlignToReefConstants.rightTargetTX, 
@@ -131,8 +121,9 @@ public class AlignToReef extends Command {
                 horizontalInTolerance = false;
             }
 
-            if(inTolerance(cameraPoseInTagSpace[4], 0, 1)) {
-                System.out.println(cameraPoseInTagSpace[4]);
+            lastHorizontalOutput = horizontalOutput;
+
+            if(Math.abs(cameraPoseInTagSpace[4]) < 1.0) {
                 rotationalOutput = 0;
                 thetaInTolerance = true;
             } else {
@@ -146,6 +137,11 @@ public class AlignToReef extends Command {
                     .withRotationalRate(rotationalOutput)
             );
 
+            System.out.println("T " + thetaInTolerance);
+            System.out.println("F " + forwardInTolerance);
+            System.out.println("H " + horizontalInTolerance);
+            System.out.println("-------------------------");
+
             // System.out.println(cameraPoseInTagSpace[4]);
             // System.out.println("FORWARD OUTPUT: " + forwardOutput);
             // System.out.println("HORIZONTAL OUTPUT: " + horizontalOutput);
@@ -154,14 +150,27 @@ public class AlignToReef extends Command {
             // System.out.println("HORIZONTAL ERROR: " + (cameraPoseInTagSpace[0] - leftTargetTX));
             // System.out.println(cameraPoseInTagSpace[0]);
             // System.out.println(left ? leftTargetTX : rightTargetTX);
+
+            if(!LimelightHelpers.getTV("limelight")) {
+            }
         } else {
-            swerve.setControl(new SwerveRequest.RobotCentric());
+            if(lastHorizontalOutput < 0) {
+                swerve.setControl(
+                    new SwerveRequest.RobotCentric()
+                        .withVelocityY(-AlignToReefConstants.horizontalReAlignSpeed)
+                );
+            } else {
+                swerve.setControl(
+                    new SwerveRequest.RobotCentric()
+                        .withVelocityY(AlignToReefConstants.horizontalReAlignSpeed)
+                );
+            }
         }
     }
 
     @Override
     public boolean isFinished() {
-        return thetaInTolerance && horizontalInTolerance && forwardInTolerance;
+        return (thetaInTolerance && horizontalInTolerance && forwardInTolerance && LimelightHelpers.getTV("limelight")) || deadlineTimer.get() >= AlignToReefConstants.secTimerLimit;
     }
     
     @Override
@@ -170,7 +179,6 @@ public class AlignToReef extends Command {
         swerve.setControl(new SwerveRequest.RobotCentric());
 
         // REPORTS ALIGNMENT DATA TO DASHBOARD
-        reachedDeadline = timerEnd();
         deadlineTimer.stop();
 
         // FOR TUNING
@@ -179,11 +187,6 @@ public class AlignToReef extends Command {
     }
 
     private static boolean inTolerance(double valueOne, double valueTwo, double tolerance) {
-        return Math.abs(Math.abs(valueOne) - Math.abs(valueTwo)) < tolerance;
-    }
-
-    /**Returns if Timer reached deadline*/
-    private boolean timerEnd() {
-        return deadlineTimer.get() >= AlignToReefConstants.secTimerLimit;
+        return Math.abs(Math.abs(valueOne) - Math.abs(valueTwo)) < tolerance && valueOne * valueTwo > 0;
     }
 }
