@@ -293,13 +293,26 @@
         {
           "type": "named",
           "data": {
-            "name": "Stored"
+            "name": "Stop Intake"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Stop Intake"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LAAL4P6"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stored"
+                }
+              }
+            ]
           }
         }
       ]

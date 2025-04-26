@@ -18,7 +18,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.utils.LimelightHelpers;
 
 public class AlignToReef extends Command {
-
     public static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
 
     // private Translation2d lastStartPosition;
@@ -26,18 +25,14 @@ public class AlignToReef extends Command {
     private CommandSwerveDrivetrain swerve;
     private boolean left;
 
-    // private final PIDController forwardController = new PIDController(4, 0, 0);
-    // private final PIDController horizontalController = new PIDController(7, 0, 0.1);
+    private final PIDController translationController = new PIDController(3.5, 0, 0);
     private final PIDController rotationalController = new PIDController(.1, 0, 0.01);
-
-    // private ProfiledPIDController translationController = new ProfiledPIDController(4, 0, 0, new TrapezoidProfile.Constraints(1.5, 1));
-    private PIDController translationController = new PIDController(3.5, 0, 0);
 
     private boolean thetaInTolerance;
     private boolean forwardInTolerance;
     private boolean horizontalInTolerance;
     
-    private Translation2d targetOffsetTranslation;
+    private final Translation2d targetOffsetTranslation;
 
     private Timer deadlineTimer = new Timer();
 
@@ -117,8 +112,6 @@ public class AlignToReef extends Command {
             double forwardOutput = -translationOutput.getX();
             double horizontalOutput = translationOutput.getY();
 
-            // double forwardOutput = MathUtil.clamp(forwardController.calculate(cameraPoseInTagSpace[2], targetTZ), -1.5, 1.5);
-            // double horizontalOutput = MathUtil.clamp(-horizontalController.calculate(cameraPoseInTagSpace[0], left ? leftTargetTX : rightTargetTX), -1.5, 1.5);
             double rotationalOutput = MathUtil.clamp(-rotationalController.calculate(cameraPoseInTagSpace[4], 0), -2.5, 2.5);
 
             if(inTolerance(cameraPoseInTagSpace[2], AlignToReefConstants.targetTZ, AlignToReefConstants.tolerance)) {
