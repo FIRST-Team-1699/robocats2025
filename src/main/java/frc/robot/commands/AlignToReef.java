@@ -17,8 +17,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.utils.LimelightHelpers;
 
 public class AlignToReef extends Command {
-    // FOR DETERMINING WHEN TO TRY TO RE-ALIGN
-    public static boolean reachedDeadline = false;
+
     public static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
 
     // private Translation2d lastStartPosition;
@@ -40,6 +39,9 @@ public class AlignToReef extends Command {
     private Translation2d targetOffsetTranslation;
 
     private Timer deadlineTimer = new Timer();
+
+    // FOR DETERMINING WHEN TO TRY TO RE-ALIGN
+    private boolean reachedDeadline = false;
 
     public AlignToReef(CommandSwerveDrivetrain swerve, boolean left) {
         this.swerve = swerve;
