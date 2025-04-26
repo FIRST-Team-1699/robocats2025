@@ -80,7 +80,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
 
         timer = new Timer();
         trapezoid = new TrapezoidProfile(new TrapezoidProfile.Constraints(200, 700));
-        climbTrapezoid = new TrapezoidProfile(new TrapezoidProfile.Constraints(250, 450));
+        climbTrapezoid = new TrapezoidProfile(new TrapezoidProfile.Constraints(150, 450));
         feedforward = new ArmFeedforward(0, 0.523, 2.6);
         shouldMove = false;
     }
@@ -283,7 +283,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-67), ALGAE_DESCORE_L_THREE(-47),
         GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-8), // -50
 
-        L_ONE(-65), L_TWO(-60), L_THREE(0), L_FOUR(0),
+        L_ONE(-70), L_TWO(-60), L_THREE(0), L_FOUR(0),
         L_FOUR_FRONT(-22), L_THREE_FRONT(-36);
         private double rotations;
         PivotPosition(double rotations) {

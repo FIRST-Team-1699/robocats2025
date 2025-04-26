@@ -4,38 +4,32 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.utils.LimelightHelpers;
 
 public class AlignToReef extends Command {
-    public static final double targetTZ = -.48;
+    public static final double targetTZ = -.5;
     public static final double leftTargetTX = -.17;
     public static final double rightTargetTX = .17;
-    public static final double tolerance = .05;
+    public static final double tolerance = .025;
 
-    public static final Translation2d leftOffsetTranslation = new Translation2d(-.5, -.17);
-    public static final Translation2d rightOffsetTranslation = new Translation2d(-.5, .17);
-    private CommandSwerveDrivetrain swerve;
-    private boolean left;
+    public static final Translation2d leftOffsetTranslation = new Translation2d(targetTZ, leftTargetTX);
+    public static final Translation2d rightOffsetTranslation = new Translation2d(targetTZ, rightTargetTX);
+    private final CommandSwerveDrivetrain swerve;
+    private final boolean left;
 
-    // private final PIDController forwardController = new PIDController(4, 0, 0);
-    // private final PIDController horizontalController = new PIDController(7, 0, 0.1);
+    private final PIDController translationController = new PIDController(3.5, 0, 0);
     private final PIDController rotationalController = new PIDController(.1, 0, 0.01);
-
-    // private ProfiledPIDController translationController = new ProfiledPIDController(4, 0, 0, new TrapezoidProfile.Constraints(1.5, 1));
-    private PIDController translationController = new PIDController(3.5, 0, 0);
 
     private boolean thetaInTolerance;
     private boolean forwardInTolerance;
     private boolean horizontalInTolerance;
     
-    private Translation2d targetOffsetTranslation;
+    private final Translation2d targetOffsetTranslation;
 
     public AlignToReef(CommandSwerveDrivetrain swerve, boolean left) {
         this.swerve = swerve;
@@ -44,7 +38,11 @@ public class AlignToReef extends Command {
         thetaInTolerance = false;
         forwardInTolerance = false;
         horizontalInTolerance = false;
-        targetOffsetTranslation = left ? leftOffsetTranslation : rightOffsetTranslation;
+        if(left) {
+            targetOffsetTranslation = leftOffsetTranslation;
+        } else {
+            targetOffsetTranslation = rightOffsetTranslation;
+        }
     }
 
     @Override
@@ -69,8 +67,6 @@ public class AlignToReef extends Command {
             double forwardOutput = -translationOutput.getX();
             double horizontalOutput = translationOutput.getY();
 
-            // double forwardOutput = MathUtil.clamp(forwardController.calculate(cameraPoseInTagSpace[2], targetTZ), -1.5, 1.5);
-            // double horizontalOutput = MathUtil.clamp(-horizontalController.calculate(cameraPoseInTagSpace[0], left ? leftTargetTX : rightTargetTX), -1.5, 1.5);
             double rotationalOutput = MathUtil.clamp(-rotationalController.calculate(cameraPoseInTagSpace[4], 0), -2.5, 2.5);
 
             if(inTolerance(cameraPoseInTagSpace[2], targetTZ, tolerance)) {

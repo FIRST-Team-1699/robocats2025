@@ -174,7 +174,7 @@ public class TiltWristSubsystem extends SubsystemBase {
     }
 
     public BooleanSupplier isInL2L3L4() {
-        return () -> currentTargetPosition == TiltPosition.L_FOUR || currentTargetPosition == TiltPosition.L_THREE || currentTargetPosition == TiltPosition.L_TWO;
+        return () -> currentTargetPosition == TiltPosition.L_FOUR || currentTargetPosition == TiltPosition.L_THREE || currentTargetPosition == TiltPosition.L_TWO || currentTargetPosition == TiltPosition.L_FOUR_FRONT || currentTargetPosition == TiltPosition.L_THREE_FRONT;
     }
 
     public BooleanSupplier isInL3L4() {
