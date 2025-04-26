@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import frc.robot.utils.LimelightHelpers;
 
 public class Robot extends TimedRobot {
   private Command autoCommand;
@@ -61,6 +62,9 @@ public class Robot extends TimedRobot {
     lastAlliance = DriverStation.getAlliance();
     selectedAutoString = autoChooser.getSelected();
     autoCommand = AutoBuilder.buildAuto(autoChooser.getSelected());
+
+    CameraServer.startAutomaticCapture();
+    LimelightHelpers.setLEDMode_ForceOn("limelight");
   }
 
   @Override
@@ -95,6 +99,7 @@ public class Robot extends TimedRobot {
     if (autoCommand != null) {
       autoCommand.schedule();
     }
+    System.out.println(autoChooser.getSelected());
   }
 
   @Override

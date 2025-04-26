@@ -209,8 +209,6 @@ public class RobotContainer {
                 this::isBlue));
 
         configureBindings();
-
-        LimelightHelpers.setLEDMode_ForceOff("limelight");
     }
 
     private void configureBindings() {
@@ -230,6 +228,15 @@ public class RobotContainer {
 
         driverController.leftBumper()
             .whileTrue(new AlignToReef(drivetrain, true).andThen(Commands.runOnce(() -> isAligned = true)));
+
+        // driverController.povUp()
+        //     .onTrue(Commands.runOnce(() -> LimelightHelpers.setLEDMode_ForceOn("limelight")));
+
+        // driverController.povDown()
+        //     .onTrue(Commands.runOnce(() -> LimelightHelpers.setLEDMode_ForceOff("limelight")));
+
+        // driverController.povUp()
+        //     .onTrue(Commands.runOnce(() -> servo.enableServo()));
 
         // pivot.setDefaultCommand(pivot.printPosition());
         // elevator.setDefaultCommand(elevator.printPosition());
@@ -353,10 +360,10 @@ public class RobotContainer {
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.CORAL_STATION_INTAKE))
-                .andThen(pivot.waitUntilAtSetpoint())
-                .andThen(elevator.setPosition(ElevatorPosition.CORAL_STATION_INTAKE)
+                .andThen(pivot.waitUntilAtSetpoint()
+                .alongWith(elevator.setPosition(ElevatorPosition.CORAL_STATION_INTAKE)
                 .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
-                .alongWith(tiltWrist.setPosition(TiltPosition.CORAL_STATION_INTAKE)))))
+                .alongWith(tiltWrist.setPosition(TiltPosition.CORAL_STATION_INTAKE))))))
                 .unless(pivot.isInGroundIntakePosition())
             );
 
@@ -383,7 +390,7 @@ public class RobotContainer {
                 .andThen(pivot.setPosition(PivotPosition.L_TWO))
                 .andThen(pivot.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.L_TWO)
-                .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)
+                .alongWith(getAutoFlipCommand(true)
                 .alongWith(tiltWrist.setPosition(TiltPosition.L_TWO)))))
                 .unless(pivot.isInGroundIntakePosition())
             );
@@ -445,7 +452,7 @@ public class RobotContainer {
             .onTrue(
                 new SelectCommand<>(
                     Map.of(true, rotateWrist.setPosition(RotatePosition.VERTICAL), false, rotateWrist.setPosition(RotatePosition.VERTICAL_FLIPPED)), rotateWrist::isVerticalFlipped)
-                    .onlyIf(tiltWrist.isInL3L4())
+                    .onlyIf(tiltWrist.isInL2L3L4())
             );
     }
 
