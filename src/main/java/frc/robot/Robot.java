@@ -90,8 +90,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    // CHANGES AUTO STATE TO TRUE FOR ALIGNTOREEFCOMMAND
-    RobotContainer.inAuto = true;
     if (autoCommand != null) {
       autoCommand.schedule();
     }
@@ -102,8 +100,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {
-    // CHANGES AUTO STATE TO FALSE FOR ALIGNTOREEFCOMMAND
-    RobotContainer.inAuto = false;
   }
 
   @Override

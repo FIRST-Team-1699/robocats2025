@@ -77,8 +77,6 @@ public class RobotContainer {
 
     public static boolean isAligned = false;
 
-    public static boolean inAuto = false;
-
     public RobotContainer() {
         // Adding commands so that they can be seen by pathplanner
         NamedCommands.registerCommand("Stored",

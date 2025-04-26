@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -65,7 +66,7 @@ public class AlignToReef extends Command {
 
     @Override
     public void execute() {
-        if(RobotContainer.inAuto && timerEnd()) {
+        if(DriverStation.isAutonomous() && (timerEnd() || !LimelightHelpers.getTV("limelight"))) {
             reachedDeadline = true;
             deadlineTimer.restart();
         }
@@ -96,7 +97,7 @@ public class AlignToReef extends Command {
         }
 
         if(LimelightHelpers.getTV("limelight") 
-            && (!reachedDeadline || !RobotContainer.inAuto)) {
+            && (!reachedDeadline || !DriverStation.isAutonomous())) {
 
             double[] cameraPoseInTagSpace = LimelightHelpers.getBotPose_TargetSpace("limelight");
             Translation2d cameraTranslation = new Translation2d(cameraPoseInTagSpace[2], cameraPoseInTagSpace[0]);
