@@ -97,7 +97,7 @@ public class AlignToReef extends Command {
             double forwardOutput = MathUtil.clamp(-translationOutput.getX(), -1.5, 1.5);
             double horizontalOutput = MathUtil.clamp(translationOutput.getY(), -1.5, 1.5);
 
-            double rotationalOutput = MathUtil.clamp(-rotationalController.calculate(cameraPoseInTagSpace[4], 0), -2.5, 2.5);
+            double rotationalOutput = MathUtil.clamp(-rotationalController.calculate(cameraPoseInTagSpace[4], 0), -1.5, 1.5);
 
             if(inTolerance(cameraPoseInTagSpace[2], AlignToReefConstants.targetTZ, AlignToReefConstants.tolerance)) {
                 System.out.println("forward in tolerance");
@@ -150,9 +150,6 @@ public class AlignToReef extends Command {
             // System.out.println("HORIZONTAL ERROR: " + (cameraPoseInTagSpace[0] - leftTargetTX));
             // System.out.println(cameraPoseInTagSpace[0]);
             // System.out.println(left ? leftTargetTX : rightTargetTX);
-
-            if(!LimelightHelpers.getTV("limelight")) {
-            }
         } else {
             if(lastHorizontalOutput < 0) {
                 swerve.setControl(

@@ -474,14 +474,10 @@ public class RobotContainer {
     // }
 
     private Command getGroundIntakeSequence() {
-        return elevator.setPosition(ElevatorPosition.STORED)
+        return elevator.setPosition(ElevatorPosition.GROUND_INTAKE)
         // .alongWith(setElevatedSpeed())
         .andThen(elevator.waitUntilAtSetpoint())
-        .andThen(pivot.setPosition(PivotPosition.STORED)
-        .alongWith(tiltWrist.setPosition(TiltPosition.STORED).alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL))))
-        .andThen(pivot.waitUntilAtSetpoint())
-        .andThen(elevator.setPosition(ElevatorPosition.GROUND_INTAKE))
-        .andThen(elevator.waitUntilAtSetpoint())
+        .alongWith(tiltWrist.setPosition(TiltPosition.STORED).alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
         .andThen((pivot.setPosition(PivotPosition.GROUND_INTAKE))
         .alongWith(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE_HORIZONTAL)))
         .alongWith(intake.runIntake(.6));
