@@ -7,6 +7,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.interfaces.LaserCanInterface.RegionOfInterest;
 import au.grapplerobotics.interfaces.LaserCanInterface.TimingBudget;
+import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.generated.TunerConstants;
 
 public class Constants {
@@ -209,5 +210,21 @@ public class Constants {
 
         public static final int kAlignmentTolerance = -1;
         public static final int kReefDetectionTolerance = -1;
+    }
+
+    public static class AlignToReefConstants {
+        public static final double targetTZ = -.48;
+        public static final double leftTargetTX = -.17;
+        public static final double rightTargetTX = .17;
+        public static final double tolerance = .04;
+
+        public static final Translation2d leftOffsetTranslation = new Translation2d(-.5, -.17);
+        public static final Translation2d rightOffsetTranslation = new Translation2d(-.5, .17);
+
+        // TODO: TUNE
+        public static final double secTimerLimit = 3;
+
+        public static final double forwardReAlignSpeed = .2;
+        public static final double horizontalReAlignSpeed = .2;
     }
 }

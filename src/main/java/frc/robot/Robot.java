@@ -64,7 +64,7 @@ public class Robot extends TimedRobot {
     autoCommand = AutoBuilder.buildAuto(autoChooser.getSelected());
 
     CameraServer.startAutomaticCapture();
-    LimelightHelpers.setLEDMode_ForceOn("limelight");
+    LimelightHelpers.setLEDMode_ForceOff("limelight");
   }
 
   @Override
@@ -104,7 +104,8 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+  }
 
   @Override
   public void teleopInit() {
