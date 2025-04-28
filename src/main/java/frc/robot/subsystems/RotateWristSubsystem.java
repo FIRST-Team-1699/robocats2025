@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
-
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase;
@@ -12,7 +10,6 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -55,14 +52,7 @@ public class RotateWristSubsystem extends SubsystemBase {
         motorConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             .pidf(RotateWristConstants.kP, RotateWristConstants.kI, RotateWristConstants.kD, RotateWristConstants.kFF, ClosedLoopSlot.kSlot0)
-            .pidf(RotateWristConstants.kMAXMotionP, RotateWristConstants.kMAXMotionI, RotateWristConstants.kMAXMotionD, RotateWristConstants.kMAXMotionFF, ClosedLoopSlot.kSlot1)
-            .outputRange(RotateWristConstants.kMinimumOutputLimit, RotateWristConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot0)
-            .outputRange(RotateWristConstants.kMinimumOutputLimit, RotateWristConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot1)
-        .maxMotion
-            .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot1)
-            .maxAcceleration(RotateWristConstants.kMAXMotionMaxAcceleration, ClosedLoopSlot.kSlot1)
-            .maxVelocity(RotateWristConstants.kMAXMotionMaxVelocity, ClosedLoopSlot.kSlot1)
-            .allowedClosedLoopError(RotateWristConstants.kMAXMotionAllowedError, ClosedLoopSlot.kSlot1);
+            .outputRange(RotateWristConstants.kMinimumOutputLimit, RotateWristConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot0);
         motorConfig.encoder
             .positionConversionFactor(RotateWristConstants.kPositionConversionFactor);
         motorConfig.absoluteEncoder

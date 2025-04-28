@@ -4,15 +4,9 @@
 
 package frc.robot;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Optional;
 
-import org.json.simple.parser.ParseException;
-
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.FileVersionException;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -28,6 +22,7 @@ import frc.robot.utils.LimelightHelpers;
 public class Robot extends TimedRobot {
   private Command autoCommand;
 
+  @SuppressWarnings("unused")
   private final RobotContainer m_robotContainer;
 
   private final SendableChooser<String> autoChooser;
@@ -51,7 +46,7 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Processor 3 L1 Descore 2", processor3L1Descore2);
     autoChooser.addOption("PROCESSOR FOR 1153 NO DESCORE 3 L1", processor3L1NoDescore);
     autoChooser.addOption("Barge 3 L1 Descore 2", barge3L1Descore2);
-    autoChooser.setDefaultOption("BARGE FOR 1153 NO DESCORE 3 L1", barge3L1NoDescore);
+    autoChooser.addOption("BARGE FOR 1153 NO DESCORE 3 L1", barge3L1NoDescore);
     autoChooser.addOption("Center 1 L4 Descore 1", center1L4);
     autoChooser.addOption("Do Nothing", doNothing);
     autoChooser.addOption("Auto Align L4 Processor", autoAlignL4Processor);

@@ -2,26 +2,19 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants.PivotConstants;
-import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
 import frc.robot.utils.Servo;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
-import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
-import java.util.function.BooleanSupplier;
-
 import java.util.function.BooleanSupplier;
 
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -38,16 +31,14 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     // MOTORS
     private SparkMax leadMotor, followMotor;
     // ENCODERS
-    private RelativeEncoder encoder;
+    // private RelativeEncoder encoder;
     private AbsoluteEncoder absoluteEncoder;
     // FEEDBACK CONTROLLER
     private SparkClosedLoopController feedbackController;
     // CONFIGS
-    SparkMaxConfig leadConfig, followConfig;
+    private SparkMaxConfig leadConfig, followConfig;
     // CURRENT POSITION
     public PivotPosition currentTargetPosition;
-
-    private ShuffleboardTab pivotTab;
 
     private Timer timer;
     private TrapezoidProfile trapezoid;
@@ -65,7 +56,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         followMotor = new SparkMax(PivotConstants.kFollowerID, MotorType.kBrushless);
         // ENCODERS
         absoluteEncoder = leadMotor.getAbsoluteEncoder();
-        encoder = leadMotor.getEncoder();
+        // encoder = leadMotor.getEncoder();
         // PID/FEEDBACK CONTROLLER
         feedbackController = leadMotor.getClosedLoopController();
         // SETS TARGET POSITION
@@ -76,8 +67,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         followConfig = new SparkMaxConfig();
         // CONFIGURE MOTORS
         configureMotors();
-        configureShuffleboard();
-
+        // CONFIGURE TRAPEZOIDS AND MISC VARIABLES
         timer = new Timer();
         trapezoid = new TrapezoidProfile(new TrapezoidProfile.Constraints(200, 700));
         climbTrapezoid = new TrapezoidProfile(new TrapezoidProfile.Constraints(150, 450));
@@ -118,10 +108,6 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         followMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    private void configureShuffleboard() {
-        pivotTab = Shuffleboard.getTab("Pivot");
-    }
-
     /** Changes hieght/angle of pivot.
      * @param pivotPosition
      * enum that has height value for target position.
@@ -138,6 +124,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     public Command setPosition(PivotPosition position) {
         return runOnce(
             () -> {
+                Servo.getInstance().disableServo();
                 shouldMove = true;
                 currentTargetPosition = position;
                 timer.reset();
@@ -148,6 +135,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         );
     }
 
+    /** The method which updates the SparkMax setpoint based on the current setpoint, must be run periodically. */
     private void runPID() {
         TrapezoidProfile.State setpoint = trapezoid.calculate(timer.get() + 0.02, new TrapezoidProfile.State(startingPosition, startingVelocity), new TrapezoidProfile.State(currentTargetPosition.rotations, 0));
         if(currentTargetPosition == PivotPosition.CLIMB_LOWER) {
@@ -156,10 +144,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         feedbackController.setReference(setpoint.position, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, feedforward.calculate(Rotation2d.fromDegrees(setpoint.position).getRadians(), Rotation2d.fromDegrees(setpoint.velocity).getRadians()));
     }
 
-    public double getPositionRadians() {
-        return Rotation2d.fromDegrees(absoluteEncoder.getPosition() + 90).getRadians();
-    }
-
+    /** Used for tuning the arm feedforward. */
     public Command tuneFeedforwardPosition() {
         return startRun(() -> {
             timer.reset();
@@ -171,47 +156,36 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         });
     }
 
-    /** Changes height/angle of pivot.
-     * @param pivotPosition
-     * enum that has height value for target position.
-     */
-    public Command setClimbPosition() {
-        return runOnce(() -> {
-            currentTargetPosition = PivotPosition.CLIMB_LOWER;
-            feedbackController.setReference(PivotPosition.CLIMB_LOWER.getRotations(), SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot1);
-        });
-    }
-
+    /** A command which runs until the arm reaches its current setpoint using the default tolerance. */
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
             return isAtSetpoint();
         });
     }
 
+    /** A command which runs until the arm reaches its current setpoint using the climbing tolerance, a wider tolerance than usual. */
     public Command waitUntilAtClimbSetpoint() {
         return new WaitUntilCommand(() -> {
             return isAtClimbSetpoint();
         });
     }
 
-    /**Returns if currentTargetPosition is not at ground intake
-     */
+    /** Pivots to a height above the bumpers to avoid elevator retraction collisions. */
     public Command moveToSafePosition() {
         return setPosition(PivotPosition.SAFE_POSITION).onlyIf(() -> !currentTargetPosition.canElevatorRetractFromHere());
     }
 
+    /** @return true if the arm's position error is within the default tolerance. */
     public boolean isAtSetpoint() {
         return getError() < PivotConstants.kTolerance;
     }
 
+    /** @return true if the arm's position error is within the wider climbing tolerance. */
     public boolean isAtClimbSetpoint() {
-        return getError() < 3.1;
-    }
-
-    public boolean isAtLEDTolerance() {
-        return getError() < 2.5;
+        return getError() < PivotConstants.kClimbTolerance;
     }
     
+    /** @return the error, in degrees, between the measured position of the arm and the target position of the arm */
     private double getError() {
         return Math.abs(Math.abs(getPosition()) - Math.abs(currentTargetPosition.getRotations()));
     }
@@ -262,9 +236,6 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         SmartDashboard.putNumber("Output Current", leadMotor.getOutputCurrent());
         SmartDashboard.putBoolean("Safe Zone", currentTargetPosition.canElevatorRetractFromHere());
 
-        // pivotTab.("Setpoint", currentTargetPosition.getRotations());
-        // pivotTab.add("Current Position", absoluteEncoder.getPosition());
-        // pivotTab.add("At Setpoint", isAtSetpoint());
         if(shouldMove) {
             runPID();
         } else {
@@ -277,15 +248,17 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
      * Height Pivot must reach to get to state.
      */
     public enum PivotPosition {
-        STORED(-70), PRIME(-60), SAFE_POSITION(-75), COBRA_STANCE(-1),
+        STORED(-70), PRIME(-60), SAFE_POSITION(-75),
         CLIMB_RAISE(-25), CLIMB_LOWER(-106.5),
 
-        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-67), ALGAE_DESCORE_L_THREE(-47),
-        GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-8), // -50
+        ALGAE_DESCORE_L_TWO(-67), ALGAE_DESCORE_L_THREE(-47),
+        GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-8),
 
         L_ONE(-70), L_TWO(-60), L_THREE(0), L_FOUR(0),
         L_FOUR_FRONT(-22), L_THREE_FRONT(-36);
+
         private double rotations;
+
         PivotPosition(double rotations) {
             this.rotations = rotations;
         }

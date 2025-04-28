@@ -1,9 +1,6 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import edu.wpi.first.hal.HAL;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorPosition;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ElevatorTests {

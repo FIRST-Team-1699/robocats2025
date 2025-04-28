@@ -1,17 +1,12 @@
 package frc.robot.commands;
 
-import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.AlignToReefConstants;
@@ -52,7 +47,6 @@ public class AlignToReef extends Command {
     @Override
     public void initialize() {
         translationController.setSetpoint(0);
-
         // STARTS TIMER. USED TO PREVENT BEING STUCK AT END POSITION AT AN INTERVAL DEFINED IN COSTANTS (secTimerLimit). 
         // If IN TELE-OP, USED FOR DISPLAYING AUTO ALIGN TIME.
         deadlineTimer.start();
@@ -136,20 +130,6 @@ public class AlignToReef extends Command {
                     .withVelocityY(horizontalOutput)
                     .withRotationalRate(rotationalOutput)
             );
-
-            System.out.println("T " + thetaInTolerance);
-            System.out.println("F " + forwardInTolerance);
-            System.out.println("H " + horizontalInTolerance);
-            System.out.println("-------------------------");
-
-            // System.out.println(cameraPoseInTagSpace[4]);
-            // System.out.println("FORWARD OUTPUT: " + forwardOutput);
-            // System.out.println("HORIZONTAL OUTPUT: " + horizontalOutput);
-            // System.out.println("THETA OUTPUT: " + thetaOutput);
-            // System.out.println("FORWARD ERROR: " + (cameraPoseInTagSpace[2] - targetTZ));
-            // System.out.println("HORIZONTAL ERROR: " + (cameraPoseInTagSpace[0] - leftTargetTX));
-            // System.out.println(cameraPoseInTagSpace[0]);
-            // System.out.println(left ? leftTargetTX : rightTargetTX);
         } else {
             if(lastHorizontalOutput < 0) {
                 swerve.setControl(
@@ -167,7 +147,7 @@ public class AlignToReef extends Command {
 
     @Override
     public boolean isFinished() {
-        return (thetaInTolerance && horizontalInTolerance && forwardInTolerance && LimelightHelpers.getTV("limelight")) || deadlineTimer.get() >= AlignToReefConstants.secTimerLimit;
+        return (thetaInTolerance && horizontalInTolerance && forwardInTolerance && LimelightHelpers.getTV("limelight")) || deadlineTimer.get() >= AlignToReefConstants.autoAlignTimeLimit;
     }
     
     @Override
@@ -179,7 +159,6 @@ public class AlignToReef extends Command {
         deadlineTimer.stop();
 
         // FOR TUNING
-        SmartDashboard.putNumber("Time to Align: ", deadlineTimer.get());
         deadlineTimer.reset(); 
     }
 
