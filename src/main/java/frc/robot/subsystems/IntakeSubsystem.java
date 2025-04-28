@@ -6,6 +6,9 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -43,7 +46,9 @@ public class IntakeSubsystem extends SubsystemBase {
             .inverted(IntakeConstants.kInverted) 
             .idleMode(IdleMode.kBrake);
         config.limitSwitch
-            .forwardLimitSwitchEnabled(false);
+            .forwardLimitSwitchEnabled(false)
+            .reverseLimitSwitchEnabled(false);
+        config.openLoopRampRate(.1);
             // .forwardLimitSwitchType(Type.kNormallyOpen);
 
         motor.configureAsync(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -59,28 +64,28 @@ public class IntakeSubsystem extends SubsystemBase {
      * @param toReverseIntake
      * Boolean to determine to reverse or run intake
      */
-    public Command runIntake() {
-        return runOnce(() -> {
-            motor.set(currentIntakeSpeed.speed);
-        });
-    }
-
-    public Command runOutake() {
-        return runOnce(() -> {
-            motor.set(-currentIntakeSpeed.speed);
-        });
+    public Command outtake() {
+        return runOnce(() -> motor.set(-.4));
     }
 
     public boolean isRunning() {
-        return currentIntakeSpeed.speed != 0;
+        return motor.get() != 0 && motor.get() != .05;
     }
 
     public Command stopMotorCommand() {
-        return runOnce(() -> motor.set(0));
+        return runOnce(() -> motor.set(0.05));
     }
 
     public Command runIntake(double percentage) {
         return runOnce(() -> motor.set(percentage));
+    }
+
+    public boolean hasPiece() {
+        return motor.getReverseLimitSwitch().isPressed();
+    }
+
+    public boolean flipSensorActive() {
+        return motor.getForwardLimitSwitch().isPressed();
     }
 
     // public Command setRaw(double speed) {
@@ -91,9 +96,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Intake is at hard limit", motor.getForwardLimitSwitch().isPressed());
+        SmartDashboard.putBoolean("Intake is at hard limit", hasPiece());
         SmartDashboard.putNumber("Wanted intake speed", currentIntakeSpeed.speed);
         SmartDashboard.putNumber("Current intake speed", motor.get());
+        SmartDashboard.putBoolean("Flip Sensor Triggered", flipSensorActive());
 
     // intakeTab.add("Speed", motor.get());
     // intakeTab.add("Is Running", isRunning());

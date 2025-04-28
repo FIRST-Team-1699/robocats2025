@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.683141447368421,
+        "y": 0.4361019736842104
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.1686954842016117,
+        "y": 1.4122059878973117
+      },
+      "isLocked": false,
+      "linkedName": "B CS L4"
+    },
+    {
+      "anchor": {
+        "x": 3.516010273972603,
+        "y": 2.124250856164383
+      },
+      "prevControl": {
+        "x": 1.846703780875933,
+        "y": 1.0299173339394267
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": 59.99999999999999
+  },
+  "reversed": false,
+  "folder": "AutoAlign L4 Processor",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 55.0
+  },
+  "useDefaultConstraints": true
+}

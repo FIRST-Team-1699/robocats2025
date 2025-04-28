@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 1.75,
-        "y": 3.887
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2088557159603286,
-        "y": 4.002797040956788
+        "x": 2.1816013197639963,
+        "y": 4.05810817223964
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 4.162858606557377
       },
       "prevControl": {
-        "x": 1.643240214053029,
-        "y": 3.8041264748870973
+        "x": 1.7794544258350073,
+        "y": 4.006099762625462
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "folder": "Lollipop lower",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 165.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
