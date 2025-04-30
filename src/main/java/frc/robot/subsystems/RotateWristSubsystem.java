@@ -28,7 +28,6 @@ public class RotateWristSubsystem extends SubsystemBase {
 
     private RotatePosition currentTargetPosition;
 
-    /**Constructor for Subsystem */
     public RotateWristSubsystem() {
         motor = new SparkMax(RotateWristConstants.kMotorID, MotorType.kBrushless);
 
@@ -41,7 +40,7 @@ public class RotateWristSubsystem extends SubsystemBase {
         configureMotors();
     }
 
-    /**Configures motor, encoder and closed loop for subsystem  */
+    /** Sets the configurations for each motor. */
     private void configureMotors() {
         motorConfig = new SparkMaxConfig();
         
@@ -60,19 +59,11 @@ public class RotateWristSubsystem extends SubsystemBase {
             .zeroOffset(RotateWristConstants.kOffset)
             .zeroCentered(RotateWristConstants.kZeroCentered)
             .inverted(RotateWristConstants.kAbsoluteEncoderInverted);
-        // motorConfig.softLimit
-        //     .forwardSoftLimit(RotateWristConstants.kMaximumRotationLimit)
-        //     .forwardSoftLimitEnabled(true)
-        //     .reverseSoftLimit(RotateWristConstants.kMinimumRotationLimit)
-        //     .reverseSoftLimitEnabled(true);
             
         motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    /**Sets rotate position for writs
-     * @param currentTargetPosition
-     * Sets the currentTargetPosition to object and to PID controller
-     */
+    /** Sets the target rotation of the wrist. */
     public Command setPosition(RotatePosition currentTargetPosition) {
         return runOnce(() -> {
             this.currentTargetPosition = currentTargetPosition;
@@ -80,14 +71,12 @@ public class RotateWristSubsystem extends SubsystemBase {
         });
     }
 
-    /**Waits until within an acceptable range for PID (Tolerence), via calling isAtSetpoint */
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
             return isAtSetpoint();
         });
     }
 
-    /**Returns boolean if getError is within tolerence*/
     public boolean isAtSetpoint() {
         return getError() < RotateWristConstants.kTolerance;
     }
@@ -96,12 +85,10 @@ public class RotateWristSubsystem extends SubsystemBase {
         return getError() < 3;
     }
 
-    /**Returns double, representing error between target position and actual position */
     public double getError() {
         return Math.abs(Math.abs(currentTargetPosition.degrees) - Math.abs(absoluteEncoder.getPosition()));
     }
 
-    /**Returns a command to stop motor */
     public Command stopMotorCommand() {
         return runOnce(() -> {
             motor.set(0);
@@ -131,8 +118,7 @@ public class RotateWristSubsystem extends SubsystemBase {
         return currentTargetPosition == RotatePosition.VERTICAL;
     }
 
-    public boolean 
-    isVerticalFlipped() {
+    public boolean isVerticalFlipped() {
         return currentTargetPosition == RotatePosition.VERTICAL_FLIPPED;
     }
 
@@ -149,7 +135,7 @@ public class RotateWristSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("IsFlipped", isVerticalFlipped());
     }
 
-    /**Contains desired position for rotational positions */
+    /** Enum for rotation setpoints. */
     public enum RotatePosition {
         VERTICAL(90), HORIZONTAL(0), VERTICAL_FLIPPED(-90);
         double degrees;
