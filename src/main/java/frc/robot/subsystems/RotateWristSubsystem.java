@@ -40,7 +40,7 @@ public class RotateWristSubsystem extends SubsystemBase {
         configureMotors();
     }
 
-    /** Sets the configurations for each motor. */
+    /** Sets the configuration for the motor. */
     private void configureMotors() {
         motorConfig = new SparkMaxConfig();
         

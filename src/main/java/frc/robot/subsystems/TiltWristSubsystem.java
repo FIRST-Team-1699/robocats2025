@@ -30,7 +30,6 @@ public class TiltWristSubsystem extends SubsystemBase {
 
     private TiltPosition currentTargetPosition;
 
-    /**Constructor for Subsystem */
     public TiltWristSubsystem() {
         motor = new SparkMax(TiltWristConstants.kMotorID, MotorType.kBrushless);
 
@@ -43,7 +42,7 @@ public class TiltWristSubsystem extends SubsystemBase {
         configureMotors();
     }
 
-    /**Configures motor, encoder and closed loop for subsystem  */
+    /** Sets the configuration for the motor. */
     private void configureMotors() {
         motorConfig = new SparkMaxConfig();
         
@@ -71,12 +70,7 @@ public class TiltWristSubsystem extends SubsystemBase {
         motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    /**Sets Tilt position for writs
-     * @param currentTargetPosition
-     * Sets the currentTargetPosition to object and to PID controller
-     * @param targetTiltPosition
-     * Integer, if the target position-- being targeted-- is tilt position one or two.
-     */
+    /** Sets the target tilt position. */
     public Command setPosition(TiltPosition currentTargetPosition) {
         return runOnce(() -> {
             this.currentTargetPosition = currentTargetPosition;
@@ -84,19 +78,16 @@ public class TiltWristSubsystem extends SubsystemBase {
         });
     }
 
-    /**Waits until within an acceptable range for PID (Tolerence), via calling isAtSetpoint */
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
             return isAtSetpoint();
         });
     }
 
-    /**Returns boolean if getError is within tolerence*/
     public boolean isAtSetpoint() {
         return getError() < TiltWristConstants.kTolerance;
     }
 
-    /**Returns double, representing error between target position and actual position */
     public double getError() {
         return Math.abs(Math.abs(currentTargetPosition.degreePosition) - Math.abs(absoluteEncoder.getPosition()));
     }
@@ -104,7 +95,7 @@ public class TiltWristSubsystem extends SubsystemBase {
     public boolean isAtLEDTolerance() {
         return getError() < 3.0;
     }
-    /**returns command to stop motor */
+
     public Command stopMotorCommand() {
         return runOnce(() -> {
             motor.set(0);
@@ -190,7 +181,7 @@ public class TiltWristSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Is In Scoring Tilt", isInL2L3L4().getAsBoolean());
     }
 
-    /**Contains desired position for rotational positions */
+    /** Enum for tilt wrist setpoints. */
     public enum TiltPosition {
         STORED(-110), PRIME(-30),
 
