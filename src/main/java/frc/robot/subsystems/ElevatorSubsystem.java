@@ -17,7 +17,6 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -28,7 +27,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // FEEDBACK CONTROLLER
     private SparkClosedLoopController feedbackController;
     // CONFIGS
-    SparkMaxConfig leadConfig, followConfig;
+    private SparkMaxConfig leadConfig, followConfig;
     // CURRENT POSITION
     public ElevatorPosition currentTargetPosition;
 
@@ -60,14 +59,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pidf(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD, ElevatorConstants.kFF, ClosedLoopSlot.kSlot0)
-            .pidf(ElevatorConstants.kMAXMotionP, ElevatorConstants.kMAXMotionI, ElevatorConstants.kMAXMotionD, ElevatorConstants.kMAXMotionFF, ClosedLoopSlot.kSlot1) 
-            .outputRange(ElevatorConstants.kMinimumOutputLimit, ElevatorConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot0)
-            .outputRange(ElevatorConstants.kMinimumOutputLimit, ElevatorConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot1)
-        .maxMotion
-            .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot1)
-            .maxAcceleration(ElevatorConstants.kMAXMotionMaxAcceleration, ClosedLoopSlot.kSlot1)
-            .maxVelocity(ElevatorConstants.kMAXMotionMaxVelocity, ClosedLoopSlot.kSlot1)
-            .allowedClosedLoopError(ElevatorConstants.kMAXMotionAllowedError, ClosedLoopSlot.kSlot1);
+            .outputRange(ElevatorConstants.kMinimumOutputLimit, ElevatorConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot0);
         leadConfig.softLimit
             .forwardSoftLimit(ElevatorConstants.kMaximumRotationLimit)
             .forwardSoftLimitEnabled(true)
@@ -80,69 +72,42 @@ public class ElevatorSubsystem extends SubsystemBase {
         followMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    // COMMAND FACTORIES TO REACH ENUM HEIGHT
+    /** Returns a command to set the percentage output of the motors. */
     public Command setRaw(double percent) {
         return runOnce(() -> {
             leadMotor.set(percent);
         });
     }
 
-    /** Sets the target height of the elevator. 
-     * @param ElevatorPosition
-     * The taregt position: including state and height.
-    */
+    /** Sets the target height of the elevator. */
     public Command setPosition(ElevatorPosition position) {
         return runOnce(() -> {
-            // CHANGES CURRENT TARGET TO POS
             currentTargetPosition = position;
-            // SETS FEEDBACKCONTROLLER TO POS
             feedbackController.setReference(position.rotations, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0);
         });
     }
 
-    /** Sets the target height of the elevator using trapezoidal profiling. 
-     * @param ElevatorPosition
-     * The taregt position: including state and height.
-    */
-    public Command setPositionSmartMotion(ElevatorPosition position) {
-        return runOnce(() -> {
-            // CHANGES CURRENT TARGET TO POS
-            currentTargetPosition = position;
-            // SETS FEEDBACKCONTROLLER TO POS
-            feedbackController.setReference(position.rotations, SparkBase.ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot1);
-        });
-    }
 
+    /** A command which retracts the elevator to a reasonable height for pivoting. */
     public Command moveToSafePosition() {
         return setPosition(ElevatorPosition.SAFE_POSITION).onlyIf(() -> !currentTargetPosition.shouldPivotMoveFromHere());
     }
 
-    /**Waits until elevator reaches position within Tolerance.
-     * @param ElevatorPosition
-     * Enum for elevator height options. 
-     */
+    /** Returns a command which executes until the elevator reaches its setpoint. */
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
-            // TEST FOR IF ELEVATORERROR IS IN TOLERANCE OF TARGETPOSITION
             return isAtSetpoint();
         });
     }
     
     public boolean isAtSetpoint() {
-        return (getElevatorError() < ElevatorConstants.kTolerance);
+        return getElevatorError() < ElevatorConstants.kTolerance;
     }
 
     private double getElevatorError() {
         return Math.abs(Math.abs(encoder.getPosition()) - Math.abs(currentTargetPosition.rotations));
     }
 
-    /**Resets encoder to 0*/
-    public Command resetEncoder() {
-        return runOnce(() -> {
-                encoder.setPosition(0);
-            });
-    }
-    /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
     public Command stopMotorCommand() {
         return runOnce(() -> {
             leadMotor.set(0);
@@ -177,25 +142,22 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Elevator at safe return point", currentTargetPosition.shouldPivotMoveFromHere());
     }
     
-    /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
+    /** Enum for elevator height options. Contains the target motor rotations. */
     public enum ElevatorPosition {
         // ENUMS FOR POSITIONS
-        STORED(0), PRIME(0), COBRA_STANCE(-1), SAFE_POSITION(7),
+        STORED(0), PRIME(0), SAFE_POSITION(7),
         
         CLIMB(10),
 
-        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(4), ALGAE_DESCORE_L_THREE(18),
+        ALGAE_DESCORE_L_TWO(4), ALGAE_DESCORE_L_THREE(18),
       
-        GROUND_INTAKE(7), CORAL_STATION_INTAKE(0), // 0
+        GROUND_INTAKE(7), CORAL_STATION_INTAKE(0),
 
         L_ONE(0), L_TWO(6), L_THREE(7), L_FOUR(45),
         L_FOUR_FRONT(50), L_THREE_FRONT(20);
 
         private double rotations;
-        /**Constrcutor for height for ElevatorPositions (Enum for Elevator poses)
-        * @param rotations
-        * verticle movement in centimeters
-        */
+
         ElevatorPosition(double rotations) {
             this.rotations = rotations;
         }

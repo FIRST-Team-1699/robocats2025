@@ -12,7 +12,6 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,7 +30,6 @@ public class TiltWristSubsystem extends SubsystemBase {
 
     private TiltPosition currentTargetPosition;
 
-    /**Constructor for Subsystem */
     public TiltWristSubsystem() {
         motor = new SparkMax(TiltWristConstants.kMotorID, MotorType.kBrushless);
 
@@ -44,7 +42,7 @@ public class TiltWristSubsystem extends SubsystemBase {
         configureMotors();
     }
 
-    /**Configures motor, encoder and closed loop for subsystem  */
+    /** Sets the configuration for the motor. */
     private void configureMotors() {
         motorConfig = new SparkMaxConfig();
         
@@ -55,14 +53,7 @@ public class TiltWristSubsystem extends SubsystemBase {
         motorConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             .pidf(TiltWristConstants.kP, TiltWristConstants.kI, TiltWristConstants.kD, TiltWristConstants.kFF, ClosedLoopSlot.kSlot0)
-            .pidf(TiltWristConstants.kMAXMotionP, TiltWristConstants.kMAXMotionI, TiltWristConstants.kMAXMotionD, TiltWristConstants.kMAXMotionFF, ClosedLoopSlot.kSlot1)
-            .outputRange(TiltWristConstants.kMinimumOutputLimit, TiltWristConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot0)
-            .outputRange(TiltWristConstants.kMinimumOutputLimit, TiltWristConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot1)
-        .maxMotion
-            .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot1)
-            .maxAcceleration(TiltWristConstants.kMAXMotionMaxAcceleration, ClosedLoopSlot.kSlot1)
-            .maxVelocity(TiltWristConstants.kMAXMotionMaxVelocity, ClosedLoopSlot.kSlot1)
-            .allowedClosedLoopError(TiltWristConstants.kMAXMotionAllowedError, ClosedLoopSlot.kSlot1);
+            .outputRange(TiltWristConstants.kMinimumOutputLimit, TiltWristConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot0);
         motorConfig.encoder
             .positionConversionFactor(TiltWristConstants.kPositionConversionFactor);
         motorConfig.absoluteEncoder
@@ -79,12 +70,7 @@ public class TiltWristSubsystem extends SubsystemBase {
         motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    /**Sets Tilt position for writs
-     * @param currentTargetPosition
-     * Sets the currentTargetPosition to object and to PID controller
-     * @param targetTiltPosition
-     * Integer, if the target position-- being targeted-- is tilt position one or two.
-     */
+    /** Sets the target tilt position. */
     public Command setPosition(TiltPosition currentTargetPosition) {
         return runOnce(() -> {
             this.currentTargetPosition = currentTargetPosition;
@@ -92,19 +78,16 @@ public class TiltWristSubsystem extends SubsystemBase {
         });
     }
 
-    /**Waits until within an acceptable range for PID (Tolerence), via calling isAtSetpoint */
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
             return isAtSetpoint();
         });
     }
 
-    /**Returns boolean if getError is within tolerence*/
     public boolean isAtSetpoint() {
         return getError() < TiltWristConstants.kTolerance;
     }
 
-    /**Returns double, representing error between target position and actual position */
     public double getError() {
         return Math.abs(Math.abs(currentTargetPosition.degreePosition) - Math.abs(absoluteEncoder.getPosition()));
     }
@@ -112,7 +95,7 @@ public class TiltWristSubsystem extends SubsystemBase {
     public boolean isAtLEDTolerance() {
         return getError() < 3.0;
     }
-    /**returns command to stop motor */
+
     public Command stopMotorCommand() {
         return runOnce(() -> {
             motor.set(0);
@@ -198,15 +181,15 @@ public class TiltWristSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Is In Scoring Tilt", isInL2L3L4().getAsBoolean());
     }
 
-    /**Contains desired position for rotational positions */
+    /** Enum for tilt wrist setpoints. */
     public enum TiltPosition {
-        STORED(-110), PRIME(-30), COBRA_STANCE(-1),
+        STORED(-110), PRIME(-30),
 
         CLIMB_UPPER(0), CLIMB_LOWER(-60),
 
-        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(20), ALGAE_DESCORE_L_THREE(20),
+        ALGAE_DESCORE_L_TWO(20), ALGAE_DESCORE_L_THREE(20),
 
-        GROUND_INTAKE_HORIZONTAL(55), GROUND_INTAKE_VERTICAL(35), CORAL_STATION_INTAKE(-90), // -1
+        GROUND_INTAKE_HORIZONTAL(55), GROUND_INTAKE_VERTICAL(35), CORAL_STATION_INTAKE(-90),
 
         L_ONE(25), L_TWO(-15), L_THREE(-15), L_FOUR(-30), L_FOUR_FRONT(5), L_THREE_FRONT(0),
         L_TWO_PECK(20), L_THREE_PECK(-70), L_FOUR_PECK(-75), L_FOUR_FRONT_PECK(55), L_THREE_FRONT_PECK(40);
