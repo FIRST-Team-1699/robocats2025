@@ -8,7 +8,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.BooleanTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -42,7 +41,6 @@ public class AlignToReef extends Command {
 
     private NetworkTableInstance ntInstance;
     private NetworkTable alignTable;
-    private BooleanTopic alignTopic;
     private BooleanPublisher alignPublisher;
 
     public AlignToReef(CommandSwerveDrivetrain swerve, boolean left) {
@@ -57,8 +55,7 @@ public class AlignToReef extends Command {
 
         ntInstance = NetworkTableInstance.getDefault();
         alignTable = ntInstance.getTable("autoalign");
-        alignTopic = ntInstance.getBooleanTopic("/autoalign/aligned");
-        alignPublisher = alignTopic.publish();
+        alignPublisher = ntInstance.getBooleanTopic("/autoalign/aligned").publish();
     }
 
     @Override
