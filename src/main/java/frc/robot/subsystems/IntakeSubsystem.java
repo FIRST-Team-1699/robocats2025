@@ -18,9 +18,12 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanTopic;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class IntakeSubsystem extends SubsystemBase {
-
     private SparkMax motor;
       
     private SparkMaxConfig config;
@@ -28,6 +31,10 @@ public class IntakeSubsystem extends SubsystemBase {
     private IntakeSpeed currentIntakeSpeed;
 
     private ShuffleboardTab intakeTab;
+
+    private NetworkTableInstance ntInstance;
+    private NetworkTable intakeTable;
+    private BooleanPublisher intakeActivePublisher, hasPiecePublisher;
 
     public IntakeSubsystem() {
         motor = new SparkMax(IntakeConstants.kMotorID, MotorType.kBrushless);
@@ -37,6 +44,11 @@ public class IntakeSubsystem extends SubsystemBase {
         configureMotors();
 
         intakeTab = Shuffleboard.getTab("Intake");
+
+        ntInstance = NetworkTableInstance.getDefault();
+        intakeTable = ntInstance.getTable("intake");
+        intakeActivePublisher = ntInstance.getBooleanTopic("/intake/active").publish();
+        hasPiecePublisher = ntInstance.getBooleanTopic("/intake/hasPiece").publish();
     }
 
     private void configureMotors() {
@@ -100,6 +112,9 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Wanted intake speed", currentIntakeSpeed.speed);
         SmartDashboard.putNumber("Current intake speed", motor.get());
         SmartDashboard.putBoolean("Flip Sensor Triggered", flipSensorActive());
+
+        intakeActivePublisher.accept(isRunning());
+        hasPiecePublisher.accept(hasPiece());
 
     // intakeTab.add("Speed", motor.get());
     // intakeTab.add("Is Running", isRunning());

@@ -7,6 +7,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -38,6 +39,10 @@ public class AlignToReef extends Command {
 
     private Timer deadlineTimer = new Timer();
 
+    private NetworkTableInstance ntInstance;
+    private NetworkTable alignTable;
+    private BooleanPublisher alignPublisher;
+
     public AlignToReef(CommandSwerveDrivetrain swerve, boolean left) {
         this.swerve = swerve;
         this.left = left;
@@ -47,6 +52,10 @@ public class AlignToReef extends Command {
         horizontalInTolerance = false;
         targetOffsetTranslation = left ? AlignToReefConstants.leftOffsetTranslation 
             : AlignToReefConstants.rightOffsetTranslation;
+
+        ntInstance = NetworkTableInstance.getDefault();
+        alignTable = ntInstance.getTable("autoalign");
+        alignPublisher = ntInstance.getBooleanTopic("/autoalign/aligned").publish();
     }
 
     @Override
@@ -56,6 +65,8 @@ public class AlignToReef extends Command {
         // STARTS TIMER. USED TO PREVENT BEING STUCK AT END POSITION AT AN INTERVAL DEFINED IN COSTANTS (secTimerLimit). 
         // If IN TELE-OP, USED FOR DISPLAYING AUTO ALIGN TIME.
         deadlineTimer.start();
+
+        alignPublisher.accept(false);
     }
 
     @Override
@@ -181,6 +192,10 @@ public class AlignToReef extends Command {
         // FOR TUNING
         SmartDashboard.putNumber("Time to Align: ", deadlineTimer.get());
         deadlineTimer.reset(); 
+
+        if(!interrupted) {
+            alignPublisher.accept(true);
+        }
     }
 
     private static boolean inTolerance(double valueOne, double valueTwo, double tolerance) {
