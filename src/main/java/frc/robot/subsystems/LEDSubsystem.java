@@ -8,10 +8,7 @@ import frc.robot.RobotContainer;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.utils.LimelightHelpers;
 
-
-// NOTE: THIS CLASS MAY NOT WORK INDEPENDENTLY BECAUSE THE REQUIRED SUBSYSTEMS ARE INVISIBLE TO IT 
 public class LEDSubsystem extends SubsystemBase {
-    // DECLARATIONS
     private AddressableLED leds;
     private AddressableLEDBuffer ledBuffer;
     private double cycleTicks, blinkTicks;
@@ -23,30 +20,24 @@ public class LEDSubsystem extends SubsystemBase {
     private CommandSwerveDrivetrain drivetrain;
 
     public LEDSubsystem(IntakeSubsystem intake, CommandSwerveDrivetrain drivetrain) {
-        // Constructor for LED objects
-        leds = new AddressableLED(LEDConstants.kPort);
-        ledBuffer = new AddressableLEDBuffer(LEDConstants.kLEDLength);
+        this.leds = new AddressableLED(LEDConstants.kPort);
+        this.ledBuffer = new AddressableLEDBuffer(LEDConstants.kLEDLength);
 
-        // Sets LED length to leds
         leds.setLength(LEDConstants.kLEDLength);
 
-        cycleTicks = 0;
+        this.cycleTicks = 0;
+        this.blink = false;
 
-        // SUBSYSTEMS TO USE FOR CONDITIONALS
         this.intake = intake;
         this.drivetrain = drivetrain;
 
-        blink = false;
-
-        currentRGB = TargetRGB.BLUE;
+        this.currentRGB = TargetRGB.BLUE;
         start();
         changeColor(currentRGB);
     }
 
-    /**Changes the colot of LEDs */
+    /** Changes the color of LEDs. */
     public void changeColor(TargetRGB targetRGB) {
-        // STOPS FROM WASTING RESOURCES VIA RETURN
-        // ALLOWS LEDS TO TURN ON/OFF, BLINK FOR INTAKE
         if(blink && blinkTicks < 10) {
             setColorDirectly(TargetRGB.NONE);
         } else {
@@ -63,18 +54,15 @@ public class LEDSubsystem extends SubsystemBase {
         currentRGB = targetRGB;
     }
 
-    // METHODS TO MANIPULATE LEDs in-match
-    /**Enables LEDs and assigns color to "START_UP" Enum */
     public void start() {
         leds.start();
     }
 
-    /**Disables LEDs*/
     public void stop() {
         leds.stop();
     }
 
-    /**Runs periodically, uses conditionals to change LED color */
+    /** Updates LED color periodically based on subsystem states. */
     @Override
     public void periodic() {
         if(drivetrain.getState().Speeds.vxMetersPerSecond > 0.1 || drivetrain.getState().Speeds.vyMetersPerSecond > 0.1 || drivetrain.getState().Speeds.omegaRadiansPerSecond > 0.1) {
@@ -86,7 +74,7 @@ public class LEDSubsystem extends SubsystemBase {
             blinkTicks = 0;
         }
         if(cycleTicks >= 10) {
-            if(RobotContainer.isAligned) { // magic condition which determines that we are aligned
+            if(RobotContainer.isAligned) {
                 changeColor(TargetRGB.GREEN);
             } else if(LimelightHelpers.getTV("limelight")) {
                 changeColor(TargetRGB.RED);
@@ -107,31 +95,22 @@ public class LEDSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Blink Ticks", blinkTicks);
     }
 
-    /**enums for determining RGBs of LEDs*/
+    /** Enums for determining RGBs of LEDs */
     public enum TargetRGB {
-        NONE(0, 0, 0), // NONE
+        NONE(0, 0, 0),
 
-        BLUE(18, 255, 148), // Blue
+        BLUE(18, 255, 148),
 
-        RED(255, 13, 13),// Red
+        RED(255, 13, 13),
 
-        GOLD(255, 180, 0),// Gold
+        GOLD(255, 180, 0),
 
-        GREEN(5, 255, 10);//Green
+        GREEN(5, 255, 10);
 
-        // VARIABLES TO SET INTS for LEDs' enums
-        int red;
-        int green;
-        int blue;
+        final int red;
+        final int green;
+        final int blue;
 
-        /**Constructor for LEDs color
-         * @param hue
-         * Determines hue of LEDs
-         * @param saturation
-         * determines saturation of LEDs
-         * @param value
-         * determines value of LEDs
-         */
         private TargetRGB(int red, int green, int blue) {
             this.red = red;
             this.green = green;
