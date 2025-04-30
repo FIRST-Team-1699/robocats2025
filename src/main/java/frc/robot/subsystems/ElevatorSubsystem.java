@@ -27,7 +27,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // FEEDBACK CONTROLLER
     private SparkClosedLoopController feedbackController;
     // CONFIGS
-    SparkMaxConfig leadConfig, followConfig;
+    private SparkMaxConfig leadConfig, followConfig;
     // CURRENT POSITION
     public ElevatorPosition currentTargetPosition;
 
@@ -72,35 +72,28 @@ public class ElevatorSubsystem extends SubsystemBase {
         followMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    // COMMAND FACTORIES TO REACH ENUM HEIGHT
+    /** Returns a command to set the percentage output of the motors. */
     public Command setRaw(double percent) {
         return runOnce(() -> {
             leadMotor.set(percent);
         });
     }
 
-    /** Sets the target height of the elevator. 
-     * @param ElevatorPosition
-     * The taregt position: including state and height.
-    */
+    /** Sets the target height of the elevator. */
     public Command setPosition(ElevatorPosition position) {
         return runOnce(() -> {
-            // CHANGES CURRENT TARGET TO POS
             currentTargetPosition = position;
-            // SETS FEEDBACKCONTROLLER TO POS
             feedbackController.setReference(position.rotations, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0);
         });
     }
 
 
+    /** A command which retracts the elevator to a reasonable height for pivoting. */
     public Command moveToSafePosition() {
         return setPosition(ElevatorPosition.SAFE_POSITION).onlyIf(() -> !currentTargetPosition.shouldPivotMoveFromHere());
     }
 
-    /**Waits until elevator reaches position within Tolerance.
-     * @param ElevatorPosition
-     * Enum for elevator height options. 
-     */
+    /** Returns a command which executes until the elevator reaches its setpoint. */
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
             return isAtSetpoint();
@@ -115,13 +108,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         return Math.abs(Math.abs(encoder.getPosition()) - Math.abs(currentTargetPosition.rotations));
     }
 
-    /**Resets encoder to 0*/
-    public Command resetEncoder() {
-        return runOnce(() -> {
-            encoder.setPosition(0);
-        });
-    }
-    /**Ensures that motor is set to 0 after triggering bottomLimitSwitch*/
     public Command stopMotorCommand() {
         return runOnce(() -> {
             leadMotor.set(0);
@@ -156,7 +142,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Elevator at safe return point", currentTargetPosition.shouldPivotMoveFromHere());
     }
     
-    /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */
+    /** Enum for elevator height options. Contains the target motor rotations. */
     public enum ElevatorPosition {
         // ENUMS FOR POSITIONS
         STORED(0), PRIME(0), SAFE_POSITION(7),
@@ -171,10 +157,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         L_FOUR_FRONT(50), L_THREE_FRONT(20);
 
         private double rotations;
-        /**Constrcutor for height for ElevatorPositions (Enum for Elevator poses)
-        * @param rotations
-        * verticle movement in centimeters
-        */
+
         ElevatorPosition(double rotations) {
             this.rotations = rotations;
         }
