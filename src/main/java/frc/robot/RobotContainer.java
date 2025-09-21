@@ -105,6 +105,17 @@ public class RobotContainer {
                 intake::hasPiece
             ).alongWith(intake.stopMotorCommand()));
 
+        NamedCommands.registerCommand("L3 Front", 
+            elevator.moveToSafePosition()
+            .andThen(elevator.waitUntilAtSetpoint())
+            .andThen(elevator.setPosition(ElevatorPosition.STORED))
+            .andThen(pivot.setPosition(PivotPosition.L_THREE_FRONT))
+            .andThen(pivot.waitUntilAtSetpoint())
+            .andThen(elevator.setPosition(ElevatorPosition.L_THREE_FRONT)
+            .alongWith(getAutoFlipCommand(true)
+            .alongWith(tiltWrist.setPosition(TiltPosition.L_THREE_FRONT))))
+            );
+
         NamedCommands.registerCommand("Outtake", intake.runIntake(-.4));
 
         NamedCommands.registerCommand("Intake", intake.runIntake(.4));
@@ -170,7 +181,23 @@ public class RobotContainer {
             .andThen(elevator.setPosition(ElevatorPosition.CORAL_STATION_INTAKE)
             .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
             .alongWith(tiltWrist.setPosition(TiltPosition.CORAL_STATION_INTAKE))))
+            .andThen(tiltWrist.waitUntilAtSetpoint())
+            .andThen(rotateWrist.waitUntilAtSetpoint())
         );
+
+        NamedCommands.registerCommand("Move CS Vert", 
+            elevator.moveToSafePosition()
+            .andThen(elevator.waitUntilAtSetpoint())
+            .andThen(elevator.setPosition(ElevatorPosition.STORED))
+            .andThen(pivot.setPosition(PivotPosition.CORAL_STATION_INTAKE))
+            .andThen(pivot.waitUntilAtSetpoint())
+            .andThen(elevator.setPosition(ElevatorPosition.CORAL_STATION_INTAKE)
+            .alongWith(getAutoFlipCommand(true)
+            .alongWith(tiltWrist.setPosition(TiltPosition.CORAL_STATION_INTAKE))))
+            .andThen(tiltWrist.waitUntilAtSetpoint())
+        );
+
+        NamedCommands.registerCommand("Move Ground", getGroundIntakeSequence());
 
         NamedCommands.registerCommand("Align Right", new AlignToReef(drivetrain, false));
         NamedCommands.registerCommand("Align Left", new AlignToReef(drivetrain, true));
@@ -353,10 +380,8 @@ public class RobotContainer {
         
         operatorController.b()
             .onTrue(
-                (elevator.moveToSafePosition()
-                // .alongWith(setDefaultSpeed())
+                (elevator.setPosition(ElevatorPosition.STORED)
                 .andThen(elevator.waitUntilAtSetpoint())
-                .andThen(elevator.setPosition(ElevatorPosition.STORED))
                 .andThen(pivot.setPosition(PivotPosition.CORAL_STATION_INTAKE))
                 .andThen(pivot.waitUntilAtSetpoint()
                 .alongWith(elevator.setPosition(ElevatorPosition.CORAL_STATION_INTAKE)
@@ -480,8 +505,9 @@ public class RobotContainer {
         .alongWith(tiltWrist.setPosition(TiltPosition.STORED).alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
         .andThen((pivot.setPosition(PivotPosition.GROUND_INTAKE))
         .alongWith(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE_HORIZONTAL)))
-        .alongWith(intake.runIntake(.6));
+        .alongWith(intake.runIntake(.3));
     }
+    // .6 speed
 
     private Command getLollipopIntakeSequence() {
         return elevator.setPosition(ElevatorPosition.STORED)
@@ -537,6 +563,17 @@ public class RobotContainer {
             intake::flipSensorActive);
     }
 
+    private Command getCoralStationSequence() {
+        return elevator.setPosition(ElevatorPosition.STORED)
+        .alongWith(intake.stopMotorCommand())
+        .andThen(elevator.waitUntilAtSetpoint())
+        .andThen(pivot.setPosition(PivotPosition.CORAL_STATION_INTAKE))
+        .andThen(pivot.waitUntilAtSetpoint()
+        .alongWith(elevator.setPosition(ElevatorPosition.CORAL_STATION_INTAKE)
+        .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
+        .alongWith(tiltWrist.setPosition(TiltPosition.CORAL_STATION_INTAKE)))));
+    }
+
     // private BooleanSupplier shouldFlip() {
     //     return () -> tiltWrist.isInL2L3L4().getAsBoolean() && rotateWrist.isVerticalFlipped().getAsBoolean();
     // }
@@ -545,9 +582,12 @@ public class RobotContainer {
     //     return () -> tiltWrist.isInL2L3L4().getAsBoolean() && rotateWrist.isVertical().getAsBoolean();
     // }
 
-    // public Command getAutonomousCommand() 
-    // {
-    //     return AutoBuilder.buildAuto("Move then L1");
+    // public Command getAutonomousCommand() {
+    //     return new PrintCommand("auto sequence").andThen(getStowSequence()).andThen(new PrintCommand("stored!")).andThen(getGroundIntakeSequence())
+    //             .andThen(new WaitUntilCommand(() -> intake.hasPiece()))
+    //                 .andThen(getCoralStationSequence())
+    //                     .andThen(intake.runIntake(-.2))
+    //                         .andThen(new WaitUntilCommand(() -> !intake.hasPiece())).andThen(intake.stopMotorCommand());
     // }
 
     public boolean isBlue() {

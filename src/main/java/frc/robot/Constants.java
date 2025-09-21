@@ -65,8 +65,11 @@ public class Constants {
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -5; // TODO: SET
         public static final double kMaximumRotationLimit = 50; // TODO: SET
-        public static final double kMinimumOutputLimit = -.85;
+        //public static final double kMinimumOutputLimit = -.3; // -.85
+        //public static final double kMaximumOutputLimit = .3; // .85
+        public static final double kMinimumOutputLimit = -.85; // -.85
         public static final double kMaximumOutputLimit = .85;
+
         // INVERSIONS
         public static final boolean kInverted = false;
         public static final boolean kFollowerInverted = true;
@@ -101,8 +104,8 @@ public class Constants {
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -105; // TODO: SET
         public static final double kMaximumRotationLimit = 5; // TODO: SET
-        public static final double kMinimumOutputLimit = -.7;
-        public static final double kMaximumOutputLimit = .75;
+        public static final double kMinimumOutputLimit = -.2; // -.7
+        public static final double kMaximumOutputLimit = .2; // .75
         public static final double kMinimumClimbOutputLimit = -.35;
         public static final double kMaximumClimbOutputLimit = .35;
         // INVERSIONS

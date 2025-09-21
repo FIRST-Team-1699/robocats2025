@@ -281,7 +281,7 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         CLIMB_RAISE(-25), CLIMB_LOWER(-106.5),
 
         ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(-67), ALGAE_DESCORE_L_THREE(-47),
-        GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-8), // -50
+        GROUND_INTAKE(-95), CORAL_STATION_INTAKE(-10), // -50
 
         L_ONE(-70), L_TWO(-60), L_THREE(0), L_FOUR(0),
         L_FOUR_FRONT(-22), L_THREE_FRONT(-36);

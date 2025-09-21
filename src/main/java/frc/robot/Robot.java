@@ -41,6 +41,8 @@ public class Robot extends TimedRobot {
   private final String doNothing = "DoNothing";
   private final String autoAlignL4Processor = "Processor L4";
   private final String autoAlignL4Barge = "Barge L4";
+  private final String autoAlignL4Front = "AutoAlignOnePiece";
+  private final String kevinCapstone = "Kevin Capstone";
 
   private Optional<Alliance> lastAlliance;
   private String selectedAutoString;
@@ -51,17 +53,20 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Processor 3 L1 Descore 2", processor3L1Descore2);
     autoChooser.addOption("PROCESSOR FOR 1153 NO DESCORE 3 L1", processor3L1NoDescore);
     autoChooser.addOption("Barge 3 L1 Descore 2", barge3L1Descore2);
-    autoChooser.setDefaultOption("BARGE FOR 1153 NO DESCORE 3 L1", barge3L1NoDescore);
+    autoChooser.addOption("BARGE FOR 1153 NO DESCORE 3 L1", barge3L1NoDescore);
     autoChooser.addOption("Center 1 L4 Descore 1", center1L4);
     autoChooser.addOption("Do Nothing", doNothing);
     autoChooser.addOption("Auto Align L4 Processor", autoAlignL4Processor);
     autoChooser.addOption("Auto Align L4 Barge", autoAlignL4Barge);
-    autoChooser.setDefaultOption("Center 1 L1 Descore 1", center1L1Descore1);
+    autoChooser.addOption("Auto Align FRONT", autoAlignL4Front);
+    autoChooser.addOption("Center 1 L1 Descore 1", center1L1Descore1);
+    autoChooser.setDefaultOption("Kevin Capstone", kevinCapstone);
     SmartDashboard.putData(autoChooser);
 
     lastAlliance = DriverStation.getAlliance();
     selectedAutoString = autoChooser.getSelected();
     autoCommand = AutoBuilder.buildAuto(autoChooser.getSelected());
+    // autoCommand = m_robotContainer.getAutonomousCommand();
 
     CameraServer.startAutomaticCapture();
     LimelightHelpers.setLEDMode_ForceOff("limelight");
@@ -96,6 +101,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     if (autoCommand != null) {
       autoCommand.schedule();
+      System.out.println("running auto");
     }
     System.out.println(autoChooser.getSelected());
   }
