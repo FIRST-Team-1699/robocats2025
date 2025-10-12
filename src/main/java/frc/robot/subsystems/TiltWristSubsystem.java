@@ -2,42 +2,36 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-
+import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.TiltWristConstants;
 
 public class TiltWristSubsystem extends SubsystemBase {
-    private SparkMax motor;
-    private SparkAbsoluteEncoder absoluteEncoder;
-    private SparkClosedLoopController feedbackController;
+    // TODO: CONFIG/ DECIDE DYNAMIC V. DEFAULT
+    private final MotionMagicVoltage m_request = new MotionMagicVoltage(TiltWristConstants.kOffset);
 
-    private SparkMaxConfig motorConfig;
+    private TalonFX motor;
 
     private TiltPosition currentTargetPosition;
 
+    private TalonFXConfiguration talonConfigs;
+    private MotorOutputConfigs motorConfigs;
+
     /**Constructor for Subsystem */
     public TiltWristSubsystem() {
-        motor = new SparkMax(TiltWristConstants.kMotorID, MotorType.kBrushless);
-
-        absoluteEncoder = motor.getAbsoluteEncoder();
-
-        feedbackController = motor.getClosedLoopController();
+        motor = new TalonFX(TiltWristConstants.kMotorID);
 
         currentTargetPosition = TiltPosition.STORED;
 
@@ -46,37 +40,36 @@ public class TiltWristSubsystem extends SubsystemBase {
 
     /**Configures motor, encoder and closed loop for subsystem  */
     private void configureMotors() {
-        motorConfig = new SparkMaxConfig();
-        
-        motorConfig
-            .inverted(TiltWristConstants.kInverted)
-            .idleMode(TiltWristConstants.kIdleMode)
-            .smartCurrentLimit(TiltWristConstants.kStallLimit, TiltWristConstants.kFreeLimit);
-        motorConfig.closedLoop
-            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-            .pidf(TiltWristConstants.kP, TiltWristConstants.kI, TiltWristConstants.kD, TiltWristConstants.kFF, ClosedLoopSlot.kSlot0)
-            .pidf(TiltWristConstants.kMAXMotionP, TiltWristConstants.kMAXMotionI, TiltWristConstants.kMAXMotionD, TiltWristConstants.kMAXMotionFF, ClosedLoopSlot.kSlot1)
-            .outputRange(TiltWristConstants.kMinimumOutputLimit, TiltWristConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot0)
-            .outputRange(TiltWristConstants.kMinimumOutputLimit, TiltWristConstants.kMaximumOutputLimit, ClosedLoopSlot.kSlot1)
-        .maxMotion
-            .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal, ClosedLoopSlot.kSlot1)
-            .maxAcceleration(TiltWristConstants.kMAXMotionMaxAcceleration, ClosedLoopSlot.kSlot1)
-            .maxVelocity(TiltWristConstants.kMAXMotionMaxVelocity, ClosedLoopSlot.kSlot1)
-            .allowedClosedLoopError(TiltWristConstants.kMAXMotionAllowedError, ClosedLoopSlot.kSlot1);
-        motorConfig.encoder
-            .positionConversionFactor(TiltWristConstants.kPositionConversionFactor);
-        motorConfig.absoluteEncoder
-            .positionConversionFactor(TiltWristConstants.kPositionConversionFactor)
-            .zeroOffset(TiltWristConstants.kOffset)
-            .zeroCentered(TiltWristConstants.kZeroCentered)
-            .inverted(TiltWristConstants.kAbsoluteEncoderInverted);
-        // motorConfig.softLimit
-        //     .forwardSoftLimit(TiltWristConstants.kMaximumRotationLimit)
-        //     .forwardSoftLimitEnabled(true)
-        //     .reverseSoftLimit(TiltWristConstants.kMinimumRotationLimit)
-        //     .reverseSoftLimitEnabled(true);
+        talonConfigs = new TalonFXConfiguration();
+        motorConfigs = new MotorOutputConfigs();
+        var slot0 = talonConfigs.Slot0;
 
-        motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motorConfigs.Inverted = TiltWristConstants.kInverted;
+        motorConfigs.PeakForwardDutyCycle = TiltWristConstants.kForwardLimit;
+        motorConfigs.PeakReverseDutyCycle = TiltWristConstants.kReverseLimit;
+        motorConfigs.NeutralMode = TiltWristConstants.kIdle;
+
+
+        slot0.GravityType = TiltWristConstants.kGravityCounter;
+        slot0.StaticFeedforwardSign = TiltWristConstants.kFeedForward;
+
+        // EXAMPLE K VALUES
+        slot0.kS = 0.25;
+        slot0.kV = 0.12;
+        slot0.kA = 0.01;
+        slot0.kP = 4.8;
+        slot0.kI = 0;
+        slot0.kD = 0.1;
+
+        // EXAMPLE MOTION VALUES
+        var motionConfig = talonConfigs.MotionMagic;
+        motionConfig.MotionMagicCruiseVelocity = TiltWristConstants.kMotionMagicVelocity;
+        motionConfig.MotionMagicAcceleration = TiltWristConstants.kMotionMagicAcceleration;
+        motionConfig.MotionMagicJerk =  TiltWristConstants.kMotionMagicJerk;
+
+        motor.getConfigurator().apply(motorConfigs);
+        motor.getConfigurator().apply(slot0);
+        motor.getConfigurator().apply(motionConfig);
     }
 
     /**Sets Tilt position for writs
@@ -88,7 +81,8 @@ public class TiltWristSubsystem extends SubsystemBase {
     public Command setPosition(TiltPosition currentTargetPosition) {
         return runOnce(() -> {
             this.currentTargetPosition = currentTargetPosition;
-            feedbackController.setReference(currentTargetPosition.degreePosition, SparkBase.ControlType.kPosition);
+            // COMMENTING THIS CODE OUT AS SAFETY
+            // motor.setControl(m_request.withPosition(currentTargetPosition.degreePosition/PivotConstants.kPositionConversionFactor));
         });
     }
 
@@ -106,7 +100,7 @@ public class TiltWristSubsystem extends SubsystemBase {
 
     /**Returns double, representing error between target position and actual position */
     public double getError() {
-        return Math.abs(Math.abs(currentTargetPosition.degreePosition) - Math.abs(absoluteEncoder.getPosition()));
+        return Math.abs(Math.abs(currentTargetPosition.degreePosition) - Math.abs(getPosition()));
     }
 
     public boolean isAtLEDTolerance() {
@@ -126,7 +120,7 @@ public class TiltWristSubsystem extends SubsystemBase {
     }
 
     public double getPosition() {
-        return absoluteEncoder.getPosition();
+        return motor.getPosition().getValueAsDouble();
     }
 
     public TiltPosition getTargetPosition() {
@@ -185,14 +179,15 @@ public class TiltWristSubsystem extends SubsystemBase {
         return run(() -> System.out.println(getPosition()));
     }
 
-    public void setIdleMode(IdleMode idleMode) {
-        motorConfig.idleMode(idleMode);
-        motor.configureAsync(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    public void setIdleMode(NeutralModeValue idleMode) {
+        motorConfigs.NeutralMode = idleMode;
+        motor.getConfigurator().apply(motorConfigs);
+        
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Actual Tilt Wrist Angle", absoluteEncoder.getPosition());
+        SmartDashboard.putNumber("Actual Tilt Wrist Angle", getPosition());
         SmartDashboard.putNumber("Wanted Tilt Wrist Angle", currentTargetPosition.degreePosition);
         SmartDashboard.putBoolean("At Tilt Setpoint", isAtSetpoint());
         SmartDashboard.putBoolean("Is In Scoring Tilt", isInL2L3L4().getAsBoolean());

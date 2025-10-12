@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -10,6 +11,15 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import java.util.function.BooleanSupplier;
 
 import com.revrobotics.spark.SparkMax;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 
@@ -21,16 +31,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-    private SparkMax motor;
-      
-    private SparkMaxConfig config;
+    private TalonFX motor;
+
+    private MotorOutputConfigs motorConfigs;
 
     private IntakeSpeed currentIntakeSpeed;
 
     private ShuffleboardTab intakeTab;
 
     public IntakeSubsystem() {
-        motor = new SparkMax(IntakeConstants.kMotorID, MotorType.kBrushless);
+        motor = new TalonFX(IntakeConstants.kMotorID);
 
         currentIntakeSpeed = IntakeSpeed.STOP;
 
@@ -40,18 +50,16 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     private void configureMotors() {
-        config = new SparkMaxConfig();
+        // TODO: ABSTRACT
+        motorConfigs = new MotorOutputConfigs();
 
-        config
-            .inverted(IntakeConstants.kInverted) 
-            .idleMode(IdleMode.kBrake);
-        config.limitSwitch
-            .forwardLimitSwitchEnabled(false)
-            .reverseLimitSwitchEnabled(false);
-        config.openLoopRampRate(.1);
-            // .forwardLimitSwitchType(Type.kNormallyOpen);
+        motorConfigs.Inverted = InvertedValue.Clockwise_Positive;
+        motorConfigs.PeakForwardDutyCycle = IntakeConstants.kForwardLimit;
+        motorConfigs.PeakReverseDutyCycle = IntakeConstants.kReverseLimit;
+        motorConfigs.NeutralMode = IntakeConstants.kIdle;
 
-        motor.configureAsync(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        motor.getConfigurator().apply(motorConfigs);
     }
     /**Prepares the speed of arm for when trigger is pressed
      * @param intakeSpeed
@@ -81,12 +89,14 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public boolean hasPiece() {
-        return motor.getReverseLimitSwitch().isPressed();
+        // return motor.getReverseLimitSwitch().isPressed();
+        // TODO: FIND OUT WHAT PORT/ HOW SENSORS WILL WORK
+        return false;
     }
 
-    public boolean flipSensorActive() {
-        return motor.getForwardLimitSwitch().isPressed();
-    }
+    // public boolean flipSensorActive() {
+    //     return motor.getForwardLimitSwitch().isPressed();
+    // }
 
     // public Command setRaw(double speed) {
     //     return runOnce(()-> {
@@ -96,10 +106,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Intake is at hard limit", hasPiece());
+        // SmartDashboard.putBoolean("Intake is at hard limit", hasPiece());
         SmartDashboard.putNumber("Wanted intake speed", currentIntakeSpeed.speed);
         SmartDashboard.putNumber("Current intake speed", motor.get());
-        SmartDashboard.putBoolean("Flip Sensor Triggered", flipSensorActive());
+        // SmartDashboard.putBoolean("Flip Sensor Triggered", flipSensorActive());
 
     // intakeTab.add("Speed", motor.get());
     // intakeTab.add("Is Running", isRunning());
