@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 6.1425,
+        "y": 4.181
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.1425,
+        "y": 4.181
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.97125,
+        "y": 4.7757499999999995
+      },
+      "prevControl": {
+        "x": 5.97125,
+        "y": 4.7757499999999995
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": "New Wrist Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -179.41536947929484
+  },
+  "useDefaultConstraints": true
+}

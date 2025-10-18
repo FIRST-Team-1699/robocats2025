@@ -12,6 +12,9 @@ public class BeamBreak {
     public static BooleanSupplier hasCoral() {
         return () -> sensor.getRange()<BeamBreakConstatnts.kHasCoralInRange;
     }
+    public static boolean hasCoralBoolean() {
+        return sensor.getRange()<BeamBreakConstatnts.kHasCoralInRange;
+    }
     public static double getDistance() {
         return sensor.getRange();
     }

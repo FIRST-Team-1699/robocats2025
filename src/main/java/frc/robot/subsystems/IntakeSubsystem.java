@@ -137,8 +137,8 @@ public class IntakeSubsystem extends SubsystemBase {
     public enum IntakeSpeed {
         // CORAL(.1), ALGAE(.1), DESCORE_ALGAE(.1), //TODO: Change values to verify differing intake speeds
         // STOP(0);
-        INTAKE(10), //PLACES ON FRONT FOR CORAL
-        OUTTAKE(-60), //INTAKES CORAL
+        INTAKE(-70), //PLACES ON FRONT FOR CORAL
+        OUTTAKE(60), //INTAKES CORAL
         STOP(0);
         double speed;
         IntakeSpeed(double speed) {

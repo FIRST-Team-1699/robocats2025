@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -28,6 +29,7 @@ public class TiltWristSubsystem extends SubsystemBase {
 
     private TalonFXConfiguration talonConfigs;
     private MotorOutputConfigs motorConfigs;
+    private FeedbackConfigs feedback;
 
     /**Constructor for Subsystem */
     public TiltWristSubsystem() {
@@ -42,6 +44,7 @@ public class TiltWristSubsystem extends SubsystemBase {
     private void configureMotors() {
         talonConfigs = new TalonFXConfiguration();
         motorConfigs = new MotorOutputConfigs();
+        feedback = new FeedbackConfigs();
 
         motorConfigs.Inverted = TiltWristConstants.kInverted;
         motorConfigs.PeakForwardDutyCycle = TiltWristConstants.kForwardLimit;
@@ -50,7 +53,6 @@ public class TiltWristSubsystem extends SubsystemBase {
 
         talonConfigs.Slot0.GravityType = TiltWristConstants.kGravityCounter;
         talonConfigs.Slot0.StaticFeedforwardSign = TiltWristConstants.kFeedForward;
-
         // EXAMPLE K VALUES
         talonConfigs.Slot0.kS = TiltWristConstants.kS;
         talonConfigs.Slot0.kV = TiltWristConstants.kV;
@@ -64,9 +66,12 @@ public class TiltWristSubsystem extends SubsystemBase {
         talonConfigs.MotionMagic.MotionMagicAcceleration = TiltWristConstants.kMotionMagicAcceleration;
         talonConfigs.MotionMagic.MotionMagicJerk =  TiltWristConstants.kMotionMagicJerk;
 
+        feedback.SensorToMechanismRatio = TiltWristConstants.kPositionConversionFactor;
+
         motor.getConfigurator().apply(talonConfigs.Slot0);
         motor.getConfigurator().apply(talonConfigs.MotionMagic);
         motor.getConfigurator().apply(motorConfigs);
+        motor.getConfigurator().apply(feedback);
     }
 
     /**Sets Tilt position for writs
@@ -79,7 +84,7 @@ public class TiltWristSubsystem extends SubsystemBase {
         return runOnce(() -> {
             this.currentTargetPosition = currentTargetPosition;
             // COMMENTING THIS CODE OUT AS SAFETY
-            // motor.setControl(m_request.withPosition(currentTargetPosition.degreePosition/PivotConstants.kPositionConversionFactor));
+            motor.setControl(m_request.withPosition(currentTargetPosition.degreePosition));
         });
     }
 
@@ -192,18 +197,20 @@ public class TiltWristSubsystem extends SubsystemBase {
 
     /**Contains desired position for rotational positions */
     public enum TiltPosition {
-        STORED(-110), PRIME(-30), COBRA_STANCE(-1),
+        STORED(-10), PRIME(-10), COBRA_STANCE(-1),
 
         CLIMB_UPPER(0), CLIMB_LOWER(-60),
 
-        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(20), ALGAE_DESCORE_L_THREE(20),
+        ALGAE_INTAKE(-1), 
+        
+        ALGAE_DESCORE_L_TWO(20), ALGAE_DESCORE_L_THREE(20),
 
         GROUND_INTAKE_HORIZONTAL(55), GROUND_INTAKE_VERTICAL(35), CORAL_STATION_INTAKE(-90), // -1
 
         L_ONE(25), L_TWO(-15), L_THREE(-15), L_FOUR(-30), L_FOUR_FRONT(5), L_THREE_FRONT(0),
         L_TWO_PECK(20), L_THREE_PECK(-70), L_FOUR_PECK(-75), L_FOUR_FRONT_PECK(55), L_THREE_FRONT_PECK(40),
 
-        BARGE_SCORE(40);
+        BARGE_SCORE(-24.5);
 
         double degreePosition;
         private TiltPosition(double degreePosition) {

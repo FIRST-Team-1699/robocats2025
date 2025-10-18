@@ -286,10 +286,10 @@ public class RobotContainer {
         //         .unless(pivot.isInGroundIntakePosition())
         //     );
         operatorController.povUp()
-            .onTrue(tiltWrist.setRaw(0.05))
+            .onTrue(tiltWrist.setRaw(0.10))
             .onFalse(tiltWrist.stopMotorCommand());
         operatorController.povDown()
-            .onTrue(tiltWrist.setRaw(-0.05))
+            .onTrue(tiltWrist.setRaw(-0.1))
             .onFalse(tiltWrist.stopMotorCommand());
 
         operatorController.povRight()
@@ -319,8 +319,8 @@ public class RobotContainer {
             .onFalse(getStowSequence());
 
         // Operator Controller
-        operatorController.rightTrigger().whileTrue(intake.runALgaeOuttake()).onFalse(intake.stopMotorCommand());
-        operatorController.leftTrigger().whileTrue(intake.runALgaeIntake()).onFalse(intake.stopMotorCommand());
+        operatorController.rightTrigger().onTrue(intake.runALgaeIntake());
+        operatorController.leftTrigger().whileTrue(intake.runALgaeOuttake()).onFalse(intake.stopMotorCommand());
 
         operatorController.a()
             .onTrue(
@@ -340,13 +340,13 @@ public class RobotContainer {
                     pivot.moveToSafePosition()
                     .alongWith(tiltWrist.setPosition(TiltPosition.STORED))
                     // .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
-                    .andThen(pivot.waitUntilAtSetpoint())
+                    // .andThen(pivot.waitUntilAtSetpoint())
                     .andThen(elevator.setPosition(ElevatorPosition.STORED)
                     .andThen(tiltWrist.waitUntilAtSetpoint())
                     .andThen(elevator.waitUntilAtSetpoint())
                     .andThen(pivot.setPosition(PivotPosition.STORED))
                     )), 
-                    BeamBreak::hasCoral
+                    BeamBreak::hasCoralBoolean
                 ))// ).alongWith(setDefaultSpeed())).andThen(setDefaultSpeed())
             );    
         // UNCOMMENT WHEN FINISHED TESTING
@@ -460,6 +460,8 @@ public class RobotContainer {
         operatorController.rightBumper()
             .onTrue(getStowSequence()
                 .andThen(bargeScore())
+                .andThen(getStowSequence())
+                .andThen(intake.stopMotorCommand())
             );
 
         // operatorController.leftBumper()
@@ -533,27 +535,36 @@ public class RobotContainer {
                         pivot.moveToSafePosition()
                         .alongWith(tiltWrist.setPosition(TiltPosition.STORED))
                         // .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
-                        .andThen(pivot.waitUntilAtSetpoint())
+                        // .andThen(pivot.setPosition(PivotPosition.STORED))
+                        // .andThen(pivot.waitUntilAtSetpoint())
                         .andThen(elevator.setPosition(ElevatorPosition.STORED)
                         .andThen(tiltWrist.waitUntilAtSetpoint())
                         .andThen(elevator.waitUntilAtSetpoint())
                         .andThen(pivot.setPosition(PivotPosition.STORED))
                         )), 
-                    BeamBreak::hasCoral
-                ).alongWith(intake.stopMotorCommand()
-                // .alongWith(setDefaultSpeed()));
+                    BeamBreak::hasCoralBoolean
                 );
+                // .alongWith(intake.stopMotorCommand()
+                // .alongWith(setDefaultSpeed()));
+        // return pivot.moveToSafePosition()
+        //     .alongWith(tiltWrist.setPosition(TiltPosition.STORED))
+        //     // .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
+        //     .andThen(pivot.waitUntilAtSetpoint())
+        //     .andThen(elevator.setPosition(ElevatorPosition.STORED)
+        //     .andThen(tiltWrist.waitUntilAtSetpoint())
+        //     .andThen(elevator.waitUntilAtSetpoint())
+        //     .andThen(pivot.setPosition(PivotPosition.STORED)));
     }
 
     private Command bargeScore() {
         // TODO: ENSURE GETSTOWSEQUENCE IS CALLED FIRST
         return pivot.setPosition(PivotPosition.BARGE_SCORE)
             .alongWith(tiltWrist.setPosition(TiltPosition.BARGE_SCORE))
+            .andThen(tiltWrist.waitUntilAtSetpoint())
             .andThen(elevator.setPosition(ElevatorPosition.BARGE_SCORE))
             .andThen(elevator.waitUntilAtBargeSetpoint())
             .andThen(intake.runALgaeOuttake())
-            .andThen(elevator.waitUntilAtSetpoint()
-            .andThen(getStowSequence()));
+            .andThen(elevator.waitUntilAtSetpoint());
     }
 
     // private Command getAutoFlipCommand(boolean flipIfActive) {

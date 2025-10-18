@@ -69,7 +69,7 @@ public class Constants {
         public static final double kMAXMotionAllowedError = 0;
         // TOLERANCE FOR PID ERROR
         public static final double kTolerance = 1.0; // TODO: TUNE
-        public static final double kBargeTolerance = 12.0;
+        public static final double kBargeTolerance = 4.0;
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -5; // TODO: SET
         public static final double kMaximumRotationLimit = 50; // TODO: SET
@@ -155,6 +155,8 @@ public class Constants {
         public static final double kMotionMagicVelocity = 80;
         public static final double kMotionMagicAcceleration = 160;
         public static final double kMotionMagicJerk = 1600;
+
+        public static final double kPositionConversionFactor = 1/12;
     }
     
    
@@ -192,6 +194,6 @@ public class Constants {
 
     public static class BeamBreakConstatnts {
         public static final int kSensorID = 47;
-        public static final double kHasCoralInRange = 10;
+        public static final double kHasCoralInRange = 100;
     }
 }

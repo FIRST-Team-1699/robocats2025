@@ -1,0 +1,25 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 Place Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align Right"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "New Wrist Autos",
+  "choreoAuto": false
+}

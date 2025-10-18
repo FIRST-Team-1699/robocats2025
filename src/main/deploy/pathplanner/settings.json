@@ -9,13 +9,15 @@
     "Coral station upper",
     "Lollipop lower",
     "Lollipop upper",
-    "New Folder",
+    "New New Folder",
+    "New Wrist Paths",
     "Sweeping support"
   ],
   "autoFolders": [
     "4 piece(Prob not happening)",
     "Charlie Ring's Auto",
-    "Main autos"
+    "Main autos",
+    "New Wrist Autos"
   ],
   "defaultMaxVel": 5.0,
   "defaultMaxAccel": 3.5,
