@@ -123,13 +123,23 @@ public class ElevatorSubsystem extends SubsystemBase {
      */
     public Command waitUntilAtSetpoint() {
         return new WaitUntilCommand(() -> {
-            // TEST FOR IF ELEVATORERROR IS IN TOLERANCE OF TARGETPOSITION
             return isAtSetpoint();
+        });
+    }
+
+    public Command waitUntilAtBargeSetpoint() {
+        return new WaitUntilCommand(() -> {
+            // TEST FOR IF ELEVATORERROR IS IN TOLERANCE OF TARGETPOSITION
+            return isAtBargeSetpoint();
         });
     }
     
     public boolean isAtSetpoint() {
         return (getElevatorError() < ElevatorConstants.kTolerance);
+    }
+
+    public boolean isAtBargeSetpoint() {
+        return (getElevatorError() < ElevatorConstants.kBargeTolerance);
     }
 
     private double getElevatorError() {
@@ -189,7 +199,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         GROUND_INTAKE(7), CORAL_STATION_INTAKE(0), // 0
 
         L_ONE(0), L_TWO(6), L_THREE(7), L_FOUR(45),
-        L_FOUR_FRONT(50), L_THREE_FRONT(20);
+        L_FOUR_FRONT(50), L_THREE_FRONT(20),
+
+        BARGE_SCORE(50);
 
         private double rotations;
         /**Constrcutor for height for ElevatorPositions (Enum for Elevator poses)

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.LEDConstants;
+import frc.robot.utils.BeamBreak;
 import frc.robot.utils.LimelightHelpers;
 
 
@@ -90,7 +91,7 @@ public class LEDSubsystem extends SubsystemBase {
                 changeColor(TargetRGB.GREEN);
             } else if(LimelightHelpers.getTV("limelight")) {
                 changeColor(TargetRGB.RED);
-            } else if(intake.hasPiece()) {
+            } else if(BeamBreak.hasCoral().getAsBoolean()) {
                 changeColor(TargetRGB.GOLD);
             } else {
                 changeColor(TargetRGB.BLUE);

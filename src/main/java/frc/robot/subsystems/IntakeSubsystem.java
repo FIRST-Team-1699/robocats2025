@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
+import frc.robot.utils.BeamBreak;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -15,6 +16,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -60,6 +62,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
 
         motor.getConfigurator().apply(motorConfigs);
+        motor.setControl(new VoltageOut(0));
     }
     /**Prepares the speed of arm for when trigger is pressed
      * @param intakeSpeed
@@ -68,30 +71,41 @@ public class IntakeSubsystem extends SubsystemBase {
     public Command setWaitingIntake(IntakeSpeed intakeSpeed) {
         return runOnce(() ->this.currentIntakeSpeed = intakeSpeed);
     }
-    /**Used to run intake based on speed defined by the ArmState enum and the IntakeSpeed enum inside of it. Will run or stop Intake.
-     * @param toReverseIntake
-     * Boolean to determine to reverse or run intake
-     */
-    public Command outtake() {
-        return runOnce(() -> motor.set(-.4));
-    }
+    // /**Used to run intake based on speed defined by the ArmState enum and the IntakeSpeed enum inside of it. Will run or stop Intake.
+    //  * @param toReverseIntake
+    //  * Boolean to determine to reverse or run intake
+    //  */
+    // public Command outtake() {
+    //     return runOnce(() -> motor.set(IntakeSpeed.OUTTAKE.speed));
+    // }
 
     public boolean isRunning() {
         return motor.get() != 0 && motor.get() != .05;
     }
 
     public Command stopMotorCommand() {
-        return runOnce(() -> motor.set(0.05));
+        // return runOnce(() -> motor.set(0.05));
+        return runOnce(() -> motor.set(IntakeSpeed.STOP.speed));
     }
 
-    public Command runIntake(double percentage) {
-        return runOnce(() -> motor.set(percentage));
+    public Command runCoralIntake() {
+        return runOnce(() -> motor.set(IntakeSpeed.OUTTAKE.speed));
     }
 
-    public boolean hasPiece() {
-        // return motor.getReverseLimitSwitch().isPressed();
-        // TODO: FIND OUT WHAT PORT/ HOW SENSORS WILL WORK
-        return false;
+    public Command runCoralGroundIntake() {
+        return runOnce(() -> motor.set(IntakeSpeed.OUTTAKE.speed));
+    }
+
+    public Command runALgaeIntake() {
+        return runOnce(() -> motor.set(IntakeSpeed.INTAKE.speed));
+    }
+
+    public Command runCoralOuttake() {
+        return runOnce(() -> motor.set(IntakeSpeed.INTAKE.speed));
+    }
+
+    public Command runALgaeOuttake() {
+        return runOnce(() -> motor.set(IntakeSpeed.OUTTAKE.speed));
     }
 
     // public boolean flipSensorActive() {
@@ -109,14 +123,22 @@ public class IntakeSubsystem extends SubsystemBase {
         // SmartDashboard.putBoolean("Intake is at hard limit", hasPiece());
         SmartDashboard.putNumber("Wanted intake speed", currentIntakeSpeed.speed);
         SmartDashboard.putNumber("Current intake speed", motor.get());
-        // SmartDashboard.putBoolean("Flip Sensor Triggered", flipSensorActive());
+        SmartDashboard.putBoolean("BeamBreak Triggered", BeamBreak.hasCoral().getAsBoolean());
+        SmartDashboard.putNumber("BeamBreak distance", BeamBreak.getDistance());
+
 
     // intakeTab.add("Speed", motor.get());
     // intakeTab.add("Is Running", isRunning());
+        if(BeamBreak.hasCoral().getAsBoolean()) {
+            motor.set(IntakeSpeed.STOP.speed);
+        }
     }
 
     public enum IntakeSpeed {
-        CORAL(.1), ALGAE(.1), DESCORE_ALGAE(.1), //TODO: Change values to verify differing intake speeds
+        // CORAL(.1), ALGAE(.1), DESCORE_ALGAE(.1), //TODO: Change values to verify differing intake speeds
+        // STOP(0);
+        INTAKE(10), //PLACES ON FRONT FOR CORAL
+        OUTTAKE(-60), //INTAKES CORAL
         STOP(0);
         double speed;
         IntakeSpeed(double speed) {

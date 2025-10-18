@@ -36,6 +36,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TiltWristSubsystem;
 // import frc.robot.subsystems.RotateWristSubsystem.RotatePosition;
 import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
+import frc.robot.utils.BeamBreak;
 import frc.robot.utils.LimelightHelpers;
 import frc.robot.utils.Servo;
 import frc.robot.utils.Telemetry;
@@ -102,18 +103,22 @@ public class RobotContainer {
                     .andThen(tiltWrist.waitUntilAtSetpoint())
                     .andThen(elevator.waitUntilAtSetpoint())
                     .andThen(pivot.setPosition(PivotPosition.STORED)))), 
-                intake::hasPiece
+                BeamBreak::hasCoral
             ).alongWith(intake.stopMotorCommand()));
 
-        NamedCommands.registerCommand("Outtake", intake.runIntake(-.4));
+        // NamedCommands.registerCommand("Outtake", intake.runIntake(-.4));
+        NamedCommands.registerCommand("OuttakeAlgae", intake.runALgaeOuttake());
+        NamedCommands.registerCommand("OuttakeCoral", intake.runCoralOuttake());
 
-        NamedCommands.registerCommand("Intake", intake.runIntake(.4));
+        // NamedCommands.registerCommand("Intake", intake.runIntake(.4));
+        NamedCommands.registerCommand("IntakeAlgae", intake.runALgaeIntake());
+        NamedCommands.registerCommand("IntakeCoral", intake.runCoralIntake());
 
         NamedCommands.registerCommand("Stop Intake", intake.stopMotorCommand());
 
-        NamedCommands.registerCommand("Wait Until Loaded", new WaitUntilCommand(() -> intake.hasPiece()));
+        NamedCommands.registerCommand("Wait Until Loaded", new WaitUntilCommand(() -> BeamBreak.hasCoral().getAsBoolean()));
 
-        NamedCommands.registerCommand("Wait Until Unloaded", new WaitUntilCommand(() -> !intake.hasPiece()));
+        NamedCommands.registerCommand("Wait Until Unloaded", new WaitUntilCommand(() -> !BeamBreak.hasCoral().getAsBoolean()));
 
         NamedCommands.registerCommand("Peck", 
             tiltWrist.setPosition(TiltPosition.L_THREE_PECK).onlyIf(tiltWrist.isInL3Position())
@@ -314,8 +319,8 @@ public class RobotContainer {
             .onFalse(getStowSequence());
 
         // Operator Controller
-        operatorController.rightTrigger().whileTrue(intake.runIntake(.4)).onFalse(intake.stopMotorCommand());
-        operatorController.leftTrigger().whileTrue(intake.runIntake(-.3)).onFalse(intake.stopMotorCommand());
+        operatorController.rightTrigger().whileTrue(intake.runALgaeOuttake()).onFalse(intake.stopMotorCommand());
+        operatorController.leftTrigger().whileTrue(intake.runALgaeIntake()).onFalse(intake.stopMotorCommand());
 
         operatorController.a()
             .onTrue(
@@ -341,7 +346,7 @@ public class RobotContainer {
                     .andThen(elevator.waitUntilAtSetpoint())
                     .andThen(pivot.setPosition(PivotPosition.STORED))
                     )), 
-                    intake::hasPiece
+                    BeamBreak::hasCoral
                 ))// ).alongWith(setDefaultSpeed())).andThen(setDefaultSpeed())
             );    
         // UNCOMMENT WHEN FINISHED TESTING
@@ -437,19 +442,24 @@ public class RobotContainer {
                 .alongWith(tiltWrist.setPosition(TiltPosition.ALGAE_DESCORE_L_TWO)))
             );
 
+        // operatorController.rightBumper()
+        //     .onTrue(
+        //         tiltWrist.setPosition(TiltPosition.L_THREE_PECK).onlyIf(tiltWrist.isInL3Position())
+        //         .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_PECK).onlyIf(tiltWrist.isInL4Position()))
+        //         .andThen(tiltWrist.setPosition(TiltPosition.L_TWO_PECK).onlyIf(tiltWrist.isInL2Position()))
+        //         .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT_PECK).onlyIf(tiltWrist.isInL4FrontPosition()))
+        //         .andThen(tiltWrist.setPosition(TiltPosition.L_THREE_FRONT_PECK).onlyIf(tiltWrist.isInL3FrontPosition()))
+        //     )
+        //     .onFalse(tiltWrist.setPosition(TiltPosition.L_FOUR).onlyIf(tiltWrist.isInL4PeckPosition())
+        //         .andThen(tiltWrist.setPosition(TiltPosition.L_THREE).onlyIf(tiltWrist.isInL3PeckPosition()))
+        //         .andThen(tiltWrist.setPosition(TiltPosition.L_TWO).onlyIf(tiltWrist.isInL2PeckPosition()))
+        //         .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT).onlyIf(tiltWrist.isInL4FrontPeckPosition()))
+        //         .andThen(tiltWrist.setPosition(TiltPosition.L_THREE_FRONT).onlyIf(tiltWrist.isInL3FrontPeckPosition()))
+        //     );
+
         operatorController.rightBumper()
-            .onTrue(
-                tiltWrist.setPosition(TiltPosition.L_THREE_PECK).onlyIf(tiltWrist.isInL3Position())
-                .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_PECK).onlyIf(tiltWrist.isInL4Position()))
-                .andThen(tiltWrist.setPosition(TiltPosition.L_TWO_PECK).onlyIf(tiltWrist.isInL2Position()))
-                .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT_PECK).onlyIf(tiltWrist.isInL4FrontPosition()))
-                .andThen(tiltWrist.setPosition(TiltPosition.L_THREE_FRONT_PECK).onlyIf(tiltWrist.isInL3FrontPosition()))
-            )
-            .onFalse(tiltWrist.setPosition(TiltPosition.L_FOUR).onlyIf(tiltWrist.isInL4PeckPosition())
-                .andThen(tiltWrist.setPosition(TiltPosition.L_THREE).onlyIf(tiltWrist.isInL3PeckPosition()))
-                .andThen(tiltWrist.setPosition(TiltPosition.L_TWO).onlyIf(tiltWrist.isInL2PeckPosition()))
-                .andThen(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT).onlyIf(tiltWrist.isInL4FrontPeckPosition()))
-                .andThen(tiltWrist.setPosition(TiltPosition.L_THREE_FRONT).onlyIf(tiltWrist.isInL3FrontPeckPosition()))
+            .onTrue(getStowSequence()
+                .andThen(bargeScore())
             );
 
         // operatorController.leftBumper()
@@ -487,7 +497,7 @@ public class RobotContainer {
         // .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
         .andThen((pivot.setPosition(PivotPosition.GROUND_INTAKE))
         .alongWith(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE_HORIZONTAL)))
-        .alongWith(intake.runIntake(.6));
+        .alongWith(intake.runCoralGroundIntake());
     }
 
     private Command getLollipopIntakeSequence() {
@@ -502,7 +512,7 @@ public class RobotContainer {
         .andThen(elevator.waitUntilAtSetpoint())
         .andThen(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE_VERTICAL)
         .alongWith(pivot.setPosition(PivotPosition.GROUND_INTAKE)))
-        .andThen(intake.runIntake(.4));
+        .andThen(intake.runCoralGroundIntake());
     }
 
     private Command getStowSequence() {
@@ -529,10 +539,21 @@ public class RobotContainer {
                         .andThen(elevator.waitUntilAtSetpoint())
                         .andThen(pivot.setPosition(PivotPosition.STORED))
                         )), 
-                    intake::hasPiece
+                    BeamBreak::hasCoral
                 ).alongWith(intake.stopMotorCommand()
                 // .alongWith(setDefaultSpeed()));
                 );
+    }
+
+    private Command bargeScore() {
+        // TODO: ENSURE GETSTOWSEQUENCE IS CALLED FIRST
+        return pivot.setPosition(PivotPosition.BARGE_SCORE)
+            .alongWith(tiltWrist.setPosition(TiltPosition.BARGE_SCORE))
+            .andThen(elevator.setPosition(ElevatorPosition.BARGE_SCORE))
+            .andThen(elevator.waitUntilAtBargeSetpoint())
+            .andThen(intake.runALgaeOuttake())
+            .andThen(elevator.waitUntilAtSetpoint()
+            .andThen(getStowSequence()));
     }
 
     // private Command getAutoFlipCommand(boolean flipIfActive) {

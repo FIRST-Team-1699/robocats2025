@@ -42,34 +42,31 @@ public class TiltWristSubsystem extends SubsystemBase {
     private void configureMotors() {
         talonConfigs = new TalonFXConfiguration();
         motorConfigs = new MotorOutputConfigs();
-        var slot0 = talonConfigs.Slot0;
 
         motorConfigs.Inverted = TiltWristConstants.kInverted;
         motorConfigs.PeakForwardDutyCycle = TiltWristConstants.kForwardLimit;
         motorConfigs.PeakReverseDutyCycle = TiltWristConstants.kReverseLimit;
         motorConfigs.NeutralMode = TiltWristConstants.kIdle;
 
-
-        slot0.GravityType = TiltWristConstants.kGravityCounter;
-        slot0.StaticFeedforwardSign = TiltWristConstants.kFeedForward;
+        talonConfigs.Slot0.GravityType = TiltWristConstants.kGravityCounter;
+        talonConfigs.Slot0.StaticFeedforwardSign = TiltWristConstants.kFeedForward;
 
         // EXAMPLE K VALUES
-        slot0.kS = 0.25;
-        slot0.kV = 0.12;
-        slot0.kA = 0.01;
-        slot0.kP = 4.8;
-        slot0.kI = 0;
-        slot0.kD = 0.1;
+        talonConfigs.Slot0.kS = TiltWristConstants.kS;
+        talonConfigs.Slot0.kV = TiltWristConstants.kV;
+        talonConfigs.Slot0.kA = TiltWristConstants.kA;
+        talonConfigs.Slot0.kP = TiltWristConstants.kP;
+        talonConfigs.Slot0.kI = TiltWristConstants.kI;
+        talonConfigs.Slot0.kD = TiltWristConstants.kD;
 
         // EXAMPLE MOTION VALUES
-        var motionConfig = talonConfigs.MotionMagic;
-        motionConfig.MotionMagicCruiseVelocity = TiltWristConstants.kMotionMagicVelocity;
-        motionConfig.MotionMagicAcceleration = TiltWristConstants.kMotionMagicAcceleration;
-        motionConfig.MotionMagicJerk =  TiltWristConstants.kMotionMagicJerk;
+        talonConfigs.MotionMagic.MotionMagicCruiseVelocity = TiltWristConstants.kMotionMagicVelocity;
+        talonConfigs.MotionMagic.MotionMagicAcceleration = TiltWristConstants.kMotionMagicAcceleration;
+        talonConfigs.MotionMagic.MotionMagicJerk =  TiltWristConstants.kMotionMagicJerk;
 
+        motor.getConfigurator().apply(talonConfigs.Slot0);
+        motor.getConfigurator().apply(talonConfigs.MotionMagic);
         motor.getConfigurator().apply(motorConfigs);
-        motor.getConfigurator().apply(slot0);
-        motor.getConfigurator().apply(motionConfig);
     }
 
     /**Sets Tilt position for writs
@@ -204,7 +201,9 @@ public class TiltWristSubsystem extends SubsystemBase {
         GROUND_INTAKE_HORIZONTAL(55), GROUND_INTAKE_VERTICAL(35), CORAL_STATION_INTAKE(-90), // -1
 
         L_ONE(25), L_TWO(-15), L_THREE(-15), L_FOUR(-30), L_FOUR_FRONT(5), L_THREE_FRONT(0),
-        L_TWO_PECK(20), L_THREE_PECK(-70), L_FOUR_PECK(-75), L_FOUR_FRONT_PECK(55), L_THREE_FRONT_PECK(40);
+        L_TWO_PECK(20), L_THREE_PECK(-70), L_FOUR_PECK(-75), L_FOUR_FRONT_PECK(55), L_THREE_FRONT_PECK(40),
+
+        BARGE_SCORE(40);
 
         double degreePosition;
         private TiltPosition(double degreePosition) {
