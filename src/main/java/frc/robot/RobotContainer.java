@@ -312,7 +312,7 @@ public class RobotContainer {
 
         driverController.rightTrigger()
             .onTrue(getGroundIntakeSequence())
-            .onFalse(getStowSequence());
+            .onFalse(getStowSequence().alongWith(intake.stopMotorCommand()));
 
         driverController.leftTrigger()
             .onTrue(getLollipopIntakeSequence())
@@ -458,8 +458,7 @@ public class RobotContainer {
         //     );
 
         operatorController.rightBumper()
-            .onTrue(getStowSequence()
-                .andThen(bargeScore())
+            .onTrue(bargeScore()
                 .andThen(getStowSequence())
                 .andThen(intake.stopMotorCommand())
             );
