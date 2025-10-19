@@ -107,11 +107,11 @@ public class RobotContainer {
             ).alongWith(intake.stopMotorCommand()));
 
         // NamedCommands.registerCommand("Outtake", intake.runIntake(-.4));
-        NamedCommands.registerCommand("OuttakeAlgae", intake.runALgaeOuttake());
+        NamedCommands.registerCommand("OuttakeAlgae", intake.runAlgaeOuttake());
         NamedCommands.registerCommand("OuttakeCoral", intake.runCoralOuttake());
 
         // NamedCommands.registerCommand("Intake", intake.runIntake(.4));
-        NamedCommands.registerCommand("IntakeAlgae", intake.runALgaeIntake());
+        NamedCommands.registerCommand("IntakeAlgae", intake.runAlgaeIntake());
         NamedCommands.registerCommand("IntakeCoral", intake.runCoralIntake());
 
         NamedCommands.registerCommand("Stop Intake", intake.stopMotorCommand());
@@ -274,23 +274,23 @@ public class RobotContainer {
                 .andThen(pivot.runOnce(() -> pivot.disableMovement())))
                 .onlyIf(pivot.isClimbReady()));
         // UNCOMMET AFTER TESTING
-        // operatorController.povUp()
-        //     .onTrue(
-        //         (elevator.setPosition(ElevatorPosition.STORED)
-        //         // .alongWith(setElevatedSpeed())
-        //         .andThen(pivot.setPosition(PivotPosition.L_FOUR_FRONT))
-        //         .andThen(pivot.waitUntilAtSetpoint())
-        //         .andThen(elevator.setPosition(ElevatorPosition.L_FOUR_FRONT)
-        //         // .alongWith(getAutoFlipCommand(true)
-        //         .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT))))
-        //         .unless(pivot.isInGroundIntakePosition())
-        //     );
         operatorController.povUp()
-            .onTrue(tiltWrist.setRaw(0.10))
-            .onFalse(tiltWrist.stopMotorCommand());
-        operatorController.povDown()
-            .onTrue(tiltWrist.setRaw(-0.1))
-            .onFalse(tiltWrist.stopMotorCommand());
+            .onTrue(
+                (elevator.setPosition(ElevatorPosition.STORED)
+                // .alongWith(setElevatedSpeed())
+                .andThen(pivot.setPosition(PivotPosition.L_FOUR))
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.L_FOUR)
+                // .alongWith(getAutoFlipCommand(true)
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR))))
+                .unless(pivot.isInGroundIntakePosition())
+            );
+        // operatorController.povUp()
+        //     .onTrue(tiltWrist.setRaw(0.10))
+        //     .onFalse(tiltWrist.stopMotorCommand());
+        // operatorController.povDown()
+        //     .onTrue(tiltWrist.setRaw(-0.1))
+        //     .onFalse(tiltWrist.stopMotorCommand());
 
         operatorController.povRight()
             .onTrue(
@@ -298,11 +298,11 @@ public class RobotContainer {
                 // .alongWith(setDefaultSpeed())
                 .andThen(elevator.waitUntilAtSetpoint())
                 .andThen(elevator.setPosition(ElevatorPosition.STORED))
-                .andThen(pivot.setPosition(PivotPosition.L_THREE_FRONT))
+                .andThen(pivot.setPosition(PivotPosition.L_THREE))
                 .andThen(pivot.waitUntilAtSetpoint())
-                .andThen(elevator.setPosition(ElevatorPosition.L_THREE_FRONT)
+                .andThen(elevator.setPosition(ElevatorPosition.L_THREE)
                 // .alongWith(getAutoFlipCommand(true)
-                .alongWith(tiltWrist.setPosition(TiltPosition.L_THREE_FRONT)))
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_THREE)))
             );
 
         // reset the field-centric heading
@@ -311,16 +311,21 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         driverController.rightTrigger()
-            .onTrue(getGroundIntakeSequence())
+            .onTrue(getStowSequence().andThen(getGroundIntakeSequence()))
             .onFalse(getStowSequence().alongWith(intake.stopMotorCommand()));
 
         driverController.leftTrigger()
-            .onTrue(getLollipopIntakeSequence())
+            .onTrue(pivot.setPosition(PivotPosition.SAFE_POSITION).andThen(pivot.waitUntilAtSetpoint()).andThen(getAlgaeGroundIntakeSequence()))
             .onFalse(getStowSequence());
 
+        driverController.povUp()
+            .onTrue(pivot.setPosition(PivotPosition.SAFE_POSITION).andThen(pivot.waitUntilAtSetpoint()).andThen(getAlgaeGroundOuttakeSequence()));
+
         // Operator Controller
-        operatorController.rightTrigger().onTrue(intake.runALgaeIntake());
-        operatorController.leftTrigger().whileTrue(intake.runALgaeOuttake()).onFalse(intake.stopMotorCommand());
+        operatorController.rightBumper().onTrue(intake.runAlgaeIntake());
+        operatorController.rightTrigger().whileTrue(intake.runCoralIntake()).onFalse(intake.stopMotorCommand());
+        operatorController.leftTrigger().whileTrue(intake.runCoralOuttake()).onFalse(intake.stopMotorCommand());
+        driverController.povDown().onTrue(intake.runSlowAlgaeOuttake()).onFalse(intake.stopMotorCommand().alongWith(getStowSequence()));
 
         operatorController.a()
             .onTrue(
@@ -329,7 +334,7 @@ public class RobotContainer {
                     pivot.moveToSafePosition()
                     .alongWith(tiltWrist.setPosition(TiltPosition.PRIME))
                     // .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL)))
-                    .andThen(pivot.waitUntilAtSetpoint().onlyIf(() -> pivot.currentTargetPosition.canElevatorRetractFromHere()))
+                    // .andThen(pivot.waitUntilAtSetpoint().onlyIf(() -> pivot.currentTargetPosition.canElevatorRetractFromHere()))
                     .andThen(elevator.setPosition(ElevatorPosition.PRIME)
                     .andThen(tiltWrist.waitUntilAtSetpoint())
                     .andThen(elevator.waitUntilAtSetpoint())
@@ -340,7 +345,7 @@ public class RobotContainer {
                     pivot.moveToSafePosition()
                     .alongWith(tiltWrist.setPosition(TiltPosition.STORED))
                     // .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
-                    .andThen(pivot.waitUntilAtSetpoint().onlyIf(() -> pivot.currentTargetPosition.canElevatorRetractFromHere()))
+                    // .andThen(pivot.waitUntilAtSetpoint().onlyIf(() -> pivot.currentTargetPosition.canElevatorRetractFromHere()))
                     .andThen(elevator.setPosition(ElevatorPosition.STORED)
                     .andThen(tiltWrist.waitUntilAtSetpoint())
                     .andThen(elevator.waitUntilAtSetpoint())
@@ -350,17 +355,17 @@ public class RobotContainer {
                 ))// ).alongWith(setDefaultSpeed())).andThen(setDefaultSpeed())
             );    
         // UNCOMMENT WHEN FINISHED TESTING
-        // operatorController.povUp()
-        //     .onTrue(
-        //         (elevator.setPosition(ElevatorPosition.STORED)
-        //         // .alongWith(setElevatedSpeed())
-        //         .andThen(pivot.setPosition(PivotPosition.L_FOUR))
-        //         .andThen(pivot.waitUntilAtSetpoint())
-        //         .andThen(elevator.setPosition(ElevatorPosition.L_FOUR)
-        //         .alongWith(getAutoFlipCommand(true)
-        //         .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR)))))
-        //         .unless(pivot.isInGroundIntakePosition())
-        //     );
+        operatorController.povUp()
+            .onTrue(
+                (elevator.setPosition(ElevatorPosition.STORED)
+                // .alongWith(setElevatedSpeed())
+                .andThen(pivot.setPosition(PivotPosition.L_FOUR))
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.L_FOUR)
+                // .alongWith(getAutoFlipCommand(true)
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR))))
+                .unless(pivot.isInGroundIntakePosition())
+            );
         
         operatorController.b()
             .onTrue(
@@ -404,19 +409,19 @@ public class RobotContainer {
                 .unless(pivot.isInGroundIntakePosition())
             );
         // UNCOMMENT AFTER TESTING
-        // operatorController.povDown()
-        //     .onTrue(
-        //         (elevator.moveToSafePosition()
-        //         // .alongWith(setDefaultSpeed())
-        //         .andThen(elevator.waitUntilAtSetpoint())
-        //         .andThen(elevator.setPosition(ElevatorPosition.STORED))
-        //         .andThen(pivot.setPosition(PivotPosition.L_ONE))
-        //         .andThen(pivot.waitUntilAtSetpoint())
-        //         .andThen(elevator.setPosition(ElevatorPosition.L_ONE)
-        //         // .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
-        //         .alongWith(tiltWrist.setPosition(TiltPosition.L_ONE))))
-        //         .unless(pivot.isInGroundIntakePosition())
-        //     );
+        operatorController.povDown()
+            .onTrue(
+                (elevator.moveToSafePosition()
+                // .alongWith(setDefaultSpeed())
+                .andThen(elevator.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.STORED))
+                .andThen(pivot.setPosition(PivotPosition.L_ONE))
+                .andThen(pivot.waitUntilAtSetpoint())
+                .andThen(elevator.setPosition(ElevatorPosition.L_ONE)
+                // .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)
+                .alongWith(tiltWrist.setPosition(TiltPosition.L_ONE))))
+                .unless(pivot.isInGroundIntakePosition())
+            );
 
         operatorController.y()
             .onTrue(
@@ -457,8 +462,9 @@ public class RobotContainer {
         //         .andThen(tiltWrist.setPosition(TiltPosition.L_THREE_FRONT).onlyIf(tiltWrist.isInL3FrontPeckPosition()))
         //     );
 
-        operatorController.rightBumper()
-            .onTrue(bargeScore()
+        operatorController.leftBumper()
+            .onTrue(getStowSequence()
+                .andThen(bargeScore())
                 .andThen(getStowSequence())
                 .andThen(intake.stopMotorCommand())
             );
@@ -499,6 +505,27 @@ public class RobotContainer {
         .andThen((pivot.setPosition(PivotPosition.GROUND_INTAKE))
         .alongWith(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE_HORIZONTAL)))
         .alongWith(intake.runCoralGroundIntake());
+    }
+
+    private Command getAlgaeGroundIntakeSequence() {
+        return elevator.setPosition(ElevatorPosition.GROUND_ALGAE_INTAKE)
+        // .alongWith(setElevatedSpeed())
+        .andThen(elevator.waitUntilAtSetpoint())
+        .alongWith(tiltWrist.setPosition(TiltPosition.STORED))
+        // .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
+        .andThen((pivot.setPosition(PivotPosition.GROUND_ALGAE_INTAKE))
+        .alongWith(tiltWrist.setPosition(TiltPosition.GROUND_ALGAE_INTAKE)))
+        .alongWith(intake.runAlgaeIntake());
+    }
+
+    private Command getAlgaeGroundOuttakeSequence() {
+        return elevator.setPosition(ElevatorPosition.GROUND_ALGAE_INTAKE)
+        // .alongWith(setElevatedSpeed())
+        .andThen(elevator.waitUntilAtSetpoint())
+        .alongWith(tiltWrist.setPosition(TiltPosition.STORED))
+        // .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
+        .andThen((pivot.setPosition(PivotPosition.GROUND_ALGAE_INTAKE))
+        .alongWith(tiltWrist.setPosition(TiltPosition.GROUND_ALGAE_OUTTAKE)));
     }
 
     private Command getLollipopIntakeSequence() {
@@ -556,13 +583,22 @@ public class RobotContainer {
 
     private Command bargeScore() {
         // TODO: ENSURE GETSTOWSEQUENCE IS CALLED FIRST
+        // UP
         return pivot.setPosition(PivotPosition.BARGE_SCORE)
-            .alongWith(tiltWrist.setPosition(TiltPosition.BARGE_SCORE))
+            .andThen(pivot.waitUntilAtSetpoint())
+            .andThen(tiltWrist.setPosition(TiltPosition.BARGE_SCORE))
             .andThen(tiltWrist.waitUntilAtSetpoint())
             .andThen(elevator.setPosition(ElevatorPosition.BARGE_SCORE))
             .andThen(elevator.waitUntilAtBargeSetpoint())
-            .andThen(intake.runALgaeOuttake())
-            .andThen(elevator.waitUntilAtSetpoint());
+            .andThen(intake.runAlgaeOuttake())
+            .andThen(elevator.waitUntilAtSetpoint())
+
+        // DOWN
+            .andThen(tiltWrist.setPosition(TiltPosition.BARGE_RETURN))
+            .andThen(tiltWrist.waitUntilAtSetpoint())
+            .andThen(elevator.setPosition(ElevatorPosition.STORED))
+            .andThen(elevator.waitUntilAtSetpoint())
+            .andThen(pivot.setPosition(PivotPosition.STORED));
     }
 
     // private Command getAutoFlipCommand(boolean flipIfActive) {

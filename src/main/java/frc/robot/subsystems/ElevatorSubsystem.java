@@ -183,7 +183,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Elevator Height", encoder.getPosition());
         // SmartDashboard.putNumber("Target Elevator Height", currentTargetPosition.getRotations());
-        // SmartDashboard.putBoolean("Elevator at Setpoint", isAtSetpoint());
+        SmartDashboard.putBoolean("Elevator at Setpoint", isAtSetpoint());
         // SmartDashboard.putBoolean("Elevator at safe return point", currentTargetPosition.shouldPivotMoveFromHere());
     }
     
@@ -194,11 +194,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         
         CLIMB(10),
 
-        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(4), ALGAE_DESCORE_L_THREE(18),
+        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(5), ALGAE_DESCORE_L_THREE(19.64),
       
-        GROUND_INTAKE(7), CORAL_STATION_INTAKE(0), // 0
+        GROUND_INTAKE(1.857), GROUND_ALGAE_INTAKE(15), CORAL_STATION_INTAKE(3.714), // 0
 
-        L_ONE(0), L_TWO(6), L_THREE(7), L_FOUR(45),
+        L_ONE(0), L_TWO(2), L_THREE(14.1), L_FOUR(50),
         L_FOUR_FRONT(50), L_THREE_FRONT(20),
 
         BARGE_SCORE(50);

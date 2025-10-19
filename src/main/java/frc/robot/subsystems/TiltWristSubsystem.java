@@ -191,26 +191,27 @@ public class TiltWristSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Actual Tilt Wrist Angle", getPosition());
         // SmartDashboard.putNumber("Wanted Tilt Wrist Angle", currentTargetPosition.degreePosition);
-        // SmartDashboard.putBoolean("At Tilt Setpoint", isAtSetpoint());
+        SmartDashboard.putBoolean("At Tilt Setpoint", isAtSetpoint());
         // SmartDashboard.putBoolean("Is In Scoring Tilt", isInL2L3L4().getAsBoolean());
     }
 
     /**Contains desired position for rotational positions */
     public enum TiltPosition {
-        STORED(-10), PRIME(-10), COBRA_STANCE(-1),
+        STORED(-5), PRIME(-5), COBRA_STANCE(-1),
 
-        CLIMB_UPPER(0), CLIMB_LOWER(-60),
+        CLIMB_UPPER(-25.75), CLIMB_LOWER(-10),
 
-        ALGAE_INTAKE(-1), 
+        ALGAE_INTAKE(-1), GROUND_ALGAE_INTAKE(-38), GROUND_ALGAE_OUTTAKE(-29),
         
-        ALGAE_DESCORE_L_TWO(20), ALGAE_DESCORE_L_THREE(20),
+        ALGAE_DESCORE_L_TWO(-38.5), ALGAE_DESCORE_L_THREE(-38),
 
-        GROUND_INTAKE_HORIZONTAL(55), GROUND_INTAKE_VERTICAL(35), CORAL_STATION_INTAKE(-90), // -1
+        GROUND_INTAKE_HORIZONTAL(-29.58), GROUND_INTAKE_VERTICAL(35), CORAL_STATION_INTAKE(-30.6), // -1
 
-        L_ONE(25), L_TWO(-15), L_THREE(-15), L_FOUR(-30), L_FOUR_FRONT(5), L_THREE_FRONT(0),
+        L_ONE(25), L_TWO(-8.51), L_THREE(-12.55), L_FOUR(-20.66), L_FOUR_FRONT(5), L_THREE_FRONT(0),
         L_TWO_PECK(20), L_THREE_PECK(-70), L_FOUR_PECK(-75), L_FOUR_FRONT_PECK(55), L_THREE_FRONT_PECK(40),
 
-        BARGE_SCORE(-24.5);
+        BARGE_RETURN(-5),
+        BARGE_SCORE(-25.75);
 
         double degreePosition;
         private TiltPosition(double degreePosition) {

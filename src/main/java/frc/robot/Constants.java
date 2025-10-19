@@ -45,8 +45,8 @@ public class Constants {
         public static final int kMotorID = 41;
 
         public static final InvertedValue kInverted = InvertedValue.Clockwise_Positive;
-        public static final double kForwardLimit = 0.5;
-        public static final double kReverseLimit = -0.5;
+        public static final double kForwardLimit = 1.0;
+        public static final double kReverseLimit = -0.8;
         public static final NeutralModeValue kIdle = NeutralModeValue.Brake;
     }
     
@@ -69,19 +69,20 @@ public class Constants {
         public static final double kMAXMotionAllowedError = 0;
         // TOLERANCE FOR PID ERROR
         public static final double kTolerance = 1.0; // TODO: TUNE
-        public static final double kBargeTolerance = 4.0;
+        public static final double kBargeTolerance = 6.0;
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -5; // TODO: SET
         public static final double kMaximumRotationLimit = 50; // TODO: SET
-        public static final double kMinimumOutputLimit = -.85;
-        public static final double kMaximumOutputLimit = .85;
+        public static final double kMinimumOutputLimit = -.60;
+        public static final double kMaximumOutputLimit = .60;
         // INVERSIONS
         public static final boolean kInverted = false;
         public static final boolean kFollowerInverted = true;
         // CURRENT LIMITS TODO: TUNE
-        public static final int kStallLimit = 40;
-        public static final int kFreeLimit = 40;
+        public static final int kStallLimit = 30;
+        public static final int kFreeLimit = 30;
         // IDLE MODE
+        // public static final IdleMode kIdleMode = IdleMode.kCoast;
         public static final IdleMode kIdleMode = IdleMode.kBrake;
         // UNSAFE POSITION THRESHOLD
         public static final double kUnsafePosition = 7;
@@ -126,6 +127,7 @@ public class Constants {
         public static final int kFreeLimit = 35;
         // IDLE MODE
         public static final IdleMode kIdleMode = IdleMode.kBrake;
+        // public static final IdleMode kIdleMode = IdleMode.kCoast;
         // DEFINING UNSAFE POSITION
         public static final double kUnsafePosition = -95; //TODO: REPLACE THE FUNNY NUMBER WITH AN ACTUAL POSITION
     }
@@ -140,6 +142,7 @@ public class Constants {
         public static final double kForwardLimit = 0.5;
         public static final double kReverseLimit = -0.5;
         public static final NeutralModeValue kIdle = NeutralModeValue.Brake;
+        // public static final NeutralModeValue kIdle = NeutralModeValue.Coast;
 
         // TODO:DETERMINE IF GRAVITY FOR ARM_CONSTANT COSINE SHOULD BE USED
         public static final GravityTypeValue kGravityCounter = GravityTypeValue.Arm_Cosine;

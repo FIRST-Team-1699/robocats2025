@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -90,23 +91,26 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public Command runCoralIntake() {
-        return runOnce(() -> motor.set(IntakeSpeed.OUTTAKE.speed));
+        return runOnce(() -> motor.set(IntakeSpeed.INTAKE_CORAL.speed)).andThen(new WaitUntilCommand(BeamBreak.hasCoral()).andThen(runOnce(() ->motor.stopMotor())));
     }
 
     public Command runCoralGroundIntake() {
-        return runOnce(() -> motor.set(IntakeSpeed.OUTTAKE.speed));
+        return runOnce(() -> motor.set(IntakeSpeed.GROUND_INTAKE_CORAL.speed)).andThen(new WaitUntilCommand(BeamBreak.hasCoral()).andThen(runOnce(() ->motor.stopMotor())));
     }
 
-    public Command runALgaeIntake() {
+    public Command runAlgaeIntake() {
         return runOnce(() -> motor.set(IntakeSpeed.INTAKE.speed));
     }
 
     public Command runCoralOuttake() {
-        return runOnce(() -> motor.set(IntakeSpeed.INTAKE.speed));
+        return runOnce(() -> motor.set(IntakeSpeed.OUTTAKE_CORAL.speed));
     }
 
-    public Command runALgaeOuttake() {
-        return runOnce(() -> motor.set(IntakeSpeed.OUTTAKE.speed));
+    public Command runAlgaeOuttake() {
+        return runOnce(() -> motor.set(IntakeSpeed.OUTTAKE.speed)).onlyIf(() -> !BeamBreak.hasCoral().getAsBoolean());
+    }
+    public Command runSlowAlgaeOuttake() {
+        return runOnce(() -> motor.set(IntakeSpeed.SLOW_OUTTAKE.speed)).onlyIf(() -> !BeamBreak.hasCoral().getAsBoolean());
     }
 
     // public boolean flipSensorActive() {
@@ -133,9 +137,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // intakeTab.add("Speed", motor.get());
     // intakeTab.add("Is Running", isRunning());
-        if(BeamBreak.hasCoral().getAsBoolean()) {
-            motor.set(IntakeSpeed.STOP.speed);
-        }
     }
 
     public enum IntakeSpeed {
@@ -143,6 +144,10 @@ public class IntakeSubsystem extends SubsystemBase {
         // STOP(0);
         INTAKE(-70), //PLACES ON FRONT FOR CORAL
         OUTTAKE(60), //INTAKES CORAL
+        SLOW_OUTTAKE(0.5),
+        GROUND_INTAKE_CORAL(0.5),
+        INTAKE_CORAL(0.25),
+        OUTTAKE_CORAL(0.25),
         STOP(0);
         double speed;
         IntakeSpeed(double speed) {
