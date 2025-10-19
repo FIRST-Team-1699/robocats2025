@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.TiltWristSubsystem.TiltPosition;
 import frc.robot.utils.BeamBreak;
+import frc.robot.utils.LimelightHelpers;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -120,12 +121,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        double[] cameraPoseInTagSpace = LimelightHelpers.getBotPose_TargetSpace("limelight");
         // SmartDashboard.putBoolean("Intake is at hard limit", hasPiece());
-        SmartDashboard.putNumber("Wanted intake speed", currentIntakeSpeed.speed);
-        SmartDashboard.putNumber("Current intake speed", motor.get());
-        SmartDashboard.putBoolean("BeamBreak Triggered", BeamBreak.hasCoral().getAsBoolean());
-        SmartDashboard.putNumber("BeamBreak distance", BeamBreak.getDistance());
-
+        // SmartDashboard.putNumber("Wanted intake speed", currentIntakeSpeed.speed);
+        // SmartDashboard.putNumber("Current intake speed", motor.get());
+        // SmartDashboard.putBoolean("BeamBreak Triggered", BeamBreak.hasCoral().getAsBoolean());
+        // SmartDashboard.putNumber("BeamBreak distance", BeamBreak.getDistance());
+        SmartDashboard.putNumber("Horizontal Distance to Tag: ", cameraPoseInTagSpace[0]);
+        SmartDashboard.putNumber("forward Distance to Tag: ", cameraPoseInTagSpace[2]);
+        SmartDashboard.putNumber("rotation Diffrence to Tag: ", cameraPoseInTagSpace[4]);
 
     // intakeTab.add("Speed", motor.get());
     // intakeTab.add("Is Running", isRunning());

@@ -256,11 +256,11 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Actual Pivot Angle", absoluteEncoder.getPosition());
-        SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getRotations());
-        SmartDashboard.putNumber("Pivot Error", getError());
-        SmartDashboard.putBoolean("Pivot At Setpoint", isAtSetpoint());
-        SmartDashboard.putNumber("Output Current", leadMotor.getOutputCurrent());
-        SmartDashboard.putBoolean("Safe Zone", currentTargetPosition.canElevatorRetractFromHere());
+        // SmartDashboard.putNumber("Wanted Pivot Angle", currentTargetPosition.getRotations());
+        // SmartDashboard.putNumber("Pivot Error", getError());
+        // SmartDashboard.putBoolean("Pivot At Setpoint", isAtSetpoint());
+        // SmartDashboard.putNumber("Output Current", leadMotor.getOutputCurrent());
+        // SmartDashboard.putBoolean("Safe Zone", currentTargetPosition.canElevatorRetractFromHere());
 
         // pivotTab.("Setpoint", currentTargetPosition.getRotations());
         // pivotTab.add("Current Position", absoluteEncoder.getPosition());

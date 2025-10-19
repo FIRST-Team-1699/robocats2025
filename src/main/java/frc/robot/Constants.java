@@ -192,6 +192,23 @@ public class Constants {
         public static final double horizontalReAlignSpeed = .2;
     }
 
+    public static class AlignToBargeConstants {
+        public static final double kTargetTZ = -1;
+        public static final double kTargetTX = 1;
+
+
+        public static final double kMovementTolerance = .04;
+        public static final double kRotateTolerance = 1.0;
+
+        public static final Translation2d kOffsetTranslation = new Translation2d(-1, 1);
+
+        // TODO: TUNE
+        public static final double secTimerLimit = 5;
+
+        public static final double forwardReAlignSpeed = .2;
+        public static final double horizontalReAlignSpeed = .2;
+    }
+
     public static class BeamBreakConstatnts {
         public static final int kSensorID = 47;
         public static final double kHasCoralInRange = 100;

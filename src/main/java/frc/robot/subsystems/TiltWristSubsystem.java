@@ -190,9 +190,9 @@ public class TiltWristSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Actual Tilt Wrist Angle", getPosition());
-        SmartDashboard.putNumber("Wanted Tilt Wrist Angle", currentTargetPosition.degreePosition);
-        SmartDashboard.putBoolean("At Tilt Setpoint", isAtSetpoint());
-        SmartDashboard.putBoolean("Is In Scoring Tilt", isInL2L3L4().getAsBoolean());
+        // SmartDashboard.putNumber("Wanted Tilt Wrist Angle", currentTargetPosition.degreePosition);
+        // SmartDashboard.putBoolean("At Tilt Setpoint", isAtSetpoint());
+        // SmartDashboard.putBoolean("Is In Scoring Tilt", isInL2L3L4().getAsBoolean());
     }
 
     /**Contains desired position for rotational positions */
