@@ -51,6 +51,7 @@ public class AlignToReef extends Command {
 
     @Override
     public void initialize() {
+        LimelightHelpers.SetFiducialIDFiltersOverride("limelight", new int[]{6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22});
         translationController.setSetpoint(0);
 
         // STARTS TIMER. USED TO PREVENT BEING STUCK AT END POSITION AT AN INTERVAL DEFINED IN COSTANTS (secTimerLimit). 

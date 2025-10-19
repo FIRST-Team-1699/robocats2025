@@ -33,6 +33,7 @@ public class AlignToBarge extends Command{
 
     @Override
     public void initialize() {
+        LimelightHelpers.SetFiducialIDFiltersOverride("limelight", new int[]{21, 10});
         translationController.setSetpoint(0);
         deadlineTimer.start();
     }
