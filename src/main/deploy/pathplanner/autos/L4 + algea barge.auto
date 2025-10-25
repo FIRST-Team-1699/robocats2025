@@ -1,0 +1,79 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 algea pt1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Outtake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 algea pt 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move Descore L3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeAlgae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 algea pt 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "place holder for moving to barge"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "OuttakeAlgae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 algea pt 4"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

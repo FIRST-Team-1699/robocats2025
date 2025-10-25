@@ -46,7 +46,7 @@ public class Constants {
 
         public static final InvertedValue kInverted = InvertedValue.Clockwise_Positive;
         public static final double kForwardLimit = 1.0;
-        public static final double kReverseLimit = -0.8;
+        public static final double kReverseLimit = -1.0;
         public static final NeutralModeValue kIdle = NeutralModeValue.Brake;
     }
     
@@ -59,6 +59,7 @@ public class Constants {
         public static final double kI = 0;
         public static final double kD = 0;
         public static final double kFF = 0;
+
         // MAXMOTION CONSTANTS TODO: TUNE
         public static final double kMAXMotionP = 0;
         public static final double kMAXMotionI = 0;
@@ -74,7 +75,7 @@ public class Constants {
         public static final double kMinimumRotationLimit = -5; // TODO: SET
         public static final double kMaximumRotationLimit = 50; // TODO: SET
         public static final double kMinimumOutputLimit = -.60;
-        public static final double kMaximumOutputLimit = .60;
+        public static final double kMaximumOutputLimit = .80;
         // INVERSIONS
         public static final boolean kInverted = false;
         public static final boolean kFollowerInverted = true;
@@ -110,8 +111,8 @@ public class Constants {
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -105; // TODO: SET
         public static final double kMaximumRotationLimit = 5; // TODO: SET
-        public static final double kMinimumOutputLimit = -.7;
-        public static final double kMaximumOutputLimit = .75;
+        public static final double kMinimumOutputLimit = -.55; // -.7
+        public static final double kMaximumOutputLimit = .55; // 0.75
         public static final double kMinimumClimbOutputLimit = -.35;
         public static final double kMaximumClimbOutputLimit = .35;
         // INVERSIONS
@@ -137,6 +138,7 @@ public class Constants {
 
         public static final double kTolerance = 2.0;
         public static final double kOffset = 0.6048750; // TODO: SET
+        public static final double kExtraOffset = 1.5;
 
         public static final InvertedValue kInverted = InvertedValue.Clockwise_Positive;
         public static final double kForwardLimit = 0.5;

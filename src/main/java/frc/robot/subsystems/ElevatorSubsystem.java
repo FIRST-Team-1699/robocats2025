@@ -177,7 +177,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadMotor.configureAsync(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
         followConfig.idleMode(idleMode);
         followMotor.configureAsync(followConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-    }
+    }    
 
     @Override
     public void periodic() {
@@ -194,7 +194,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         
         CLIMB(10),
 
-        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(5), ALGAE_DESCORE_L_THREE(19.64),
+        ALGAE_INTAKE(-1), ALGAE_DESCORE_L_TWO(5), ALGAE_DESCORE_L_THREE(17.64),
       
         GROUND_INTAKE(1.857), GROUND_ALGAE_INTAKE(15), CORAL_STATION_INTAKE(3.714), // 0
 

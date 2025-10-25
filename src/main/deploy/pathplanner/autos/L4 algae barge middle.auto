@@ -1,0 +1,91 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 algae barge middle pt1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "OuttakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 algae barge middle pt2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stored"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move Descore L2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeAlgae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 algae barge middle pt3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 algae barge middle pt4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Barge Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 algae barge middle pt5"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -26,6 +26,7 @@ import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -37,6 +38,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private TalonFX motor;
 
+    private Timer outtakeTime;
+
     private MotorOutputConfigs motorConfigs;
 
     private IntakeSpeed currentIntakeSpeed;
@@ -47,6 +50,8 @@ public class IntakeSubsystem extends SubsystemBase {
         motor = new TalonFX(IntakeConstants.kMotorID);
 
         currentIntakeSpeed = IntakeSpeed.STOP;
+
+        outtakeTime = new Timer();
 
         configureMotors();
 
@@ -113,6 +118,16 @@ public class IntakeSubsystem extends SubsystemBase {
         return runOnce(() -> motor.set(IntakeSpeed.SLOW_OUTTAKE.speed)).onlyIf(() -> !BeamBreak.hasCoral().getAsBoolean());
     }
 
+    public Command outtakeStart() {
+        return runOnce(() -> {
+            outtakeTime.start();
+        });
+    }
+
+    public Command waitForOuttake() {
+        return new WaitUntilCommand(() -> outtakeTime.get()>1.0);
+    }
+
     // public boolean flipSensorActive() {
     //     return motor.getForwardLimitSwitch().isPressed();
     // }
@@ -137,6 +152,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // intakeTab.add("Speed", motor.get());
     // intakeTab.add("Is Running", isRunning());
+        if(outtakeTime.get() >1.5) {
+            outtakeTime.stop();
+            outtakeTime.reset();
+        }
     }
 
     public enum IntakeSpeed {
@@ -145,7 +164,7 @@ public class IntakeSubsystem extends SubsystemBase {
         INTAKE(-70), //PLACES ON FRONT FOR CORAL
         OUTTAKE(60), //INTAKES CORAL
         SLOW_OUTTAKE(0.5),
-        GROUND_INTAKE_CORAL(0.5),
+        GROUND_INTAKE_CORAL(0.75),
         INTAKE_CORAL(0.25),
         OUTTAKE_CORAL(0.25),
         STOP(0);

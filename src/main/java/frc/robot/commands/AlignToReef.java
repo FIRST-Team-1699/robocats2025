@@ -152,7 +152,7 @@ public class AlignToReef extends Command {
             // System.out.println(cameraPoseInTagSpace[0]);
             // System.out.println(left ? leftTargetTX : rightTargetTX);
         } else {
-            if(lastHorizontalOutput < 0) {
+            if(lastHorizontalOutput < 0 ) {
                 swerve.setControl(
                     new SwerveRequest.RobotCentric()
                         .withVelocityY(-AlignToReefConstants.horizontalReAlignSpeed)
@@ -168,7 +168,7 @@ public class AlignToReef extends Command {
 
     @Override
     public boolean isFinished() {
-        return (thetaInTolerance && horizontalInTolerance && forwardInTolerance && LimelightHelpers.getTV("limelight")) || deadlineTimer.get() >= AlignToReefConstants.secTimerLimit;
+        return (thetaInTolerance && horizontalInTolerance && forwardInTolerance && LimelightHelpers.getTV("limelight")) || (deadlineTimer.get() >= AlignToReefConstants.secTimerLimit);
     }
     
     @Override

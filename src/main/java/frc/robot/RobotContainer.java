@@ -18,9 +18,11 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -102,13 +104,18 @@ public class RobotContainer {
                     .andThen(elevator.setPosition(ElevatorPosition.STORED)
                     .andThen(tiltWrist.waitUntilAtSetpoint())
                     .andThen(elevator.waitUntilAtSetpoint())
-                    .andThen(pivot.setPosition(PivotPosition.STORED)))), 
+                    .andThen(pivot.setPosition(PivotPosition.STORED)))
+                    .andThen(pivot.waitUntilAtSetpoint())), 
                 BeamBreak::hasCoral
             ).alongWith(intake.stopMotorCommand()));
 
         // NamedCommands.registerCommand("Outtake", intake.runIntake(-.4));
         NamedCommands.registerCommand("OuttakeAlgae", intake.runAlgaeOuttake());
-        NamedCommands.registerCommand("OuttakeCoral", intake.runCoralOuttake());
+        NamedCommands.registerCommand("OuttakeCoral",     
+            intake.outtakeStart()
+                .andThen(intake.waitForOuttake())
+                .andThen(intake.runCoralOuttake())
+        );
 
         // NamedCommands.registerCommand("Intake", intake.runIntake(.4));
         NamedCommands.registerCommand("IntakeAlgae", intake.runAlgaeIntake());
@@ -186,6 +193,11 @@ public class RobotContainer {
             .andThen(elevator.setPosition(ElevatorPosition.L_FOUR_FRONT)
             // .alongWith(getAutoFlipCommand(true)
             .alongWith(tiltWrist.setPosition(TiltPosition.L_FOUR_FRONT))));
+
+        NamedCommands.registerCommand("Barge Score", 
+            bargeScore()
+                .andThen(getStowSequence())
+        );
 
         NamedCommands.registerCommand("Set Flipped 180", 
             new SelectCommand<>(Map.of(
@@ -463,10 +475,8 @@ public class RobotContainer {
         //     );
 
         operatorController.leftBumper()
-            .onTrue(getStowSequence()
-                .andThen(bargeScore())
+            .onTrue(bargeScore()
                 .andThen(getStowSequence())
-                .andThen(intake.stopMotorCommand())
             );
 
         // operatorController.leftBumper()
@@ -528,20 +538,20 @@ public class RobotContainer {
         .alongWith(tiltWrist.setPosition(TiltPosition.GROUND_ALGAE_OUTTAKE)));
     }
 
-    private Command getLollipopIntakeSequence() {
-        return elevator.setPosition(ElevatorPosition.STORED)
-        // .alongWith(setElevatedSpeed())
-        .andThen(elevator.waitUntilAtSetpoint())
-        .andThen(pivot.setPosition(PivotPosition.SAFE_POSITION)
-        .alongWith(tiltWrist.setPosition(TiltPosition.STORED)))
-        // .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL))))
-        .andThen(pivot.waitUntilAtSetpoint())
-        .andThen(elevator.setPosition(ElevatorPosition.GROUND_INTAKE))
-        .andThen(elevator.waitUntilAtSetpoint())
-        .andThen(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE_VERTICAL)
-        .alongWith(pivot.setPosition(PivotPosition.GROUND_INTAKE)))
-        .andThen(intake.runCoralGroundIntake());
-    }
+    // private Command getLollipopIntakeSequence() {
+    //     return elevator.setPosition(ElevatorPosition.STORED)
+    //     // .alongWith(setElevatedSpeed())
+    //     .andThen(elevator.waitUntilAtSetpoint())
+    //     .andThen(pivot.setPosition(PivotPosition.SAFE_POSITION)
+    //     .alongWith(tiltWrist.setPosition(TiltPosition.STORED)))
+    //     // .alongWith(rotateWrist.setPosition(RotatePosition.VERTICAL))))
+    //     .andThen(pivot.waitUntilAtSetpoint())
+    //     .andThen(elevator.setPosition(ElevatorPosition.GROUND_INTAKE))
+    //     .andThen(elevator.waitUntilAtSetpoint())
+    //     .andThen(tiltWrist.setPosition(TiltPosition.GROUND_INTAKE_VERTICAL)
+    //     .alongWith(pivot.setPosition(PivotPosition.GROUND_INTAKE)))
+    //     .andThen(intake.runCoralGroundIntake());
+    // }
 
     private Command getStowSequence() {
         return new SelectCommand<>( 
@@ -585,8 +595,8 @@ public class RobotContainer {
         // TODO: ENSURE GETSTOWSEQUENCE IS CALLED FIRST
         // UP
         return pivot.setPosition(PivotPosition.BARGE_SCORE)
-            .andThen(pivot.waitUntilAtSetpoint())
-            .andThen(tiltWrist.setPosition(TiltPosition.BARGE_SCORE))
+                .alongWith(tiltWrist.setPosition(TiltPosition.BARGE_SCORE))
+            .andThen(pivot.waitUntilAtBargeSetpoint())
             .andThen(tiltWrist.waitUntilAtSetpoint())
             .andThen(elevator.setPosition(ElevatorPosition.BARGE_SCORE))
             .andThen(elevator.waitUntilAtBargeSetpoint())
@@ -594,9 +604,11 @@ public class RobotContainer {
             .andThen(elevator.waitUntilAtSetpoint())
 
         // DOWN
-            .andThen(tiltWrist.setPosition(TiltPosition.BARGE_RETURN))
+            .andThen(tiltWrist.setPosition(TiltPosition.BARGE_RETURN)
+                .alongWith(elevator.setPosition(ElevatorPosition.STORED))
+            )
             .andThen(tiltWrist.waitUntilAtSetpoint())
-            .andThen(elevator.setPosition(ElevatorPosition.STORED))
+            .andThen(intake.stopMotorCommand())
             .andThen(elevator.waitUntilAtSetpoint())
             .andThen(pivot.setPosition(PivotPosition.STORED));
     }

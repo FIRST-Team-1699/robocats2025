@@ -187,6 +187,11 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
             return isAtSetpoint();
         });
     }
+    public Command waitUntilAtBargeSetpoint() {
+        return new WaitUntilCommand(() -> {
+            return isAtBargeSetpoint();
+        });
+    }
 
     public Command waitUntilAtClimbSetpoint() {
         return new WaitUntilCommand(() -> {
@@ -202,6 +207,10 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
 
     public boolean isAtSetpoint() {
         return getError() < PivotConstants.kTolerance;
+    }
+
+    public boolean isAtBargeSetpoint() {
+        return getError() < 15.2;
     }
 
     public boolean isAtClimbSetpoint() {

@@ -197,21 +197,22 @@ public class TiltWristSubsystem extends SubsystemBase {
 
     /**Contains desired position for rotational positions */
     public enum TiltPosition {
-        STORED(-5), PRIME(-5), COBRA_STANCE(-1),
+        STORED(-5 + TiltWristConstants.kExtraOffset), PRIME(-5 + TiltWristConstants.kExtraOffset), COBRA_STANCE(-1),
 
-        CLIMB_UPPER(-25.75), CLIMB_LOWER(-10),
+        CLIMB_UPPER(-25.75 + TiltWristConstants.kExtraOffset), CLIMB_LOWER(-10 + TiltWristConstants.kExtraOffset),
 
-        ALGAE_INTAKE(-1), GROUND_ALGAE_INTAKE(-38), GROUND_ALGAE_OUTTAKE(-29),
+        ALGAE_INTAKE(-1), GROUND_ALGAE_INTAKE(-38 + TiltWristConstants.kExtraOffset), GROUND_ALGAE_OUTTAKE(-29 + TiltWristConstants.kExtraOffset),
         
-        ALGAE_DESCORE_L_TWO(-38.5), ALGAE_DESCORE_L_THREE(-38),
+        ALGAE_DESCORE_L_TWO(-38.5 + TiltWristConstants.kExtraOffset), ALGAE_DESCORE_L_THREE(-38 + TiltWristConstants.kExtraOffset),
 
-        GROUND_INTAKE_HORIZONTAL(-29.58), GROUND_INTAKE_VERTICAL(35), CORAL_STATION_INTAKE(-30.6), // -1
+        GROUND_INTAKE_HORIZONTAL(-29.58 + TiltWristConstants.kExtraOffset), // GROUND_INTAKE_VERTICAL(35),
+        CORAL_STATION_INTAKE(-30.6 + TiltWristConstants.kExtraOffset), // -1
 
-        L_ONE(25), L_TWO(-8.51), L_THREE(-12.55), L_FOUR(-20.66), L_FOUR_FRONT(5), L_THREE_FRONT(0),
+        L_ONE(25), L_TWO(-8.51 + TiltWristConstants.kExtraOffset), L_THREE(-12.55 + TiltWristConstants.kExtraOffset), L_FOUR(-20.66 + TiltWristConstants.kExtraOffset), L_FOUR_FRONT(5), L_THREE_FRONT(0),
         L_TWO_PECK(20), L_THREE_PECK(-70), L_FOUR_PECK(-75), L_FOUR_FRONT_PECK(55), L_THREE_FRONT_PECK(40),
 
-        BARGE_RETURN(-5),
-        BARGE_SCORE(-25.75);
+        BARGE_RETURN(-5 + TiltWristConstants.kExtraOffset),
+        BARGE_SCORE(-25.75 + TiltWristConstants.kExtraOffset);
 
         double degreePosition;
         private TiltPosition(double degreePosition) {
