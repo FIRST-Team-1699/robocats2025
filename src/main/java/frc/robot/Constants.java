@@ -111,8 +111,8 @@ public class Constants {
         // LIMIT VALUES
         public static final double kMinimumRotationLimit = -105; // TODO: SET
         public static final double kMaximumRotationLimit = 5; // TODO: SET
-        public static final double kMinimumOutputLimit = -.55; // -.7
-        public static final double kMaximumOutputLimit = .55; // 0.75
+        public static final double kMinimumOutputLimit = -.4; // -.7
+        public static final double kMaximumOutputLimit = .4; // 0.75
         public static final double kMinimumClimbOutputLimit = -.35;
         public static final double kMaximumClimbOutputLimit = .35;
         // INVERSIONS
@@ -138,11 +138,11 @@ public class Constants {
 
         public static final double kTolerance = 2.0;
         public static final double kOffset = 0.6048750; // TODO: SET
-        public static final double kExtraOffset = 1.5;
+        public static final double kExtraOffset = -0.375;
 
         public static final InvertedValue kInverted = InvertedValue.Clockwise_Positive;
-        public static final double kForwardLimit = 0.5;
-        public static final double kReverseLimit = -0.5;
+        public static final double kForwardLimit = 0.35;
+        public static final double kReverseLimit = -0.35;
         public static final NeutralModeValue kIdle = NeutralModeValue.Brake;
         // public static final NeutralModeValue kIdle = NeutralModeValue.Coast;
 

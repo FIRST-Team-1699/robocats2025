@@ -165,7 +165,7 @@ public class IntakeSubsystem extends SubsystemBase {
         OUTTAKE(60), //INTAKES CORAL
         SLOW_OUTTAKE(0.5),
         GROUND_INTAKE_CORAL(0.75),
-        INTAKE_CORAL(0.25),
+        INTAKE_CORAL(0.45),
         OUTTAKE_CORAL(0.25),
         STOP(0);
         double speed;

@@ -205,8 +205,8 @@ public class TiltWristSubsystem extends SubsystemBase {
         
         ALGAE_DESCORE_L_TWO(-38.5 + TiltWristConstants.kExtraOffset), ALGAE_DESCORE_L_THREE(-38 + TiltWristConstants.kExtraOffset),
 
-        GROUND_INTAKE_HORIZONTAL(-29.58 + TiltWristConstants.kExtraOffset), // GROUND_INTAKE_VERTICAL(35),
-        CORAL_STATION_INTAKE(-30.6 + TiltWristConstants.kExtraOffset), // -1
+        GROUND_INTAKE_HORIZONTAL(-28.125 + TiltWristConstants.kExtraOffset), // GROUND_INTAKE_VERTICAL(35),
+        CORAL_STATION_INTAKE(-30.85 + TiltWristConstants.kExtraOffset), // -1
 
         L_ONE(25), L_TWO(-8.51 + TiltWristConstants.kExtraOffset), L_THREE(-12.55 + TiltWristConstants.kExtraOffset), L_FOUR(-20.66 + TiltWristConstants.kExtraOffset), L_FOUR_FRONT(5), L_THREE_FRONT(0),
         L_TWO_PECK(20), L_THREE_PECK(-70), L_FOUR_PECK(-75), L_FOUR_FRONT_PECK(55), L_THREE_FRONT_PECK(40),

@@ -9,6 +9,9 @@ import frc.robot.Constants.BeamBreakConstatnts;
 
 public class BeamBreak {
     private static TimeOfFlight sensor = new TimeOfFlight(47);
+    static {
+        sensor.setRangingMode(RangingMode.Short, 3);
+    }
     public static BooleanSupplier hasCoral() {
         return () -> sensor.getRange()<BeamBreakConstatnts.kHasCoralInRange;
     }
@@ -17,9 +20,5 @@ public class BeamBreak {
     }
     public static double getDistance() {
         return sensor.getRange();
-    }
-
-    static {
-        sensor.setRangingMode(RangingMode.Short, 40);
     }
 }

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.336,
-        "y": 6.392571721311475
+        "x": 7.181,
+        "y": 6.404559426229508
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.048512295081968,
-        "y": 5.912930327868851
+        "x": 6.821004098360655,
+        "y": 6.4764856557377035
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.041803278688524,
-        "y": 6.392571721311475
+        "x": 5.274590163934427,
+        "y": 5.42156762295082
       },
       "prevControl": {
-        "x": 6.521311475409835,
-        "y": 5.817028688524588
+        "x": 5.682172131147543,
+        "y": 6.212756147540984
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -119.43852929485504
   },
   "reversed": false,
-  "folder": "L4 Algae barge middle",
+  "folder": "Left L4 + Barge",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

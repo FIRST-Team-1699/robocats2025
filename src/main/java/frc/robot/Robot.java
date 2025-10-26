@@ -42,6 +42,9 @@ public class Robot extends TimedRobot {
   private final String autoAlignL4Processor = "Processor L4";
   private final String autoAlignL4Barge = "Barge L4";
   private final String centerL4Barge = "L4 algae barge middle";
+  private final String leftL4Barge = "Left L4 + Barge";
+  private final String rightL4Barge = "Right L4 + Barge";
+
 
   private Optional<Alliance> lastAlliance;
   private String selectedAutoString;
@@ -57,7 +60,11 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Do Nothing", doNothing);
     autoChooser.addOption("Auto Align L4 Processor", autoAlignL4Processor);
     autoChooser.addOption("Auto Align L4 Barge", autoAlignL4Barge);
-    autoChooser.addOption("Center L4 Barge", centerL4Barge);
+    // autoChooser.addOption("Center L4 Barge", centerL4Barge);
+    autoChooser.addOption("Left L4 + Barge", leftL4Barge); 
+    autoChooser.addOption("Right L4 + Barge", autoAlignL4Barge);
+    // autoChooser.setDefaultOption("Left L4 + Barge", leftL4Barge);
+    // autoChooser.setDefaultOption("Right 2L4 auto", leftL4Barge);
     autoChooser.setDefaultOption("Center L4 Barge", centerL4Barge);
     // autoChooser.setDefaultOption("Center 1 L1 Descore 1", center1L1Descore1);
     SmartDashboard.putData(autoChooser);

@@ -223,6 +223,8 @@ public class RobotContainer {
                 drivetrain.runOnce(() -> drivetrain.resetRotation(Rotation2d.fromDegrees(45)))), 
                 this::isBlue));
 
+        NamedCommands.registerCommand("Ground Coral Intake", getStowSequence().andThen(getGroundIntakeSequence()));
+
         configureBindings();
     }
 
@@ -519,9 +521,9 @@ public class RobotContainer {
 
     private Command getAlgaeGroundIntakeSequence() {
         return elevator.setPosition(ElevatorPosition.GROUND_ALGAE_INTAKE)
+        .alongWith(tiltWrist.setPosition(TiltPosition.STORED))
         // .alongWith(setElevatedSpeed())
         .andThen(elevator.waitUntilAtSetpoint())
-        .alongWith(tiltWrist.setPosition(TiltPosition.STORED))
         // .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
         .andThen((pivot.setPosition(PivotPosition.GROUND_ALGAE_INTAKE))
         .alongWith(tiltWrist.setPosition(TiltPosition.GROUND_ALGAE_INTAKE)))
@@ -530,12 +532,12 @@ public class RobotContainer {
 
     private Command getAlgaeGroundOuttakeSequence() {
         return elevator.setPosition(ElevatorPosition.GROUND_ALGAE_INTAKE)
+        .alongWith(tiltWrist.setPosition(TiltPosition.STORED))
         // .alongWith(setElevatedSpeed())
         .andThen(elevator.waitUntilAtSetpoint())
-        .alongWith(tiltWrist.setPosition(TiltPosition.STORED))
+        .andThen(tiltWrist.waitUntilAtSetpoint())
         // .alongWith(rotateWrist.setPosition(RotatePosition.HORIZONTAL)))
-        .andThen((pivot.setPosition(PivotPosition.GROUND_ALGAE_INTAKE))
-        .alongWith(tiltWrist.setPosition(TiltPosition.GROUND_ALGAE_OUTTAKE)));
+        .andThen((pivot.setPosition(PivotPosition.GROUND_ALGAE_INTAKE).alongWith(tiltWrist.setPosition(TiltPosition.GROUND_ALGAE_OUTTAKE))));
     }
 
     // private Command getLollipopIntakeSequence() {
@@ -595,8 +597,8 @@ public class RobotContainer {
         // TODO: ENSURE GETSTOWSEQUENCE IS CALLED FIRST
         // UP
         return pivot.setPosition(PivotPosition.BARGE_SCORE)
-                .alongWith(tiltWrist.setPosition(TiltPosition.BARGE_SCORE))
-            .andThen(pivot.waitUntilAtBargeSetpoint())
+            .andThen(pivot.waitUntilAtSetpoint())
+            .andThen(tiltWrist.setPosition(TiltPosition.BARGE_SCORE))
             .andThen(tiltWrist.waitUntilAtSetpoint())
             .andThen(elevator.setPosition(ElevatorPosition.BARGE_SCORE))
             .andThen(elevator.waitUntilAtBargeSetpoint())

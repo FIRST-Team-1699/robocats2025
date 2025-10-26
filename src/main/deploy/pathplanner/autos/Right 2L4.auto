@@ -1,0 +1,139 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right 2L4 autoP1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "OuttakeCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stored"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right 2L4 autoP2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Ground Coral Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Coral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right 2L4 autoP3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stored"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right 2L4 autoP4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align Right"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "OuttakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right 2L4 autoP5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stored"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move Descore L2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right 2L4 autoP6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right 2L4 autoP7"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stored"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
