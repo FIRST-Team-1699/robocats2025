@@ -185,6 +185,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         // SmartDashboard.putNumber("Target Elevator Height", currentTargetPosition.getRotations());
         SmartDashboard.putBoolean("Elevator at Setpoint", isAtSetpoint());
         // SmartDashboard.putBoolean("Elevator at safe return point", currentTargetPosition.shouldPivotMoveFromHere());
+
+        SmartDashboard.putBoolean("ID 46 ENCODER READING 0:", leadMotor.getAbsoluteEncoder().getPosition() == 0);
+        SmartDashboard.putBoolean("ID 45 ENCODER READING 0:", followMotor.getAbsoluteEncoder().getPosition() == 0);
     }
     
     /** Enum for elevator height options. Contains heightCentimeters, which is the target height in centimeters. */

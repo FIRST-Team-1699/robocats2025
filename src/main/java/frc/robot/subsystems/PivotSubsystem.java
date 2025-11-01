@@ -148,6 +148,14 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         );
     }
 
+    public Command setRaw(double speed) {
+        return runOnce(
+            () -> {
+                leadMotor.set(speed);
+            }
+        );
+    }
+
     private void runPID() {
         TrapezoidProfile.State setpoint = trapezoid.calculate(timer.get() + 0.02, new TrapezoidProfile.State(startingPosition, startingVelocity), new TrapezoidProfile.State(currentTargetPosition.rotations, 0));
         if(currentTargetPosition == PivotPosition.CLIMB_LOWER) {
@@ -274,11 +282,14 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         // pivotTab.("Setpoint", currentTargetPosition.getRotations());
         // pivotTab.add("Current Position", absoluteEncoder.getPosition());
         // pivotTab.add("At Setpoint", isAtSetpoint());
-        if(shouldMove) {
-            runPID();
-        } else {
-            leadMotor.set(0);
-        }
+        // if(shouldMove) {
+        //     runPID();
+        // } else {
+        //     leadMotor.set(0);
+        // }
+
+        SmartDashboard.putBoolean("ID 44 ENCODER READING 0:", leadMotor.getAbsoluteEncoder().getPosition() == 0);
+        SmartDashboard.putBoolean("ID 43 ENCODER READING 0:", followMotor.getAbsoluteEncoder().getPosition() == 0);
     }
     
     /**Enum, holds position of pivot.

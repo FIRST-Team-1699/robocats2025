@@ -84,7 +84,7 @@ public class Constants {
         public static final int kFreeLimit = 30;
         // IDLE MODE
         // public static final IdleMode kIdleMode = IdleMode.kCoast;
-        public static final IdleMode kIdleMode = IdleMode.kBrake;
+        public static final IdleMode kIdleMode = IdleMode.kCoast;
         // UNSAFE POSITION THRESHOLD
         public static final double kUnsafePosition = 7;
     }
