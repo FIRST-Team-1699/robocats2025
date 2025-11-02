@@ -6,12 +6,14 @@ package frc.robot;
 
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 
 public class RobotContainer {
     private final CommandXboxController operatorController = new CommandXboxController(1);   
 
     private final PivotSubsystem pivot = new PivotSubsystem();
+    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
 
     public RobotContainer() {
         // NOTES:
@@ -23,5 +25,11 @@ public class RobotContainer {
         operatorController.povDown()
             .onTrue(pivot.setRaw(-0.1))
             .onFalse(pivot.setRaw(0));
+        // operatorController.povUp()
+        //     .onTrue(elevator.setRaw(0.1))
+        //     .onFalse(elevator.setRaw(0));
+        // operatorController.povDown()
+        //     .onTrue(elevator.setRaw(-0.1))
+        //     .onFalse(elevator.setRaw(0));
     }
 }
