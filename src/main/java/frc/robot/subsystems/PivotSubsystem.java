@@ -103,8 +103,8 @@ public class PivotSubsystem extends SubsystemBase implements AutoCloseable {
         leadConfig.absoluteEncoder
             .positionConversionFactor(PivotConstants.kPositionConversionFactor)
             .velocityConversionFactor(PivotConstants.kPositionConversionFactor)
-            .zeroOffset(PivotConstants.kOffset)
-            .zeroCentered(true)
+            //.zeroOffset(PivotConstants.kOffset)
+           .zeroCentered(true)
             .inverted(PivotConstants.kAbsoluteEncoderInverted);
         leadConfig.softLimit
             .forwardSoftLimit(PivotConstants.kMaximumRotationLimit)

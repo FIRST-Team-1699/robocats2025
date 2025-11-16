@@ -121,6 +121,7 @@ public class Constants {
         public static final boolean kAbsoluteEncoderInverted = true;
         // OFFSET
         public static final double kOffset = 0.8174936; // TODO: SET
+        // public static final double kOffset = 40.05;
         // CONVERSION FACTOR
         public static final double kPositionConversionFactor = 360.0;
         // CURRENT LIMITS TODO: TUNE
